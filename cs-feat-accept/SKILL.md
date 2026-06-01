@@ -11,7 +11,7 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 
 代码已经写完，但流程没结束。本阶段做四件事，缺一不可：
 
-1. **核对实现有没有偏离方案**——逐层对照 `{slug}-design.md`，发现偏差当场修，**不是在报告里"记一下"**就过去
+1. **核对实现有没有偏离方案**——逐层对照 `{slug}-design.md`，hybrid feature 还要对照 `{slug}-plan.md`；发现偏差当场修，**不是在报告里"记一下"**就过去
 2. **把 feature 归并到整体架构**——对照方案第 4 节，实际去更新架构中心目录下的相关 doc
 3. **能力落档到 requirement**——draft req 对应的能力实现完成后升级为 current（保留愿景，追加变更日志）；从未写过 req 的能力 backfill
 4. **完成状态回写到 roadmap**——方案 frontmatter 有 `roadmap` / `roadmap_item` 字段时**必须**改 items.yaml 对应条目为 `done` 并同步主文档
@@ -45,7 +45,7 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 1. **代码确实实现到位**——git status / 最近提交看到本功能改动，否则退回 implement
 2. **方案 doc 完整**——frontmatter `doc_type=feature-design` / `feature` 一致 / `status=approved` / `summary` 非空 / `tags` ≥ 2；标准 design 第 0/1/2/3 节 + 第 4 节已填写
 3. **`{slug}-checklist.yaml`**——存在且 `feature` 一致；`steps` 全 `done`（有 `pending` 退回 implement）；`checks` 非空全 `pending`
-4. **上下文读全**——方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）
+4. **上下文读全**——方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + hybrid feature 时的 `{slug}-plan.md` + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）
 5. **断点恢复**——`{slug}-acceptance.md` 已存在且部分填好 → 从下一个未完成节继续，跳过 checks 中已 `passed` 的项；汇报"上次做到第 X 节，从第 Y 节继续"
 
 **Fastforward design 验收报告映射表**：

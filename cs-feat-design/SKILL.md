@@ -9,7 +9,7 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 
 开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
 
-这一阶段的产出是一份方案文件 `{slug}-design.md`，加上从中抽出的行动清单 `{slug}-checklist.yaml`。这两份东西后面会被两个阶段消费——implement 照着推进、acceptance 照着核对，所以这里写错或写漏，下游就跟着错。
+这一阶段的产出是一份方案文件 `{slug}-design.md`，加上从中抽出的行动清单 `{slug}-checklist.yaml`。对 hybrid feature，还会预留或衔接 `{slug}-plan.md` 这份详细执行步骤正文。design 继续是范围与约束的唯一方案源；plan 只承接已批准 design 的详细步骤说明。
 
 > 共享路径和命名约定看 `.codestable/reference/shared-conventions.md`。本阶段一般 feature 目录已经由 brainstorm 创建好了；没有的话在这一步建。
 
@@ -73,7 +73,7 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
    - **必读主文档第 3 节"模块拆分"和第 4 节"接口契约 / 共享协议"**——这是本 feature 的硬约束输入。契约不合理 / 漏了 → 停下来建议回 `cs-roadmap update` 改，**不要在 design 里偷偷绕开**
 2. **slug 从 roadmap 取**，feature 目录 `YYYY-MM-DD-{roadmap 条目 slug}`，不另起
 3. **走"流程"一节**，frontmatter 加 `roadmap` / `roadmap_item` 两字段
-4. **落盘 `status: approved` 同时回写 items.yaml**：对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`，用 `validate-yaml.py` 校验
+4. **落盘 `status: approved` 同时回写 items.yaml**：对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`，用 `validate-yaml.py` 校验。若该 feature 后续采用 hybrid 口径，`roadmap` / `roadmap_item` 继续由 design frontmatter 承载，plan 不另起第二套状态机
 
 完整衔接协议看 `.codestable/reference/shared-conventions.md` 第 2.5 节。
 
@@ -81,7 +81,7 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 
 ## design 写什么、不写什么
 
-design 只管"编排-计算分离"里的编排那一侧：**这次 feature 在名词层和编排层的现状与变化**。计算层细节（具体怎么写、改哪些函数、测试怎么搭）归 implement。
+design 只管"编排-计算分离"里的编排那一侧：**这次 feature 在名词层和编排层的现状与变化**。计算层细节（具体怎么写、改哪些函数、测试怎么搭）归 implement。若 feature 需要更细的逐步执行说明，那份 narrative step-by-step 正文属于 `{slug}-plan.md`，不是 design 正文。
 
 写三类东西，名词层和编排层都用"**现状 → 变化**"两段式：
 

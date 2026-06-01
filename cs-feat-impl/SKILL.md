@@ -66,11 +66,15 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 - 方案 doc 全文（标准 design 重点：第 1 节、2.1/2.2/2.3/2.4、3）
 - `{slug}-checklist.yaml`、需求来源（用户描述 + brainstorm note）、`.codestable/attention.md`
+- hybrid feature 若存在 `{slug}-plan.md`：把它与 design 一起读全；plan 是 detailed step source，checklist 是状态载体
 - 第 2.1 节接口示例的来源位置 / fastforward 第 1 节改动点提到的代码文件——读相关函数即可
 
 ### 4. 跟用户确认从哪一步开始
 
 通常第 1 步；接续上次中断从已 `done` 的下一步继续。
+
+legacy feature：以 design 为 scope source、以 checklist 为状态推进清单。
+hybrid feature：以 design 为 scope source、以 plan 为 detailed step source、以 checklist 为状态推进清单。
 
 design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 → 持久化 → 测试），**具体每步改哪个文件由你执行时决定**。如果某一步实际是 3 个独立子动作、或发现微重构是它的前置（参考反射检查），跟用户对齐后追加 / 拆分 steps，**不偷偷做**。
 

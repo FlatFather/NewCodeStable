@@ -1,0 +1,64 @@
+feature: 2026-06-01-spec-structure-contract
+created: 2026-06-01
+
+steps:
+  - action: "共享契约骨架：在 shared conventions 中写清 design、feature-plan、checklist、acceptance 的职责边界与 legacy/hybrid 兼容规则"
+    exit_signal: "共享副本能直接回答四类产物各写什么、各不写什么"
+    status: done
+
+  - action: "入口与设计阶段对齐：更新 cs-feat 与 cs-feat-design 的目录结构、阶段描述与产物边界"
+    exit_signal: "入口和设计阶段文档不再把 checklist 当 hybrid feature 的详细步骤正文"
+    status: done
+
+  - action: "实现与验收阶段对齐：更新 cs-feat-impl 与 cs-feat-accept 的消费口径"
+    exit_signal: "下游文档能明确区分 scope source、step source、status carrier、verification sink"
+    status: done
+
+  - action: "读者视图收口：同步 system-overview 与 README 中和 feature 目录及阶段流相关的说明"
+    exit_signal: "外部读者看到的目录结构与阶段说明不再和共享约定冲突"
+    status: done
+
+  - action: "一致性复核：统一 feature-plan、legacy、hybrid、checklist 职责等术语并做 grep 检查"
+    exit_signal: "同一职责不再被两份不同文档重复或冲突定义"
+    status: done
+
+checks:
+  - item: "四类产物职责在共享约定中有单一且清晰的定义"
+    source: 名词契约
+    status: passed
+
+  - item: "feature-plan 被定义为执行步骤正文，design 仍是范围与约束的唯一方案源"
+    source: 名词契约
+    status: passed
+
+  - item: "hybrid feature 的流程顺序明确为 design → plan → checklist → implement → acceptance"
+    source: 编排骨架
+    status: passed
+
+  - item: "legacy feature 在没有 feature-plan 的情况下仍被文档明确视为有效"
+    source: 流程级约束
+    status: passed
+
+  - item: "共享约定副本被更新为本次契约的权威入口"
+    source: 挂载点
+    status: passed
+
+  - item: "cs-feat、cs-feat-design、cs-feat-impl、cs-feat-accept 四份技能文档都已对齐新口径"
+    source: 挂载点
+    status: passed
+
+  - item: "代码库没有新增‘历史 feature 必须补 plan’的规则"
+    source: 范围守护
+    status: passed
+
+  - item: "代码库没有引入新的 .ccg 平行真相源或第二套 feature 目录"
+    source: 范围守护
+    status: passed
+
+  - item: "issue 与 refactor 流程没有被改写成依赖 feature-plan"
+    source: 范围守护
+    status: passed
+
+  - item: "共享约定、技能文档与读者文档对四类产物职责的说法一致"
+    source: 验收场景
+    status: passed

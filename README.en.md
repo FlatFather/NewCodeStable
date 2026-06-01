@@ -263,8 +263,9 @@ your-project/
 │   ├── features/                         # Feature flow aggregate root
 │   │   └── YYYY-MM-DD-{slug}/            # One directory per feature
 │   │       ├── {slug}-brainstorm.md      # Optional (cs-brainstorm output)
-│   │       ├── {slug}-design.md          # Design (cs-feat-design)
-│   │       ├── {slug}-checklist.yaml     # Progress checklist (impl runs it, accept writes back)
+│   │       ├── {slug}-design.md          # Design (single source for scope and constraints)
+│   │       ├── {slug}-plan.md            # Optional for hybrid features (detailed execution narrative)
+│   │       ├── {slug}-checklist.yaml     # Progress checklist (machine-readable status carrier)
 │   │       └── {slug}-acceptance.md      # Acceptance report (cs-feat-accept)
 │   │
 │   ├── issues/                           # Issue flow aggregate root

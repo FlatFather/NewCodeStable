@@ -265,8 +265,9 @@ CodeStable 的技能不是一条线性流水，而是**分层 + 事件驱动**�
 │   ├── features/                         # 特性流程聚合根
 │   │   └── YYYY-MM-DD-{slug}/            # 一个 feature 一个目录
 │   │       ├── {slug}-brainstorm.md      # 可选（cs-brainstorm 产出）
-│   │       ├── {slug}-design.md          # 方案（cs-feat-design）
-│   │       ├── {slug}-checklist.yaml     # 推进清单（impl 跑、accept 回写）
+│   │       ├── {slug}-design.md          # 方案（范围与约束唯一方案源）
+│   │       ├── {slug}-plan.md            # hybrid 可选执行计划（详细步骤正文）
+│   │       ├── {slug}-checklist.yaml     # 推进清单（机器可读状态载体）
 │   │       └── {slug}-acceptance.md      # 验收报告（cs-feat-accept）
 │   │
 │   ├── issues/                           # 问题流程聚合根

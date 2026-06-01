@@ -1,0 +1,51 @@
+roadmap: workflow-hybridization
+created: 2026-06-01
+
+items:
+  - slug: spec-structure-contract
+    description: 明确 design、plan、checklist、acceptance 的职责边界并更新共享约定
+    depends_on: []
+    status: done
+    feature: 2026-06-01-spec-structure-contract
+    minimal_loop: true
+    notes: 后续所有融合动作的基础约束入口
+
+  - slug: execution-plan-artifact
+    description: 为标准 feature 流程新增 feature-plan 产物与模板
+    depends_on: [spec-structure-contract]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 将 CCG 风格的分步骤计划正式引入 .codestable/features
+
+  - slug: feature-handoff-contract
+    description: 定义 roadmap、design、plan、checklist、acceptance 的状态交接与 frontmatter 协议
+    depends_on: [spec-structure-contract, execution-plan-artifact]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 避免 plan 成为脱离主流程的旁路文档
+
+  - slug: plan-validation-rules
+    description: 扩展校验规则以验证 plan、checklist 与 roadmap item 的一致性
+    depends_on: [feature-handoff-contract]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 让 hybrid 规范可自动检查
+
+  - slug: migration-guidance
+    description: 定义已有仓库与老 feature 采用 hybrid 工作流的迁移策略
+    depends_on: [feature-handoff-contract]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 不批量回填历史 feature plan，只规范新工作
+
+  - slug: first-hybrid-example
+    description: 用一条真实 feature 走完整 hybrid 流程并沉淀示例
+    depends_on: [plan-validation-rules, migration-guidance]
+    status: planned
+    feature: null
+    minimal_loop: false
+    notes: 作为后续文档、技能和用户示例样板
