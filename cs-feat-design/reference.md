@@ -1,6 +1,6 @@
 # feature-design 参考模板
 
-本文件提供 `cs-feat-design` 使用的 `{slug}-design.md` / `{slug}-checklist.yaml` 参考格式。
+本文件提供 `cs-feat-design` 使用的 `{slug}-design.md` / `{slug}-plan.md` / `{slug}-checklist.yaml` 参考格式。
 
 ## 1. {slug}-design.md frontmatter
 
@@ -35,7 +35,51 @@ tags: [auth, email, login]
 - `## 3. 验收契约`
 - `## 4. 与项目级架构文档的关系`
 
-## 3. {slug}-checklist.yaml 格式
+## 3. {slug}-plan.md 格式
+
+```markdown
+---
+doc_type: feature-plan
+feature: {feature 目录名}
+design: {slug}-design.md
+status: draft
+---
+
+# {slug} execution plan
+
+## 1. 执行目标
+
+一句话说明：这份 plan 只承接已批准 design，回答“按什么顺序做、每步怎么判断完成”。
+
+## 2. 分步计划
+
+### Step 1 — {步骤标题}
+- **目标**：{这一步要达成什么}
+- **触碰范围**：{文件 / 模块 / 文档路径，允许是高层级}
+- **退出信号**：{什么现象代表这一步完成}
+- **验证**：{grep / 命令 / 手工检查 / 类型系统 / 测试}
+
+### Step 2 — ...
+
+## 3. 风险与回退
+
+- 风险 R1：{可能踩坑}
+- 回退 / 止损：{如果这一步走偏，怎么停下来}
+
+## 4. 与 checklist 的映射
+
+- Step 1 → checklist.steps[0]
+- Step 2 → checklist.steps[1]
+```
+
+写作约束：
+- plan 只展开已批准 design 的推进顺序，不重复术语表、需求摘要、明确不做。
+- plan step 与 checklist step 一一对应，但 plan 写说明、checklist 写状态。
+- `status`：`draft` / `approved` / `superseded`。
+
+---
+
+## 4. {slug}-checklist.yaml 格式
 
 ```yaml
 feature: {feature 目录名}
@@ -54,6 +98,8 @@ checks:
 
 `steps`（design 阶段产出）：
 
+- legacy feature：直接从 design 的推进策略切片抽取
+- hybrid feature：从 design 的推进策略切片 + plan 的分步计划共同抽取；plan 提供 step narrative，checklist 只保留 action / exit_signal / status
 - 粒度是 paradigm 维度，**不写 file:line / 函数级**——具体落点是 implement 的事
 - 切片顺序"最简 Workflow 先行 → 逐个节点填充"：
   - 后端：编排骨架（空实现跑通）→ 计算节点逐个填 → 接通加载/持久化 → 测试覆盖

@@ -9,7 +9,7 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 
 开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
 
-这一阶段的产出是一份方案文件 `{slug}-design.md`，加上从中抽出的行动清单 `{slug}-checklist.yaml`。对 hybrid feature，还会预留或衔接 `{slug}-plan.md` 这份详细执行步骤正文。design 继续是范围与约束的唯一方案源；plan 只承接已批准 design 的详细步骤说明。
+这一阶段的产出是一份方案文件 `{slug}-design.md`，加上从中抽出的行动清单 `{slug}-checklist.yaml`。对 hybrid feature，还会预留或衔接 `{slug}-plan.md` 这份详细执行步骤正文。design 继续是范围与约束的唯一方案源；plan 只承接已批准 design 的详细步骤说明；checklist 只承接机器可读状态。
 
 > 共享路径和命名约定看 `.codestable/reference/shared-conventions.md`。本阶段一般 feature 目录已经由 brainstorm 创建好了；没有的话在这一步建。
 
@@ -206,9 +206,14 @@ AI 默认翻车的姿势是**不思考就往眼前最顺手的文件里加**。
 
 发一次整体 review 提示（提示词在 reference.md 第 5 节）。用户提意见就改，反复直到放行，把 `status` 从 `draft` 改 `approved`。
 
-### 6. 生成 {slug}-checklist.yaml
+### 6. 生成 `{slug}-plan.md`（hybrid）与 `{slug}-checklist.yaml`
 
-方案确认后从 `{slug}-design.md` 抽出 `steps` + `checks` 落到 `{slug}-checklist.yaml`。完整格式、提取规则、典型节奏看 reference.md 第 3 节。
+方案确认后：
+
+- legacy feature：从 `{slug}-design.md` 直接抽出 `steps` + `checks` 落到 `{slug}-checklist.yaml`
+- hybrid feature：先基于 `{slug}-design.md` 生成 `{slug}-plan.md`，再从 design + plan 抽出 `steps` + `checks` 落到 `{slug}-checklist.yaml`
+
+完整格式、提取规则、典型节奏看 reference.md 第 3/4 节。
 
 落盘后 `python .codestable/tools/validate-yaml.py --file {path} --yaml-only` 校验。
 

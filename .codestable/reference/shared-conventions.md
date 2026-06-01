@@ -113,7 +113,7 @@ feature 目录允许两种口径并存：
 ### 四类产物各写什么
 
 - **`{slug}-design.md`**：范围、术语、成功标准、关键决策、流程级约束、挂载点、推进策略切片。它是 feature 的 **scope source**，也是唯一方案源。
-- **`{slug}-plan.md`**：仅在 hybrid feature 使用。承接已批准 design，展开详细执行顺序、每步退出信号、验证路径、风险与缓解。它是 feature 的 **step source**，不能反向改 scope。
+- **`{slug}-plan.md`**：仅在 hybrid feature 使用。承接已批准 design，展开详细执行顺序、每步退出信号、验证路径、风险与缓解。它是 feature 的 **step source**，不能反向改 scope。frontmatter 固定为 `doc_type / feature / design / status`；正文固定包含“执行目标 / 分步计划 / 风险与回退 / 与 checklist 的映射”四节。
 - **`{slug}-checklist.yaml`**：机器可读状态载体，记录 `steps` / `checks` 及状态变化。它是 **status carrier**，不是 narrative plan。
 - **`{slug}-acceptance.md`**：对照 design / plan（若存在）/ checklist 做核验，并回写 architecture / requirement / roadmap。它是 **verification sink**。
 
@@ -130,7 +130,7 @@ feature 目录允许两种口径并存：
 ## 3. {slug}-checklist.yaml 生命周期
 
 - 是 feature 工作流的机器可读状态载体，不是详细执行步骤正文
-- 由 `cs-feat-design` 在 design 确认通过后一次生成 `steps` + `checks`
+- 由 `cs-feat-design` 在 design 确认通过后生成；legacy feature 直接生成 checklist，hybrid feature 先生成 plan，再从 design + plan 抽 `steps` + `checks`
 - hybrid feature 若存在 `{slug}-plan.md`，checklist 的步骤顺序和状态推进必须与 plan 对齐；详细步骤解释仍写在 plan，不回流到 checklist
 - `cs-feat-ff` **不生成** checklist（也不写 design / acceptance），是跳过 spec 流程直接写代码的超轻量通道；唯一留下的痕迹是动手后回写的 `{slug}-ff-note.md`（轻量回顾，参与 scoped-commit、可被 cs-arch / cs-req backfill 检索到）
 

@@ -1,0 +1,56 @@
+feature: 2026-06-01-execution-plan-artifact
+created: 2026-06-01
+
+steps:
+  - action: "plan 模板骨架：在 cs-feat-design/reference.md 中新增 {slug}-plan.md 模板与 step 示例"
+    exit_signal: "design 模板层能生成一份完整 plan 骨架"
+    status: done
+
+  - action: "design 生成顺序：更新 cs-feat-design/SKILL.md，明确 approved design → plan → checklist 的生成顺序"
+    exit_signal: "技能说明里不再只有 design/checklist 二联产物"
+    status: done
+
+  - action: "共享约定对齐：把 plan 的 frontmatter、固定节和与 checklist 的映射写回 shared conventions"
+    exit_signal: "共享约定能解释 plan 如何生成和消费"
+    status: done
+
+  - action: "下游消费口径：同步 implement 与 acceptance 的 plan 输入说明"
+    exit_signal: "下游文档能把 plan 当真实产物读取，而不是抽象占位词"
+    status: done
+
+  - action: "样板 feature 自证：为当前 feature 目录生成一份真实 execution-plan-artifact-plan.md 样板"
+    exit_signal: "feature 目录里出现真实 plan 产物，且 checklist / design 仍保持职责分离"
+    status: done
+
+checks:
+  - item: "cs-feat-design/reference.md 提供完整 {slug}-plan.md 模板，包含 frontmatter 与固定节结构"
+    source: 名词契约
+    status: passed
+
+  - item: "cs-feat-design/SKILL.md 明确 hybrid feature 的生成顺序是 approved design → plan → checklist"
+    source: 编排骨架
+    status: passed
+
+  - item: "共享约定解释了 plan 的 frontmatter、固定节和与 checklist 的映射"
+    source: 名词契约
+    status: passed
+
+  - item: "implement 与 acceptance 文档把 plan 当真实输入，而不是抽象占位词"
+    source: 流程级约束
+    status: passed
+
+  - item: "当前 feature 目录里存在真实 execution-plan-artifact-plan.md 样板，且与 design / checklist 职责不冲突"
+    source: 挂载点
+    status: passed
+
+  - item: "代码库没有新增历史 feature 必须回填 plan 的规则"
+    source: 范围守护
+    status: passed
+
+  - item: "issue 与 refactor 流程没有被改写成依赖 plan"
+    source: 范围守护
+    status: passed
+
+  - item: "plan 模板、共享约定、技能文档与样板 feature 对 plan 职责的说法一致"
+    source: 验收场景
+    status: passed

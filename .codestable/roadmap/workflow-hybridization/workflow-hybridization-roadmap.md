@@ -249,8 +249,8 @@ roadmap_item_status_flow:
 2. **execution-plan-artifact** — 为标准 feature 流程新增 `feature-plan` 产物与模板
    - 所属模块：Execution Planning Layer
    - 依赖：spec-structure-contract
-   - 状态：planned
-   - 对应 feature：未启动
+   - 状态：done
+   - 对应 feature：2026-06-01-execution-plan-artifact
    - 备注：核心目标是把 CCG `plan.md` 的分步优势引入 `.codestable/features/`
 
 3. **feature-handoff-contract** — 定义 roadmap、design、plan、checklist、acceptance 的状态交接与 frontmatter 协议
