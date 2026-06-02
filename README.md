@@ -23,7 +23,25 @@
 ## 安装
 
 ```bash
-npx skills add https://github.com/liuzhengdongfortest/CodeStable
+npx skills add https://github.com/FlatFather/NewCodeStable
+```
+
+本地开发调试最新版时，直接装本地路径：
+
+```bash
+npx skills add "/Users/kong/self/github/NewCodeStable"
+```
+
+发布新版本后，已安装用户可直接更新：
+
+```bash
+npx skills update
+```
+
+也可以重新执行安装命令完成刷新：
+
+```bash
+npx skills add https://github.com/FlatFather/NewCodeStable
 ```
 
 只需要一键，开始工作：

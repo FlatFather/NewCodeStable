@@ -23,7 +23,25 @@ Tired of OpenSpec's flimsiness, Oh-My-OpenAgent's over-engineering, and Superpow
 ## Install
 
 ```bash
-npx skills add https://github.com/liuzhengdongfortest/CodeStable
+npx skills add https://github.com/FlatFather/NewCodeStable
+```
+
+For local development against the latest working tree, install from the local path:
+
+```bash
+npx skills add "/Users/kong/self/github/NewCodeStable"
+```
+
+After publishing a new version, installed users can update with:
+
+```bash
+npx skills update
+```
+
+Or just re-run the install command to refresh this skill:
+
+```bash
+npx skills add https://github.com/FlatFather/NewCodeStable
 ```
 
 One command to start working:
