@@ -1,0 +1,28 @@
+refactor: 2026-06-02-intent-artifact-boundary
+created: 2026-06-02
+
+steps:
+  - action: "把 intent 登记进 feature 共享目录契约"
+    exit_signal: "shared conventions 单独阅读时，已经能回答 intent 是什么、放在哪、属于 feature 哪一段生命周期、哪些阶段会读它、哪些阶段不会依赖它"
+    status: done
+
+  - action: "收敛 cs-feat 的入口表述到路由层"
+    exit_signal: "cs-feat 仍能独立路由 intent 相关诉求，但不再成为 intent 身份的第二权威来源"
+    status: done
+
+  - action: "收敛 cs-feat-design 的初始化模式说明到实现细节层"
+    exit_signal: "cs-feat-design 仍能完整执行初始化模式，但关于 intent 身份的说法与 shared conventions / cs-feat 不再冲突或重复扩张"
+    status: done
+
+checks:
+  - item: "shared conventions 已把 intent 定义为 design 前的可选前置草稿，而不是 implement / acceptance 输入"
+    source: 步骤 1
+    status: passed
+
+  - item: "cs-feat 保留 intent 的路由判断，但不再重复定义其完整生命周期"
+    source: 步骤 2
+    status: passed
+
+  - item: "cs-feat-design 保留初始化模式操作细节，但不再越权充当共享身份定义"
+    source: 步骤 3
+    status: passed

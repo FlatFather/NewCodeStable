@@ -30,6 +30,8 @@ NewCodeStable 旨在演进为一个融合式工作流体系：保留 CodeStable 
 
 ## 4. 关键架构决定
 
+- **feature intent 边界**：`{slug}-intent.md` 是 feature 的可选前置草稿（pre-design seed），共享身份由 `.codestable/reference/shared-conventions.md` 定义；`cs-feat` 只负责 intent/brainstorm 的路由判断；`cs-feat-design` 负责初始化模式的草稿骨架与读取。详见 `.codestable/compound/2026-06-02-decision-feature-intent-artifact-boundary.md`。
+
 ## 5. 已知约束 / 硬边界
 
 - design 永远是 feature 范围与约束的唯一方案源；plan、checklist、acceptance 都不能越权改 scope。

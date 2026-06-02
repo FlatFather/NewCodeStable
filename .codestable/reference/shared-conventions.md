@@ -27,6 +27,7 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 ├── features/              feature spec 聚合根
 │   └── YYYY-MM-DD-{slug}/  每个 feature 一个目录
 │       ├── {slug}-brainstorm.md  （可选，case 2 时产出）
+│       ├── {slug}-intent.md      （可选，design 前置草稿；初始化模式产出）
 │       ├── {slug}-design.md      （标准 / hybrid；范围与约束唯一方案源）
 │       ├── {slug}-plan.md        （hybrid 可选；详细执行步骤正文）
 │       ├── {slug}-checklist.yaml （标准 / hybrid；机器可读状态载体）
@@ -84,6 +85,8 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 
 **feature spec**：brainstorm / design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。`status`：brainstorm = `confirmed`（落盘即确认无 draft）；design = `draft` / `approved`；acceptance 见对应技能。design 可额外带 `workflow: legacy|hybrid`；省略时按 `legacy` 处理，写 `hybrid` 时后续必须存在 `{slug}-plan.md`。
 
+**feature intent**：`{slug}-intent.md` 是 feature 的**可选前置草稿**，用于用户在 design 前先写下需求概要 / 大致做法 / 相关数据结构。frontmatter 固定为 `doc_type=feature-intent`、`feature`、`status=draft`、`summary`；它供 `cs-feat-design` 的初始化模式和正式起草入口读取，不参与 implement / acceptance 生命周期，也不替代 brainstorm note。
+
 **issue spec**：report / analysis / fix-note 共用 `doc_type` / `issue` / `status` / `tags`。`severity` / `root_cause_type` / `path` 由对应阶段按需补。
 
 **归档类（compound）**：
@@ -112,6 +115,7 @@ feature 目录允许两种口径并存：
 
 ### 四类产物各写什么
 
+- **`{slug}-intent.md`**：仅在初始化模式或用户主动先写半成品方案时出现。它记录 design 前的需求概要 / 大致做法 / 相关数据结构，是 feature 的 **pre-design seed**；后续由 `cs-feat-design` 读取并消化进正式 design，不作为 implement / acceptance 的输入。
 - **`{slug}-design.md`**：范围、术语、成功标准、关键决策、流程级约束、挂载点、推进策略切片。它是 feature 的 **scope source**，也是唯一方案源。
 - **`{slug}-plan.md`**：仅在 hybrid feature 使用。承接已批准 design，展开详细执行顺序、每步退出信号、验证路径、风险与缓解。它是 feature 的 **step source**，不能反向改 scope。frontmatter 固定为 `doc_type / feature / design / status`；正文固定包含“执行目标 / 分步计划 / 风险与回退 / 与 checklist 的映射”四节。
 - **`{slug}-checklist.yaml`**：机器可读状态载体，记录 `steps` / `checks` 及状态变化。它是 **status carrier**，不是 narrative plan。
@@ -119,6 +123,7 @@ feature 目录允许两种口径并存：
 
 ### 共享约束
 
+- intent 是 design 前的可选前置草稿；它帮助用户离线起草，但不改变后续 legacy / hybrid 流程划分。
 - design 永远是范围与约束的唯一方案源；plan、checklist、acceptance 都不能越权改 scope。
 - hybrid feature 中，plan 负责对人可读的详细执行步骤；checklist 只保留机器可读状态。
 - legacy feature 没有 plan 仍然有效；acceptance 对 legacy 继续按 `design + checklist` 验收。
