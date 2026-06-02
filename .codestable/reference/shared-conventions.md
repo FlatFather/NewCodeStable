@@ -148,7 +148,7 @@ feature 目录允许两种口径并存：
 
 - 是 feature 工作流的机器可读状态载体，不是详细执行步骤正文
 - 由 `cs-feat-design` 在 design 确认通过后生成；legacy feature 直接生成 checklist，hybrid feature 先生成 plan，再从 design + plan 抽 `steps` + `checks`
-- hybrid feature 若存在 `{slug}-plan.md`，checklist 的步骤顺序和状态推进必须与 plan 对齐；详细步骤解释仍写在 plan，不回流到 checklist
+- hybrid feature 的 checklist 步骤顺序和状态推进必须与 `{slug}-plan.md` 对齐；详细步骤解释仍写在 plan，不回流到 checklist
 - `cs-feat-ff` **不生成** checklist（也不写 design / acceptance），是跳过 spec 流程直接写代码的超轻量通道；唯一留下的痕迹是动手后回写的 `{slug}-ff-note.md`（轻量回顾，参与 scoped-commit、可被 cs-arch / cs-req backfill 检索到）
 
 `steps` 的粒度是 **编排-计算分离维度的切片策略**——按"先编排骨架、后计算节点、最后持久化与测试"写（最简 Workflow 先行 → 逐个节点填充），**不下沉到 file:line / 函数级**。具体改哪个文件由 implement 阶段决定。
