@@ -26,7 +26,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 ```
 .codestable/features/{feature}/
 ├── {slug}-brainstorm.md       ← 阶段 0 产物（仅 case 2 落盘）
-├── {slug}-intent.md           ← 阶段 1 可选前置草稿（用户自己写半成品）
+├── {slug}-intent.md           ← 可选前置草稿（用户自己写半成品，供 design 读取）
 ├── {slug}-design.md           ← 阶段 1 方案文件（范围与约束唯一方案源）
 ├── {slug}-plan.md             ← hybrid 可选执行计划（详细步骤正文）
 ├── {slug}-checklist.yaml      ← 阶段 1 生成 steps + checks，2/3 阶段更新 status
@@ -46,7 +46,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 | 阶段 | 子技能 | 产出 | 谁主导 |
 |---|---|---|---|
 | 0 brainstorm（可选，独立入口） | `cs-brainstorm` | case 2 时产出 brainstorm note | AI 思考伙伴，用户拍板 |
-| 1 方案设计 | `cs-feat-design` | design.md + checklist.yaml（hybrid 可附带 plan.md） | AI 起草，用户整体 review |
+| 1 方案设计 | `cs-feat-design` | design.md + checklist.yaml（初始化模式可先建 intent.md；hybrid 细节见 shared conventions） | AI 起草，用户整体 review |
 | 2 分步实现 | `cs-feat-impl` | 代码 + 阶段汇报 | AI 按方案执行 |
 | 3 验收闭环 | `cs-feat-accept` | acceptance.md | AI 逐层核对，用户终审 |
 
@@ -70,7 +70,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 |---|---|
 | 想法模糊，说不清真问题 / 边界 / 不做什么 | `cs-brainstorm` |
 | 想法清晰（知道做什么 / 为谁 / 怎么算成功） | `cs-feat-design` |
-| 用户说"开一个新需求 / 起草稿 / 新建 feature"想自己写半成品 | `cs-feat-design` 的"初始化模式"（建目录 + 空 intent，让用户填完再回） |
+| 用户说"开一个新需求 / 起草稿 / 新建 feature"想自己写半成品 | `cs-feat-design` 的"初始化模式"（建目录并起一份 intent 草稿，让用户填完再回） |
 | 用户主动说"先 brainstorm 一下"、"有个想法没想清楚" | `cs-brainstorm` |
 | `{slug}-intent.md` 已填好 | `cs-feat-design`（读 intent 作输入） |
 | 用户说"快速模式 / fastforward" | `cs-feat-ff` |
@@ -92,8 +92,10 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 
 两者都是 design 前置，区别在**谁在主导收敛**：
 
-- brainstorm：用户脑子里模糊，AI 问用户答。判 case 3 时移交 `cs-roadmap` 不回 feature；只有 case 2 产出 brainstorm note
-- intent：用户自己想好大致做法（100 字描述 + 相关数据结构），懒得口述就写成 `{slug}-intent.md` 给 AI 读
+- brainstorm：用户脑子里模糊，AI 通过 `cs-brainstorm` 对话收敛；判 case 3 时移交 `cs-roadmap`，只有 case 2 落 brainstorm note
+- intent：用户自己已经想好大致做法，想先写一份 `{slug}-intent.md` 前置草稿；路由到 `cs-feat-design` 的初始化模式
+
+这里的职责只到**路由判断**为止：`intent.md` 作为 feature 可选前置草稿的共享身份看 `.codestable/reference/shared-conventions.md`，草稿骨架和初始化步骤看 `cs-feat-design`。
 
 用户模糊触发"开一个新需求"时默认问"你想先聊清楚（brainstorm）还是自己写草稿（intent）？"，别自己挑。
 

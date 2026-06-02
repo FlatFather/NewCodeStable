@@ -15,13 +15,15 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 
 本阶段有三个入口：
 
-- **正式起草**：用户已经能讲清楚需求（或已经填好 `{slug}-intent.md`），直接进"流程"一节走完整起草。
+- **正式起草**：用户已经能讲清楚需求（或已经填好 `{slug}-intent.md` 这份前置草稿），直接进"流程"一节走完整起草。
 - **初始化模式**：用户说"开一个新需求 / 起个草稿 / 新建一个 feature"，但想自己先写半成品方案而不是口述。走下一节"初始化模式"，建好目录和空 `{slug}-intent.md` 就结束本轮，等用户填完再回来。
 - **从 roadmap 条目起头**：用户说"开始做 roadmap 里的 {子 feature slug}"或"推进 {roadmap} 的下一条"。slug 从 roadmap items.yaml 取，不另起；动笔前要读 roadmap 主文档和 items.yaml 了解上下文和依赖状态；落盘时 frontmatter 要带 `roadmap` / `roadmap_item` 两个字段，同时回写 items.yaml 把对应条目 `status` 改为 `in-progress`、`feature` 填为 feature 目录名。详见下文"从 roadmap 条目起头"。
 
+`intent.md` 作为 feature 可选前置草稿的共享身份看 `.codestable/reference/shared-conventions.md`；本技能负责的是**初始化模式如何建这份草稿、以及正式起草时如何读取它**。
+
 ---
 
-## 初始化模式：帮用户建目录和 intent 草稿
+## 初始化模式：帮用户建目录和 intent 前置草稿
 
 触发：用户想自己写一份半成品方案（`{slug}-intent.md`）作为后续 design 的输入，但不想手动建目录。
 
