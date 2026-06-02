@@ -28,7 +28,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 ├── {slug}-brainstorm.md       ← 阶段 0 产物（仅 case 2 落盘）
 ├── {slug}-intent.md           ← 可选前置草稿（用户自己写半成品，供 design 读取）
 ├── {slug}-design.md           ← 阶段 1 方案文件（范围与约束唯一方案源）
-├── {slug}-plan.md             ← hybrid 可选执行计划（详细步骤正文）
+├── {slug}-plan.md             ← hybrid 分支必备执行计划（详细步骤正文）
 ├── {slug}-checklist.yaml      ← 阶段 1 生成 steps + checks，2/3 阶段更新 status
 └── {slug}-acceptance.md       ← 阶段 3 验收报告
 ```
@@ -46,7 +46,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 | 阶段 | 子技能 | 产出 | 谁主导 |
 |---|---|---|---|
 | 0 brainstorm（可选，独立入口） | `cs-brainstorm` | case 2 时产出 brainstorm note | AI 思考伙伴，用户拍板 |
-| 1 方案设计 | `cs-feat-design` | design.md + checklist.yaml（初始化模式可先建 intent.md；hybrid 细节见 shared conventions） | AI 起草，用户整体 review |
+| 1 方案设计 | `cs-feat-design` | design.md + checklist.yaml（初始化模式可先建 intent.md；若采用 hybrid，则 plan 为必备输入，细节见 shared conventions） | AI 起草，用户整体 review |
 | 2 分步实现 | `cs-feat-impl` | 代码 + 阶段汇报 | AI 按方案执行 |
 | 3 验收闭环 | `cs-feat-accept` | acceptance.md | AI 逐层核对，用户终审 |
 

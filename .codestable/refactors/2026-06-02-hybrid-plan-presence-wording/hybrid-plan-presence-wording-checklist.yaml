@@ -1,0 +1,28 @@
+refactor: 2026-06-02-hybrid-plan-presence-wording
+created: 2026-06-02
+
+steps:
+  - action: "把 cs-feat 中的 hybrid plan 说法收敛成分支级硬门槛"
+    exit_signal: "cs-feat 单独阅读时，用户已经能分清“选不选 hybrid”与“选了 hybrid 之后 plan 必须存在”是两层不同判断"
+    status: pending
+
+  - action: "收紧 cs-feat-design 中关于 hybrid plan 生成的模糊措辞"
+    exit_signal: "cs-feat-design 首段、生成顺序、历史 feature 重开三处关于 hybrid plan 的说法已经一致，不再出现占位式 plan 也可以的阅读歧义"
+    status: pending
+
+  - action: "给 system-overview 与 architecture 补一句直白摘要"
+    exit_signal: "overview / architecture 读者只扫总览层，也能直接读到 hybrid 的硬门槛，不需要自行从多条细则里拼结论"
+    status: pending
+
+checks:
+  - item: "cs-feat 已把 hybrid 分支与 legacy 分支区分清楚，并明确 hybrid 启用后 plan 是必备产物"
+    source: 步骤 1
+    status: pending
+
+  - item: "cs-feat-design 不再用预留或衔接这类弱门槛词描述 hybrid plan"
+    source: 步骤 2
+    status: pending
+
+  - item: "system-overview 与 architecture 只补摘要句，没有长成 shared conventions 的第二套协议"
+    source: 步骤 3
+    status: pending

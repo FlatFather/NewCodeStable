@@ -24,7 +24,7 @@ NewCodeStable 旨在演进为一个融合式工作流体系：保留 CodeStable 
 ## 3. 子系统 / 模块索引
 
 - **工作流共享契约层**：由 `.codestable/reference/shared-conventions.md` 承载跨技能共享口径，定义 feature、roadmap、requirement、architecture 等项目级产物的结构与职责边界。
-- **feature 流程**：默认主线是 `design → checklist → implement → acceptance`；复杂 feature 可以在 design 之后引入 `plan` 层，形成 `design → plan → checklist → implement → acceptance` 的 hybrid 流程。hybrid 口径下的生成顺序固定为 approved design → plan → checklist。
+- **feature 流程**：默认主线是 `design → checklist → implement → acceptance`；复杂 feature 可以在 design 之后引入 `plan` 层，形成 `design → plan → checklist → implement → acceptance` 的 hybrid 流程。hybrid 口径下的生成顺序固定为 approved design → plan → checklist；一旦采用 hybrid 口径，`plan.md` 就是必备产物。
 - **workflow-check 校验层**：由 `.codestable/tools/validate-yaml.py --workflow-check` 承担，对 feature 目录与 roadmap items 的协议一致性做只读预检查。
 - **黄金样板层**：`.codestable/features/2026-06-02-first-hybrid-example/` 是当前仓库的首条完整 hybrid 工作流样板，用于给用户和后续 feature 作者直接参考。
 
@@ -35,7 +35,7 @@ NewCodeStable 旨在演进为一个融合式工作流体系：保留 CodeStable 
 ## 5. 已知约束 / 硬边界
 
 - design 永远是 feature 范围与约束的唯一方案源；plan、checklist、acceptance 都不能越权改 scope。
-- hybrid feature 一旦存在 `plan.md`，implement 与 acceptance 都必须把它当作输入之一；legacy feature 则继续按 `design + checklist` 工作。
+- hybrid feature 一旦采用 hybrid 口径，`plan.md` 就是必备输入；implement 与 acceptance 都必须把它当作输入之一；legacy feature 则继续按 `design + checklist` 工作。
 - checklist 只承载机器可读状态；hybrid feature 的 detailed step narrative 固定写在 `plan.md`。
 - roadmap 状态只允许 design 写 `in-progress`、acceptance 写 `done`；plan 不单独维护 progress 状态。
 - workflow-check 只报告协议错误，不自动改写文档。

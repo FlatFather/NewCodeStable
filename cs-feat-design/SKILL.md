@@ -9,7 +9,7 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 
 开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
 
-这一阶段的产出是一份方案文件 `{slug}-design.md`，加上从中抽出的行动清单 `{slug}-checklist.yaml`。对 hybrid feature，还会预留或衔接 `{slug}-plan.md` 这份详细执行步骤正文。design 继续是范围与约束的唯一方案源；plan 只承接已批准 design 的详细步骤说明；checklist 只承接机器可读状态。
+这一阶段的产出是一份方案文件 `{slug}-design.md`，加上从中抽出的行动清单 `{slug}-checklist.yaml`。对 hybrid feature，会在 approved design 后生成真实 `{slug}-plan.md` 这份详细执行步骤正文，再从 design + plan 抽 checklist。design 继续是范围与约束的唯一方案源；plan 只承接已批准 design 的详细步骤说明；checklist 只承接机器可读状态。
 
 > 共享路径和命名约定看 `.codestable/reference/shared-conventions.md`。本阶段一般 feature 目录已经由 brainstorm 创建好了；没有的话在这一步建。
 

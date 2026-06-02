@@ -127,7 +127,7 @@ feature 目录允许两种口径并存：
 - design 永远是范围与约束的唯一方案源；plan、checklist、acceptance 都不能越权改 scope。
 - hybrid feature 中，plan 负责对人可读的详细执行步骤；checklist 只保留机器可读状态。
 - legacy feature 没有 plan 仍然有效；acceptance 对 legacy 继续按 `design + checklist` 验收。
-- hybrid feature 一旦存在 plan，implement 与 acceptance 都必须把它当作输入之一。
+- hybrid feature 一旦采用 hybrid 口径，plan 就是必备产物；implement 与 acceptance 都必须把它当作输入之一。
 - issue / refactor 流程不依赖 `feature-plan`；本节只约束 feature 流程。
 - **feature directory binding**：`YYYY-MM-DD-{slug}` 目录名是 roadmap item、design、plan、checklist、acceptance 之间的唯一绑定键，不再新增第二套 execution id。
 - **plan presence rule**：legacy feature 可没有 `plan.md`；hybrid feature 一旦由 design 采用 hybrid 口径，就必须存在真实 `plan.md`，缺失时 implement / acceptance 都应失败退出；workflow-check 也应把它视为校验错误。
