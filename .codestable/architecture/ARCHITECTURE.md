@@ -31,6 +31,8 @@ NewCodeStable 旨在演进为一个融合式工作流体系：保留 CodeStable 
 ## 4. 关键架构决定
 
 - **feature intent 边界**：`{slug}-intent.md` 是 feature 的可选前置草稿（pre-design seed），共享身份由 `.codestable/reference/shared-conventions.md` 定义；`cs-feat` 只负责 intent/brainstorm 的路由判断；`cs-feat-design` 负责初始化模式的草稿骨架与读取。详见 `.codestable/compound/2026-06-02-decision-feature-intent-artifact-boundary.md`。
+- **workflow 顶层关口可见性**：凡是决定用户能否进入下一阶段的硬门槛 / 必备产物，不能只藏在子技能内部，必须同时暴露在顶层入口、阶段产出和路由表中。详见 `.codestable/compound/2026-06-02-decision-expose-workflow-gates-at-top-level.md`。
+- **hybrid 默认方向**：legacy feature 作为历史兼容口径暂时保留，但项目方向是逐步淘汰 legacy、让 hybrid 成为新 feature 的默认口径；不批量回填历史 feature，重开旧 feature 时优先升级 hybrid。详见 `.codestable/compound/2026-06-02-decision-hybrid-as-default-feature-mode.md`。
 
 ## 5. 已知约束 / 硬边界
 

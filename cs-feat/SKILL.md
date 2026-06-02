@@ -46,7 +46,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 | 阶段 | 子技能 | 产出 | 谁主导 |
 |---|---|---|---|
 | 0 brainstorm（可选，独立入口） | `cs-brainstorm` | case 2 时产出 brainstorm note | AI 思考伙伴，用户拍板 |
-| 1 方案设计 | `cs-feat-design` | design.md + checklist.yaml（初始化模式可先建 intent.md；若采用 hybrid，则 plan 为必备输入，细节见 shared conventions） | AI 起草，用户整体 review |
+| 1 方案设计 | `cs-feat-design` | design.md + checklist.yaml（初始化模式可先建 intent.md；若采用 hybrid，则在本阶段生成 plan.md，再从 design + plan 抽 checklist） | AI 起草，用户整体 review |
 | 2 分步实现 | `cs-feat-impl` | 代码 + 阶段汇报 | AI 按方案执行 |
 | 3 验收闭环 | `cs-feat-accept` | acceptance.md | AI 逐层核对，用户终审 |
 
@@ -75,6 +75,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 | `{slug}-intent.md` 已填好 | `cs-feat-design`（读 intent 作输入） |
 | 用户说"快速模式 / fastforward" | `cs-feat-ff` |
 | `{slug}-brainstorm.md` 已存在，要进设计 | `cs-feat-design` |
+| `{slug}-design.md` 已 approved，若为 hybrid 且 `plan.md` / checklist 还没落齐 | `cs-feat-design`（补齐 plan + checklist，再进入实现） |
 | `{slug}-design.md` 已 approved、代码没动 | `cs-feat-impl` |
 | fastforward design 已确认 | `cs-feat-impl` |
 | 代码已写完要验收 | `cs-feat-accept` |
