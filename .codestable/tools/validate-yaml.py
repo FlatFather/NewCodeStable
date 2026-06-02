@@ -249,6 +249,53 @@ def _extract_checklist_actions(text: str) -> list[str]:
     return re.findall(r'^\s*-\s+action:\s+"([^"]+)"$', text, re.MULTILINE)
 
 
+def _normalize_step_text(text: str) -> str:
+    return re.sub(r"\s+", " ", text.strip().lower())
+
+
+def _extract_alnum_tokens(text: str) -> set[str]:
+    return set(re.findall(r"[a-z0-9_-]{3,}", _normalize_step_text(text)))
+
+
+def _extract_cjk_text(text: str) -> str:
+    return "".join(re.findall(r"[一-鿿]+", text))
+
+
+def _longest_common_substring_length(left: str, right: str) -> int:
+    if not left or not right:
+        return 0
+    longest = 0
+    dp = [0] * (len(right) + 1)
+    for i, left_char in enumerate(left, start=1):
+        prev = 0
+        for j, right_char in enumerate(right, start=1):
+            temp = dp[j]
+            if left_char == right_char:
+                dp[j] = prev + 1
+                longest = max(longest, dp[j])
+            else:
+                dp[j] = 0
+            prev = temp
+    return longest
+
+
+def _steps_share_anchor(plan_step: str, checklist_step: str) -> bool:
+    plan_normalized = _normalize_step_text(plan_step)
+    checklist_normalized = _normalize_step_text(checklist_step)
+    if plan_normalized == checklist_normalized:
+        return True
+    if plan_normalized in checklist_normalized or checklist_normalized in plan_normalized:
+        return True
+
+    shared_tokens = _extract_alnum_tokens(plan_step) & _extract_alnum_tokens(checklist_step)
+    if shared_tokens:
+        return True
+
+    plan_cjk = _extract_cjk_text(plan_step)
+    checklist_cjk = _extract_cjk_text(checklist_step)
+    return _longest_common_substring_length(plan_cjk, checklist_cjk) >= 2
+
+
 def _extract_roadmap_item_feature(text: str, item_slug: str) -> str | None:
     pattern = re.compile(
         rf"^\s*-\s+slug:\s+{re.escape(item_slug)}\s*$([\s\S]*?)(?=^\s*-\s+slug:|\Z)",
@@ -328,6 +375,16 @@ def _workflow_check(feature_dir: Path, roadmap_file: Path | None) -> list[Valida
             plan_steps = _parse_plan_steps(plan_text)
             if len(plan_steps) != len(checklist_steps):
                 result.add_rule_error("step_alignment", str(plan_file), "plan step count must equal checklist step count")
+            else:
+                for index, (plan_step, checklist_step) in enumerate(zip(plan_steps, checklist_steps), start=1):
+                    if not _steps_share_anchor(plan_step, checklist_step):
+                        result.add_rule_error(
+                            "step_alignment",
+                            str(plan_file),
+                            "step "
+                            f"{index} is misaligned: plan '{plan_step}' vs checklist '{checklist_step}'",
+                        )
+                        break
         except OSError as exc:
             result.add_rule_error("step_alignment", str(plan_file), f"Cannot read files: {exc}")
 
