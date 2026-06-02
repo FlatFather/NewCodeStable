@@ -45,7 +45,7 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 1. **代码确实实现到位**——git status / 最近提交看到本功能改动，否则退回 implement
 2. **方案 doc 完整**——frontmatter `doc_type=feature-design` / `feature` 一致 / `status=approved` / `summary` 非空 / `tags` ≥ 2；标准 design 第 0/1/2/3 节 + 第 4 节已填写
 3. **`{slug}-checklist.yaml`**——存在且 `feature` 一致；`steps` 全 `done`（有 `pending` 退回 implement）；`checks` 非空全 `pending`
-4. **上下文读全**——方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + hybrid feature 时必须存在且读全的 `{slug}-plan.md` + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）
+4. **上下文读全**——方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + hybrid feature 时必须存在且读全的 `{slug}-plan.md` + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）；若有 roadmap 起头，验收前还必须核对 `design.feature = items.yaml.feature`，hybrid feature 还要核对 `plan.feature = design.feature`
 5. **断点恢复**——`{slug}-acceptance.md` 已存在且部分填好 → 从下一个未完成节继续，跳过 checks 中已 `passed` 的项；汇报"上次做到第 X 节，从第 Y 节继续"
 
 **Fastforward design 验收报告映射表**：
@@ -164,6 +164,12 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 
 这是**实际写文件的动作**，不是自评"应该不需要改"。
 
+### 历史 feature 重开补充
+
+- [ ] 历史 feature 若未重开，只做归档阅读，不因缺 `workflow` / `plan.md` 在 acceptance 中倒逼回填
+- [ ] 历史 feature 若被重开：先按 design 明确的迁移路径判断 `legacy` 还是 `hybrid`，再决定是否需要补 `workflow` / `plan.md`
+- [ ] 不能在 acceptance 阶段静默把 legacy feature 升级成 hybrid；需要 design 先显式拍板
+
 ## 7. roadmap 回写
 
 对照方案 frontmatter 的 `roadmap` / `roadmap_item`：
@@ -172,6 +178,7 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 - [ ] 两字段都有值：
   - 打开 `.codestable/roadmap/{roadmap}/{roadmap}-items.yaml`
   - 找到 `slug: {roadmap_item}`，核对当前 `status: in-progress` + `feature: {目录名}`——不对停下来找原因
+  - 核对 `design.feature = items.yaml.feature`；hybrid feature 还要核对 `plan.feature = design.feature`
   - 改 `status: done`，用 `validate-yaml.py` 校验
   - 同步 `{roadmap}-roadmap.md` 主文档第 3 节子 feature 清单的对应条目状态
 - [ ] 两字段不一致（只填了一个）→ 停下来补齐或澄清

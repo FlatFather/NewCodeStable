@@ -1,0 +1,56 @@
+feature: 2026-06-02-first-hybrid-example
+created: 2026-06-02
+
+steps:
+  - action: "选样板范围：明确样板要证明的环节，不再引入新协议"
+    exit_signal: "样板目标覆盖 design / plan / checklist / acceptance / 回写五件事"
+    status: done
+
+  - action: "产物落齐：生成 design + plan + checklist 四件套"
+    exit_signal: "目录结构完整且 workflow: hybrid 明确"
+    status: done
+
+  - action: "链路自证：让 workflow-check 在样板目录上通过"
+    exit_signal: "样板能被工具验证，不只是人工阅读用"
+    status: done
+
+  - action: "验收归并：完成 acceptance、architecture、roadmap 回写"
+    exit_signal: "样板形成真正闭环"
+    status: passed
+
+checks:
+  - item: "样板目录包含 design / plan / checklist / acceptance 四件套"
+    source: 名词契约
+    status: passed
+
+  - item: "样板 design frontmatter 明确 workflow: hybrid、roadmap、roadmap_item"
+    source: 编排骨架
+    status: passed
+
+  - item: "workflow-check 在样板目录上通过"
+    source: 流程级约束
+    status: passed
+
+  - item: "acceptance 完成后，roadmap item 与 architecture 回写都完成"
+    source: 流程级约束
+    status: passed
+
+  - item: "用户只读样板目录，就能理解 hybrid 流程的主要阶段关系"
+    source: 挂载点
+    status: passed
+
+  - item: "代码库没有新增教程专用文档类型"
+    source: 范围守护
+    status: passed
+
+  - item: "样板没有绕开当前共享约定"
+    source: 范围守护
+    status: passed
+
+  - item: "历史 feature 没有被批量重写成样板"
+    source: 范围守护
+    status: passed
+
+  - item: "样板目录里的各产物对 hybrid 流程的说法一致"
+    source: 验收场景
+    status: passed

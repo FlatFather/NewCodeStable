@@ -9,6 +9,7 @@
 doc_type: feature-design
 feature: 2026-04-12-user-auth
 requirement: user-auth-email
+workflow: legacy                    # 可选：legacy|hybrid；hybrid 时必须生成 {slug}-plan.md
 roadmap: permission-system           # 可选：本 feature 从某 roadmap 条目起头时填
 roadmap_item: permission-rbac-core   # 可选：对应 roadmap items.yaml 里的 slug
 status: draft

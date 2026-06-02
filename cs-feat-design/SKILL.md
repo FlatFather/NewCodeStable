@@ -73,9 +73,19 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
    - **必读主文档第 3 节"模块拆分"和第 4 节"接口契约 / 共享协议"**——这是本 feature 的硬约束输入。契约不合理 / 漏了 → 停下来建议回 `cs-roadmap update` 改，**不要在 design 里偷偷绕开**
 2. **slug 从 roadmap 取**，feature 目录 `YYYY-MM-DD-{roadmap 条目 slug}`，不另起
 3. **走"流程"一节**，frontmatter 加 `roadmap` / `roadmap_item` 两字段
-4. **落盘 `status: approved` 同时回写 items.yaml**：对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`，用 `validate-yaml.py` 校验。若该 feature 后续采用 hybrid 口径，`roadmap` / `roadmap_item` 继续由 design frontmatter 承载，plan 不另起第二套状态机
+4. **落盘 `status: approved` 同时回写 items.yaml**：对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`，用 `validate-yaml.py` 校验。若该 feature 后续采用 hybrid 口径，`roadmap` / `roadmap_item` 继续由 design frontmatter 承载，plan 不另起第二套状态机；`feature` 目录名继续作为 design / plan / checklist / acceptance / items.yaml 的唯一绑定键
 
 完整衔接协议看 `.codestable/reference/shared-conventions.md` 第 2.5 节。
+
+### 历史 feature 重开
+
+当用户不是起一条全新 feature，而是**重开历史 feature** 时，先在设计阶段把迁移路径讲清楚：
+
+- **保持原样**：历史 feature 不继续推进，只读取，不补 `workflow` / `plan.md`
+- **重开 legacy**：要继续推进，但仍按 `design + checklist + acceptance` 跑；此时补最小必要字段，如 `workflow: legacy`
+- **升级 hybrid**：明确切到新口径；此时必须补 `workflow: hybrid`，并在继续实现前生成真实 `plan.md`
+
+默认原则是 forward-only + minimal backfill：**不为了整齐回填全部旧文档**。
 
 ---
 

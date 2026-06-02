@@ -256,30 +256,30 @@ roadmap_item_status_flow:
 3. **feature-handoff-contract** — 定义 roadmap、design、plan、checklist、acceptance 的状态交接与 frontmatter 协议
    - 所属模块：Workflow State & Handoff Protocol
    - 依赖：spec-structure-contract, execution-plan-artifact
-   - 状态：planned
-   - 对应 feature：未启动
+   - 状态：done
+   - 对应 feature：2026-06-01-feature-handoff-contract
    - 备注：避免 plan 成为脱离主流程的旁路产物
 
 4. **plan-validation-rules** — 扩展校验脚本或规则，验证 plan/checklist/roadmap item 的一致性
    - 所属模块：Execution Planning Layer / Workflow State & Handoff Protocol
    - 依赖：feature-handoff-contract
-   - 状态：planned
-   - 对应 feature：未启动
+   - 状态：done
+   - 对应 feature：2026-06-02-plan-validation-rules
    - 备注：让新规范可检查而不是只靠人工记忆
 
 5. **migration-guidance** — 为已有仓库和老 feature 定义新旧规范并存的采用策略
    - 所属模块：Migration & Adoption Path
    - 依赖：feature-handoff-contract
-   - 状态：planned
-   - 对应 feature：未启动
+   - 状态：done
+   - 对应 feature：2026-06-02-migration-guidance
    - 备注：避免“一刀切”迁移
 
 6. **first-hybrid-example** — 用一条真实 feature 走完整 hybrid 流程，产出示例
    - 所属模块：Migration & Adoption Path
    - 依赖：plan-validation-rules, migration-guidance
-   - 状态：planned
-   - 对应 feature：未启动
-   - 备注：作为后续技能与文档的演示样板
+   - 状态：done
+   - 对应 feature：2026-06-02-first-hybrid-example
+   - 备注：作为后续技能、文档和用户的黄金样板
 
 **最小闭环**：第 2 条 `execution-plan-artifact` 做完后，系统就能对“新 feature 如何同时拥有 design + 可执行 plan + checklist”给出最窄端到端路径；但从依赖上看，真正的起点仍是第 1 条 `spec-structure-contract`。
 

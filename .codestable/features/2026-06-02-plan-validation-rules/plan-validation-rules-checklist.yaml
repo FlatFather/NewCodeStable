@@ -1,0 +1,60 @@
+feature: 2026-06-02-plan-validation-rules
+created: 2026-06-02
+
+steps:
+  - action: "校验器能力边界：确定在现有 validate-yaml.py 中扩展 workflow-check 模式"
+    exit_signal: "工具入口和规则层级已拍板，能承载跨文件协议校验"
+    status: done
+
+  - action: "绑定与存在性规则：实现 hybrid 缺 plan、design/items 绑定不一致的失败检测"
+    exit_signal: "hybrid 缺 plan、绑定错误时能稳定报错"
+    status: done
+
+  - action: "步骤对齐规则：实现 plan ↔ checklist steps 的数量与顺序校验"
+    exit_signal: "plan 与 checklist 不一致时能稳定报错"
+    status: done
+
+  - action: "用法落盘：更新 tools 文档和共享约定中的校验器说明"
+    exit_signal: "用户知道什么时候、怎么调用 workflow-check 校验能力"
+    status: done
+
+  - action: "样板自证：用现有通过样板和至少一个故障样板验证规则"
+    exit_signal: "通过/失败两条路径都有可观察证据"
+    status: done
+
+checks:
+  - item: "校验器能区分 legacy / hybrid，不会把 legacy 缺 plan 误报为失败"
+    source: 名词契约
+    status: passed
+
+  - item: "hybrid feature 缺 plan 时，校验器能给出明确失败信息"
+    source: 编排骨架
+    status: passed
+
+  - item: "design / plan / checklist / roadmap item 绑定不一致时，校验器能指出具体文件和规则名"
+    source: 流程级约束
+    status: passed
+
+  - item: "plan step 与 checklist step 不一致时，校验器能指出对齐失败"
+    source: 流程级约束
+    status: passed
+
+  - item: "现有真实样板 feature 能通过新规则校验"
+    source: 挂载点
+    status: passed
+
+  - item: "校验器不会自动改写文档"
+    source: 范围守护
+    status: passed
+
+  - item: "校验器不会把 legacy feature 一律打成失败"
+    source: 范围守护
+    status: passed
+
+  - item: "校验器没有引入新的状态字段来配合工作"
+    source: 范围守护
+    status: passed
+
+  - item: "校验器输出对 AI agent 友好：规则名、文件路径、失败原因齐全"
+    source: 验收场景
+    status: passed

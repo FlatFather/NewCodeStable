@@ -86,7 +86,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/guides --filter status
 
 ## 2. validate-yaml.py
 
-YAML 语法校验工具。用于验证 frontmatter 语法和必填字段。
+YAML 语法校验工具。用于验证 frontmatter 语法和必填字段，也支持 feature workflow contract 校验。
 
 ```bash
 # 校验单个文件的 YAML 语法
@@ -97,4 +97,24 @@ python .codestable/tools/validate-yaml.py --file {文件路径} --require doc_ty
 
 # 批量校验目录下所有文件
 python .codestable/tools/validate-yaml.py --dir {目录} --require doc_type --require status
+
+# 校验一条 feature 的 workflow contract（design / plan / checklist / roadmap 绑定）
+python .codestable/tools/validate-yaml.py \
+  --feature-dir .codestable/features/{feature-dir} \
+  --roadmap .codestable/roadmap/{roadmap}/{roadmap}-items.yaml \
+  --workflow-check
 ```
+
+### workflow-check 规则
+
+- `design_workflow`：design frontmatter 的 `workflow` 只能是 `legacy|hybrid`
+- `plan_presence`：`workflow: hybrid` 时必须存在 `{slug}-plan.md`
+- `binding_rule`：`design.feature = items.feature`；hybrid 时 `plan.feature = design.feature`
+- `step_alignment`：plan step 数量与 checklist step 数量一致
+- 输出是只读诊断：规则名 + 文件路径 + 失败原因，不自动改写文档
+
+### 历史 feature 适用边界
+
+- workflow-check 默认用于**新 feature**和**被重开的历史 feature**
+- 历史 feature 如果只是留档、不继续推进，则缺 `workflow` 或 `plan.md` 不应直接被视为错误
+- 如果用户决定重开旧 feature，再按 `legacy` 或 `hybrid` 路径补最小必要字段和产物后运行 workflow-check

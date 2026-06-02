@@ -82,7 +82,7 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 
 ## 1. 共享元数据口径
 
-**feature spec**：brainstorm / design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。`status`：brainstorm = `confirmed`（落盘即确认无 draft）；design = `draft` / `approved`；acceptance 见对应技能。
+**feature spec**：brainstorm / design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。`status`：brainstorm = `confirmed`（落盘即确认无 draft）；design = `draft` / `approved`；acceptance 见对应技能。design 可额外带 `workflow: legacy|hybrid`；省略时按 `legacy` 处理，写 `hybrid` 时后续必须存在 `{slug}-plan.md`。
 
 **issue spec**：report / analysis / fix-note 共用 `doc_type` / `issue` / `status` / `tags`。`severity` / `root_cause_type` / `path` 由对应阶段按需补。
 
@@ -124,6 +124,18 @@ feature 目录允许两种口径并存：
 - legacy feature 没有 plan 仍然有效；acceptance 对 legacy 继续按 `design + checklist` 验收。
 - hybrid feature 一旦存在 plan，implement 与 acceptance 都必须把它当作输入之一。
 - issue / refactor 流程不依赖 `feature-plan`；本节只约束 feature 流程。
+- **feature directory binding**：`YYYY-MM-DD-{slug}` 目录名是 roadmap item、design、plan、checklist、acceptance 之间的唯一绑定键，不再新增第二套 execution id。
+- **plan presence rule**：legacy feature 可没有 `plan.md`；hybrid feature 一旦由 design 采用 hybrid 口径，就必须存在真实 `plan.md`，缺失时 implement / acceptance 都应失败退出；workflow-check 也应把它视为校验错误。
+
+---
+
+### 迁移总则
+
+- **forward-only adoption**：新协议默认只约束新 feature；历史 feature 保持当时口径有效，不自动追溯回填。
+- **minimal backfill**：历史 feature 若被重开，只补继续走流程所需的最小字段/文件；不为“整齐”一次补齐所有旧产物。
+- **no silent upgrade**：不能偷偷把历史 legacy feature 当 hybrid；升级 hybrid 时必须显式补 `workflow: hybrid` 和真实 `plan.md`。
+- 历史 design 缺 `workflow` 字段不算错；从现在开始的新设计和被重开的设计才要求显式写 `workflow: legacy|hybrid`。
+- workflow-check 的默认适用边界是**新 feature 和被重开的 feature**；未重开的历史 feature 不因缺 `workflow` 或 `plan.md` 被直接视为错误。
 
 ---
 
@@ -177,8 +189,10 @@ planned  → dropped      （cs-roadmap update 模式，用户决定不做时改
 **cs-feat-design 的职责**（从 roadmap 起头时）：
 
 1. design.md frontmatter 加 `roadmap: {roadmap-slug}` + `roadmap_item: {子 feature slug}`
-2. items.yaml 对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`
-3. 校验 yaml
+2. 写入并固定 `feature: YYYY-MM-DD-{slug}` 目录名，作为跨 design / plan / checklist / acceptance / items.yaml 的唯一绑定键
+3. items.yaml 对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`
+4. 若 design 判定该 feature 采用 hybrid 口径：后续产物中必须存在 `{slug}-plan.md`，但**plan 不单独写 roadmap 状态**
+5. 校验 yaml
 
 直接起 feature（非 roadmap 来）两字段留空，不触发 roadmap 写。
 
@@ -186,7 +200,9 @@ planned  → dropped      （cs-roadmap update 模式，用户决定不做时改
 
 1. 读 design frontmatter `roadmap` / `roadmap_item`
 2. 空 → 跳过
-3. 有值 → items.yaml 对应条目 `status: done`；同步主文档子 feature 清单显示状态；校验 yaml
+3. 有值 → 先核对绑定关系：`design.feature = items.yaml.feature`；hybrid feature 还要核对 `plan.feature = design.feature`
+4. 绑定一致后，把 items.yaml 对应条目 `status: done`；同步主文档子 feature 清单显示状态
+5. 校验 yaml
 
 回写是**实际写文件的动作**，验收报告要明确记录回写结果。
 

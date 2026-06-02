@@ -14,6 +14,7 @@
 
 ### 命令与脚本陷阱
 
+- 运行 `.codestable/tools/*.py` 时优先使用 `.venv/bin/python`，因为本项目已在 `.venv` 中安装 `PyYAML`，系统 Python 可能只会走 fallback parser。
 ### 路径与目录约定
 
 ### 环境变量与凭证

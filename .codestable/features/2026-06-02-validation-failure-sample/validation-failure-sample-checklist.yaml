@@ -1,0 +1,12 @@
+feature: 2026-06-02-validation-failure-sample
+created: 2026-06-02
+
+steps:
+  - action: "故障样板：故意不提供 plan"
+    exit_signal: "workflow-check 报错"
+    status: pending
+
+checks:
+  - item: "hybrid 缺 plan 会被 workflow-check 识别"
+    source: 验收场景
+    status: pending

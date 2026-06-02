@@ -1,0 +1,60 @@
+feature: 2026-06-01-feature-handoff-contract
+created: 2026-06-01
+
+steps:
+  - action: "共享协议骨架：在 shared conventions 中写清 state ownership、binding rule、plan presence rule"
+    exit_signal: "共享约定能独立解释谁在何时更新哪些状态字段"
+    status: done
+
+  - action: "design 启动责任：更新 cs-feat-design/SKILL.md，明确 roadmap/frontmatter/feature 绑定写入责任"
+    exit_signal: "design 阶段对 roadmap / roadmap_item / feature 的写入责任清晰"
+    status: done
+
+  - action: "implement 启动门槛：更新 cs-feat-impl/SKILL.md，明确 hybrid feature 下 plan 缺失应视为启动失败"
+    exit_signal: "implement 不再把 plan 缺失当成可忽略信息"
+    status: done
+
+  - action: "acceptance 回写闭环：更新 cs-feat-accept/SKILL.md，明确验收时要核验三向绑定并再写 done"
+    exit_signal: "acceptance 不只看实现，还看文档绑定与状态闭环"
+    status: done
+
+  - action: "当前 feature 自证：当前 feature 目录与 roadmap item 的绑定关系可被人工核验"
+    exit_signal: "当前 feature 目录和 items.yaml 之间的绑定关系清晰且无第二套状态源"
+    status: done
+
+checks:
+  - item: "共享约定解释了 roadmap item、design frontmatter、plan presence rule、acceptance 回写责任之间的关系"
+    source: 名词契约
+    status: passed
+
+  - item: "cs-feat-design 说明了 design 阶段必须如何写 roadmap / roadmap_item / feature 绑定"
+    source: 编排骨架
+    status: passed
+
+  - item: "cs-feat-impl 说明 hybrid feature 缺 plan 时不能继续"
+    source: 流程级约束
+    status: passed
+
+  - item: "cs-feat-accept 说明验收时要核验 design / plan / items 的三向绑定，并回写 done"
+    source: 流程级约束
+    status: passed
+
+  - item: "当前 feature 目录和 roadmap item 之间的绑定关系可被人工核验，无第二套状态源"
+    source: 挂载点
+    status: passed
+
+  - item: "代码库没有新增第二份 plan 专用状态表"
+    source: 范围守护
+    status: passed
+
+  - item: "plan 没有被改成单独写 roadmap item 状态"
+    source: 范围守护
+    status: passed
+
+  - item: "legacy feature 没有被要求一律回填 plan"
+    source: 范围守护
+    status: passed
+
+  - item: "shared conventions、技能文档与当前 feature 样板对 handoff contract 的说法一致"
+    source: 验收场景
+    status: passed

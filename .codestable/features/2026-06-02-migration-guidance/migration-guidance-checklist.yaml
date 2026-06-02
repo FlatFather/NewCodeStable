@@ -1,0 +1,52 @@
+feature: 2026-06-02-migration-guidance
+created: 2026-06-02
+
+steps:
+  - action: "迁移总则：在 shared conventions 中写清 forward-only、minimal backfill、no silent upgrade"
+    exit_signal: "共享约定能独立回答旧 feature 要不要补文档"
+    status: done
+
+  - action: "设计阶段入口：更新 cs-feat-design，明确旧 feature 重开时如何判断保持原样、重开 legacy、升级 hybrid"
+    exit_signal: "design 阶段能给出三条清晰迁移路径"
+    status: done
+
+  - action: "验收与工具边界：更新 acceptance 和 tools 说明，避免 workflow-check 误伤未重开的历史 feature"
+    exit_signal: "新旧并存边界清楚，不会把历史目录都打成错误"
+    status: done
+
+  - action: "迁移样例落盘：补三种场景样例说明，让用户可人工判断自己的 feature 属于哪类"
+    exit_signal: "用户看到样例能判断自己应该原样保持、最小补写还是升级 hybrid"
+    status: done
+
+checks:
+  - item: "共享约定能回答历史 feature 默认是否需要补 plan / workflow marker"
+    source: 名词契约
+    status: passed
+
+  - item: "cs-feat-design 能在旧 feature 重开时给出明确迁移路径"
+    source: 编排骨架
+    status: passed
+
+  - item: "workflow-check 的适用边界对历史未重开的 feature 足够清晰，不会误伤"
+    source: 流程级约束
+    status: passed
+
+  - item: "重开 legacy 与重开 hybrid 的最小补写清单明确"
+    source: 流程级约束
+    status: passed
+
+  - item: "迁移指导样例足够让用户人工判断自己的 feature 属于哪条路径"
+    source: 挂载点
+    status: passed
+
+  - item: "代码库没有引入批量迁移脚本"
+    source: 范围守护
+    status: passed
+
+  - item: "代码库没有要求所有历史 feature 立即补 workflow 或 plan.md"
+    source: 范围守护
+    status: passed
+
+  - item: "shared conventions、skills 和样例说明对迁移策略的说法一致"
+    source: 验收场景
+    status: passed

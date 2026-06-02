@@ -2,6 +2,7 @@
 doc_type: feature-design
 feature: 2026-06-01-execution-plan-artifact
 requirement:
+workflow: hybrid
 roadmap: workflow-hybridization
 roadmap_item: execution-plan-artifact
 status: approved

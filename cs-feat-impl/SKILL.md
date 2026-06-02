@@ -66,7 +66,7 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 - 方案 doc 全文（标准 design 重点：第 1 节、2.1/2.2/2.3/2.4、3）
 - `{slug}-checklist.yaml`、需求来源（用户描述 + brainstorm note）、`.codestable/attention.md`
-- hybrid feature 若存在 `{slug}-plan.md`：把它与 design 一起读全；plan 是 detailed step source，checklist 是状态载体；当 feature 命中 hybrid 口径时，plan 不再是抽象占位词，而是必须存在的真实输入
+- hybrid feature 若存在 `{slug}-plan.md`：把它与 design 一起读全；plan 是 detailed step source，checklist 是状态载体；当 feature 命中 hybrid 口径时，plan 不再是抽象占位词，而是必须存在的真实输入，缺失时当前实现阶段必须停下并退回 design / 产物生成阶段
 - 第 2.1 节接口示例的来源位置 / fastforward 第 1 节改动点提到的代码文件——读相关函数即可
 
 ### 4. 跟用户确认从哪一步开始
