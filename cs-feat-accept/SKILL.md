@@ -1,6 +1,6 @@
 ---
 name: cs-feat-accept
-description: feature 流程阶段 3——验收闭环：对照 design 核实现 + 回写 architecture / requirement / roadmap，最后产出 {slug}-acceptance.md。触发：用户说"功能写完了验收一下"、"做最后检查"、"准备 merge"、"出验收报告"。前置依赖 cs-feat-impl 完成。
+description: feature 流程阶段 4——验收闭环：对照 design / plan 核实现 + 回写 architecture / requirement / roadmap，最后产出 {slug}-acceptance.md。触发：用户说"功能写完了验收一下"、"做最后检查"、"准备 merge"、"出验收报告"。前置依赖 cs-feat-impl 完成。
 ---
 
 # cs-feat-accept
@@ -11,7 +11,7 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 
 代码已经写完，但流程没结束。本阶段做四件事，缺一不可：
 
-1. **核对实现有没有偏离方案**——逐层对照 `{slug}-design.md`，hybrid feature 还要对照 `{slug}-plan.md`；发现偏差当场修，**不是在报告里"记一下"**就过去
+1. **核对实现有没有偏离方案**——逐层对照 `{slug}-design.md` 与 `{slug}-plan.md`；发现偏差当场修，**不是在报告里"记一下"**就过去
 2. **把 feature 归并到整体架构**——对照方案第 4 节，实际去更新架构中心目录下的相关 doc
 3. **能力落档到 requirement**——draft req 对应的能力实现完成后升级为 current（保留愿景，追加变更日志）；从未写过 req 的能力 backfill
 4. **完成状态回写到 roadmap**——方案 frontmatter 有 `roadmap` / `roadmap_item` 字段时**必须**改 items.yaml 对应条目为 `done` 并同步主文档
@@ -45,7 +45,7 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 1. **代码确实实现到位**——git status / 最近提交看到本功能改动，否则退回 implement
 2. **方案 doc 完整**——frontmatter `doc_type=feature-design` / `feature` 一致 / `status=approved` / `summary` 非空 / `tags` ≥ 2；标准 design 第 0/1/2/3 节 + 第 4 节已填写
 3. **`{slug}-checklist.yaml`**——存在且 `feature` 一致；`steps` 全 `done`（有 `pending` 退回 implement）；`checks` 非空全 `pending`
-4. **上下文读全**——方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + hybrid feature 时必须存在且读全的 `{slug}-plan.md` + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）；若有 roadmap 起头，验收前还必须核对 `design.feature = items.yaml.feature`，hybrid feature 还要核对 `plan.feature = design.feature`
+4. **上下文读全**——方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + 必须存在且读全的 `{slug}-plan.md` + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）；若有 roadmap 起头，验收前还必须核对 `design.feature = items.yaml.feature` 与 `plan.feature = design.feature`
 5. **断点恢复**——`{slug}-acceptance.md` 已存在且部分填好 → 从下一个未完成节继续，跳过 checks 中已 `passed` 的项；汇报"上次做到第 X 节，从第 Y 节继续"
 
 **Fastforward design 验收报告映射表**：
@@ -67,7 +67,7 @@ description: feature 流程阶段 3——验收闭环：对照 design 核实现 
 ```markdown
 # {功能名称} 验收报告
 
-> 阶段：阶段 3（验收闭环）
+> 阶段：阶段 4（验收闭环）
 > 验收日期：YYYY-MM-DD
 > 关联方案 doc：{方案 doc 路径}
 
@@ -166,9 +166,9 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 
 ### 历史 feature 重开补充
 
-- [ ] 历史 feature 若未重开，只做归档阅读，不因缺 `workflow` / `plan.md` 在 acceptance 中倒逼回填
-- [ ] 历史 feature 若被重开：先按 design 明确的迁移路径判断 `legacy` 还是 `hybrid`，再决定是否需要补 `workflow` / `plan.md`
-- [ ] 不能在 acceptance 阶段静默把 legacy feature 升级成 hybrid；需要 design 先显式拍板
+- [ ] 历史 legacy 目录若未重开，只做归档阅读，不因缺 `workflow` / `plan.md` 在 acceptance 中倒逼回填
+- [ ] 历史 legacy 目录若要继续推进：先按 design 明确的迁移路径升级到当前标准主线，再决定是否需要补 `workflow` / `plan.md`
+- [ ] 不能在 acceptance 阶段静默沿用 legacy 作为活跃主线；需要 design 先显式拍板升级路径
 
 ## 7. roadmap 回写
 

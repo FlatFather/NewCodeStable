@@ -1,6 +1,6 @@
 # feature-design 参考模板
 
-本文件提供 `cs-feat-design` 使用的 `{slug}-design.md` / `{slug}-plan.md` / `{slug}-checklist.yaml` 参考格式。
+本文件提供 `cs-feat-design` 使用的 `{slug}-design.md` 参考格式，以及 `cs-feat-plan` 使用的 `{slug}-plan.md` / `{slug}-checklist.yaml` 参考格式。
 
 ## 1. {slug}-design.md frontmatter
 
@@ -9,7 +9,7 @@
 doc_type: feature-design
 feature: 2026-04-12-user-auth
 requirement: user-auth-email
-workflow: legacy                    # 可选：legacy|hybrid；hybrid 时必须生成 {slug}-plan.md
+workflow: hybrid                    # 标准 feature 默认走 hybrid；历史 legacy 目录仅兼容读取
 roadmap: permission-system           # 可选：本 feature 从某 roadmap 条目起头时填
 roadmap_item: permission-rbac-core   # 可选：对应 roadmap items.yaml 里的 slug
 status: draft
@@ -97,10 +97,9 @@ checks:
     status: pending
 ```
 
-`steps`（design 阶段产出）：
+`steps`（`cs-feat-plan` 阶段产出）：
 
-- legacy feature：直接从 design 的推进策略切片抽取
-- hybrid feature：从 design 的推进策略切片 + plan 的分步计划共同抽取；plan 提供 step narrative，checklist 只保留 action / exit_signal / status
+- 标准 feature：从 design 的推进策略切片 + plan 的分步计划共同抽取；plan 提供 step narrative，checklist 只保留 action / exit_signal / status
 - 粒度是 paradigm 维度，**不写 file:line / 函数级**——具体落点是 implement 的事
 - 切片顺序"最简 Workflow 先行 → 逐个节点填充"：
   - 后端：编排骨架（空实现跑通）→ 计算节点逐个填 → 接通加载/持久化 → 测试覆盖
@@ -108,7 +107,7 @@ checks:
 - 4-8 步；每步必须有可独立验证的退出信号
 - 第 2.5 节结论是"微重构"时，**第 1 步固定是"按第 2.5 节方案做微重构（只搬不改行为）"**，独立退出信号（如"全部测试通过 + 编译绿灯 + 行为相关 diff 为零"），跑通后再进 feature 主体步骤
 
-`checks`（design 阶段产出，提取来源）：
+`checks`（`cs-feat-plan` 阶段产出，提取来源）：
 
 - 名词契约 ← 第 2.1 节关键接口签名
 - 编排骨架 / 流程级约束 ← 第 2.2 节主流程关键步骤、流程级约束

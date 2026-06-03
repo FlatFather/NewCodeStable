@@ -1,6 +1,6 @@
 ---
 name: cs-feat-impl
-description: feature 流程阶段 2——按 {slug}-checklist.yaml 里 design 切好的 paradigm 维度 steps 推进，每步具体改哪个文件由 implement 自决，写完用统一格式汇报。触发：用户说"方案确认了开始实现"、"按方案写代码"、"开工"。前提是 design 已 approved 且有 checklist。遇到方案外情况要回方案谈不要硬冲。
+description: feature 流程阶段 3——按 `{slug}-plan.md` 与 `{slug}-checklist.yaml` 推进实现，每步具体改哪个文件由 implement 自决，写完用统一格式汇报。触发：用户说"方案确认了开始实现"、"按方案写代码"、"开工"。前提是 design 已 approved，且 plan/checklist 已齐备。遇到方案外情况要回方案谈不要硬冲。
 ---
 
 # cs-feat-impl
@@ -66,15 +66,14 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 - 方案 doc 全文（标准 design 重点：第 1 节、2.1/2.2/2.3/2.4、3）
 - `{slug}-checklist.yaml`、需求来源（用户描述 + brainstorm note）、`.codestable/attention.md`
-- hybrid feature：把 `{slug}-plan.md` 与 design 一起读全；plan 是 detailed step source，checklist 是状态载体；当 feature 命中 hybrid 口径时，plan 不再是抽象占位词，而是必须存在的真实输入，缺失时当前实现阶段必须停下并退回 design / 产物生成阶段
+- 标准 feature：把 `{slug}-plan.md` 与 design 一起读全；plan 是 detailed step source，checklist 是状态载体；当 feature 命中标准主线时，plan 不再是抽象占位词，而是必须存在的真实输入，缺失时当前实现阶段必须停下并退回 design / 产物生成阶段
 - 第 2.1 节接口示例的来源位置 / fastforward 第 1 节改动点提到的代码文件——读相关函数即可
 
 ### 4. 跟用户确认从哪一步开始
 
 通常第 1 步；接续上次中断从已 `done` 的下一步继续。
 
-legacy feature：以 design 为 scope source、以 checklist 为状态推进清单。
-hybrid feature：以 design 为 scope source、以 plan 为 detailed step source、以 checklist 为状态推进清单。
+标准 feature：以 design 为 scope source、以 plan 为 detailed step source、以 checklist 为状态推进清单。
 
 design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 → 持久化 → 测试），**具体每步改哪个文件由你执行时决定**。如果某一步实际是 3 个独立子动作、或发现微重构是它的前置（参考反射检查），跟用户对齐后追加 / 拆分 steps，**不偷偷做**。
 
@@ -195,7 +194,7 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 ## 退出后
 
-告诉用户："所有步骤完成，方案 doc 已同步。下一步阶段 3 验收闭环，触发 cs-feat-accept。"
+告诉用户："所有步骤完成，方案 doc 已同步。下一步阶段 4 验收闭环，触发 cs-feat-accept。"
 
 别自己顺手开始写验收报告——验收需要独立的 checklist 节奏，提前进入会让把关失效。
 

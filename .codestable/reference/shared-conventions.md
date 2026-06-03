@@ -83,7 +83,7 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 
 ## 1. 共享元数据口径
 
-**feature spec**：brainstorm / design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。`status`：brainstorm = `confirmed`（落盘即确认无 draft）；design = `draft` / `approved`；acceptance 见对应技能。design 可额外带 `workflow: legacy|hybrid`；省略时按 `legacy` 处理，写 `hybrid` 时后续必须存在 `{slug}-plan.md`。
+**feature spec**：design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。design 采用标准口径时固定写 `workflow: hybrid`；历史 legacy 目录若保留原字段，可继续只读兼容。
 
 **feature intent**：`{slug}-intent.md` 是 feature 的**可选前置草稿**，用于用户在 design 前先写下需求概要 / 大致做法 / 相关数据结构。frontmatter 固定为 `doc_type=feature-intent`、`feature`、`status=draft`、`summary`；它供 `cs-feat-design` 的初始化模式和正式起草入口读取，不参与 implement / acceptance 生命周期，也不替代 brainstorm note。
 
@@ -106,70 +106,66 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 
 ## 2. feature 产物职责边界
 
-feature 目录允许两种口径并存：
+feature 的活跃标准口径固定为：
 
-- **legacy feature**：`design + checklist + acceptance`
 - **hybrid feature**：`design + plan + checklist + acceptance`
 
-两者都合法；新约定只前向生效，**不要求历史 feature 回填 `{slug}-plan.md`**。
+fastforward 继续作为独立快路径存在；历史 legacy 目录（`design + checklist + acceptance`）仅作留档兼容读取，不再作为新 feature 或重开 feature 的活跃口径。
 
 ### 四类产物各写什么
 
 - **`{slug}-intent.md`**：仅在初始化模式或用户主动先写半成品方案时出现。它记录 design 前的需求概要 / 大致做法 / 相关数据结构，是 feature 的 **pre-design seed**；后续由 `cs-feat-design` 读取并消化进正式 design，不作为 implement / acceptance 的输入。
 - **`{slug}-design.md`**：范围、术语、成功标准、关键决策、流程级约束、挂载点、推进策略切片。它是 feature 的 **scope source**，也是唯一方案源。
-- **`{slug}-plan.md`**：仅在 hybrid feature 使用。承接已批准 design，展开详细执行顺序、每步退出信号、验证路径、风险与缓解。它是 feature 的 **step source**，不能反向改 scope。frontmatter 固定为 `doc_type / feature / design / status`；正文固定包含“执行目标 / 分步计划 / 风险与回退 / 与 checklist 的映射”四节。
-- **`{slug}-checklist.yaml`**：机器可读状态载体，记录 `steps` / `checks` 及状态变化。它是 **status carrier**，不是 narrative plan。
+- **`{slug}-plan.md`**：标准 feature 必备。承接已批准 design，展开详细执行顺序、每步退出信号、验证路径、风险与缓解。它是 feature 的 **step source**，不能反向改 scope。frontmatter 固定为 `doc_type / feature / design / status`；正文固定包含“执行目标 / 分步计划 / 风险与回退 / 与 checklist 的映射”四节。
+- **`{slug}-checklist.yaml`**：标准 feature 必备。机器可读状态载体，记录 `steps` / `checks` 及状态变化。它是 **status carrier**，不是 narrative plan。
 - **`{slug}-acceptance.md`**：对照 design / plan（若存在）/ checklist 做核验，并回写 architecture / requirement / roadmap。它是 **verification sink**。
 
 ### 共享约束
 
-- intent 是 design 前的可选前置草稿；它帮助用户离线起草，但不改变后续 legacy / hybrid 流程划分。
+- intent 是 design 前的可选前置草稿；它帮助用户离线起草，但不改变后续 fastforward / hybrid 流程划分。
 - design 永远是范围与约束的唯一方案源；plan、checklist、acceptance 都不能越权改 scope。
-- hybrid feature 中，plan 负责对人可读的详细执行步骤；checklist 只保留机器可读状态。
-- legacy feature 没有 plan 仍然有效；acceptance 对 legacy 继续按 `design + checklist` 验收。
-- hybrid feature 一旦采用 hybrid 口径，plan 就是必备产物；implement 与 acceptance 都必须把它当作输入之一。
+- 标准 feature 中，plan 负责对人可读的详细执行步骤；checklist 只保留机器可读状态。
+- 标准 feature 一旦进入实现，`plan.md` 与 `checklist.yaml` 就都必须存在；implement 与 acceptance 都必须把它们当作输入之一。
 - issue / refactor 流程不依赖 `feature-plan`；本节只约束 feature 流程。
 - **feature directory binding**：`YYYY-MM-DD-{slug}` 目录名是 roadmap item、design、plan、checklist、acceptance 之间的唯一绑定键，不再新增第二套 execution id。
-- **plan presence rule**：legacy feature 可没有 `plan.md`；hybrid feature 一旦由 design 采用 hybrid 口径，就必须存在真实 `plan.md`，缺失时 implement / acceptance 都应失败退出；workflow-check 也应把它视为校验错误。
+- **plan presence rule**：活跃标准 feature 的 `plan.md` 与 `checklist.yaml` 必须在进入实现前存在；未重开的历史 legacy 目录可继续缺失并只作兼容读取；workflow-check 对新 feature 和被重开的 feature 仍应把缺失视为错误。
 
 ---
 
 ### 迁移总则
 
-- **forward-only adoption**：新协议默认只约束新 feature；历史 feature 保持当时口径有效，不自动追溯回填。
-- **minimal backfill**：历史 feature 若被重开，只补继续走流程所需的最小字段/文件；不为“整齐”一次补齐所有旧产物。
-- **no silent upgrade**：不能偷偷把历史 legacy feature 当 hybrid；升级 hybrid 时必须显式补 `workflow: hybrid` 和真实 `plan.md`。
-- 历史 design 缺 `workflow` 字段不算错；从现在开始的新设计和被重开的设计才要求显式写 `workflow: legacy|hybrid`。
-- workflow-check 的默认适用边界是**新 feature 和被重开的 feature**；未重开的历史 feature 不因缺 `workflow` 或 `plan.md` 被直接视为错误。
+- **forward-only adoption**：新协议默认只约束新 feature；历史 legacy 目录保持当时口径留档，不自动追溯回填。
+- **minimal backfill**：历史 feature 若要继续推进，应优先升级到新标准主线所需的最小字段/文件；不为“整齐”一次补齐所有旧产物。
+- **legacy removal**：legacy 从活跃 workflow 定义中删除；新 feature 与重开 feature 都不再允许沿用 `design + checklist + acceptance` 作为主线。
+- 历史 design 缺 `workflow` 字段不算错；新的标准 feature 设计固定写 `workflow: hybrid`。
+- workflow-check 的默认适用边界是**新 feature 和被重开的 feature**；未重开的历史 legacy 目录不因缺 `workflow` 或 `plan.md` 被直接视为错误。
 
 ---
 
 ## 3. {slug}-checklist.yaml 生命周期
 
 - 是 feature 工作流的机器可读状态载体，不是详细执行步骤正文
-- 由 `cs-feat-design` 在 design 确认通过后生成；legacy feature 直接生成 checklist，hybrid feature 先生成 plan，再从 design + plan 抽 `steps` + `checks`
-- hybrid feature 的 checklist 步骤顺序和状态推进必须与 `{slug}-plan.md` 对齐；详细步骤解释仍写在 plan，不回流到 checklist
+- 由 `cs-feat-plan` 在 approved design 后生成；`cs-feat-plan` 先落 `plan.md`，再从 design + plan 抽 `steps` + `checks`
+- 标准 feature 的 checklist 步骤顺序和状态推进必须与 `{slug}-plan.md` 对齐；详细步骤解释仍写在 plan，不回流到 checklist
 - `cs-feat-ff` **不生成** checklist（也不写 design / acceptance），是跳过 spec 流程直接写代码的超轻量通道；唯一留下的痕迹是动手后回写的 `{slug}-ff-note.md`（轻量回顾，参与 scoped-commit、可被 cs-arch / cs-req backfill 检索到）
 
 `steps` 的粒度是 **编排-计算分离维度的切片策略**——按"先编排骨架、后计算节点、最后持久化与测试"写（最简 Workflow 先行 → 逐个节点填充），**不下沉到 file:line / 函数级**。具体改哪个文件由 implement 阶段决定。
 
 **design 的职责**：
 
-- 提取 `steps`（4-8 步，每步独立可验证退出信号）：后端节奏 = 编排骨架 → 计算节点逐个填 → 接通持久化 → 测试覆盖；前端 = 静态结构 → 交互逻辑 → 状态接入 → 联调收尾
-- 提取 `checks`：第 1 节"明确不做"→ 范围守护；第 2.1 接口 → 名词契约；第 2.2 主流程 + 流程级约束 → 编排骨架；第 2.3 挂载点 → 挂载点；第 3 节场景清单 → 验收场景
-- hybrid feature 若生成 plan：design 仍然只决定范围和切片策略，不把 detailed step narrative 塞回 checklist
+- 提供 plan/checklist 派生所需的推进策略切片（第 2.4），但不直接落盘 `steps` / `checks`
+- 提取 `checks` 的来源：第 1 节"明确不做"→ 范围守护；第 2.1 接口 → 名词契约；第 2.2 主流程 + 流程级约束 → 编排骨架；第 2.3 挂载点 → 挂载点；第 3 节场景清单 → 验收场景
+- `cs-feat-plan` 基于已批准 design 生成 `plan.md` 与 `checklist.yaml`；design 仍然只决定范围和切片策略，不把 detailed step narrative 塞回 checklist
 
 **implement 的职责**：
 
-- 对 legacy feature：按 `steps` 顺序执行，每步完成把 status `pending` → `done`
-- 对 hybrid feature：同时读取已批准 design 与 plan；按 checklist 状态推进，但详细步骤解释、退出信号展开和验证路径以 plan 为准
+- 对标准 feature：同时读取已批准 design 与 plan；按 checklist 状态推进，但详细步骤解释、退出信号展开和验证路径以 plan 为准
 - 实现到具体文件级时需要拆分某步、或发现微重构是其前置（参考第 7 节反射检查）→ 跟用户对齐后追加 / 拆分 steps，**不偷偷做**
 - 不改写 `checks`
 
 **acceptance 的职责**：
 
-- 对 legacy feature：按 `design + checklist` 核验，只更新 `checks[].status`（`pending` → `passed` / `failed`）
-- 对 hybrid feature：按 `design + plan + checklist` 核验，仍只更新 `checks[].status`，不重写 `steps`
+- 对标准 feature：按 `design + plan + checklist` 核验，仍只更新 `checks[].status`，不重写 `steps`
 
 **写作约束**：子技能描述 checklist 时只补本阶段读 / 写哪一部分，不重新定义生命周期。
 

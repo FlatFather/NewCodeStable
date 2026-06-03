@@ -1,0 +1,52 @@
+feature: 2026-06-03-feature-plan-stage
+created: 2026-06-03
+
+steps:
+  - action: "顶层 plan 阶段：让 cs-feat 显式暴露 design → plan → impl → accept 链路，并删除 legacy 作为活跃主线路径"
+    exit_signal: "顶层阶段表和路由规则已经出现 cs-feat-plan，且只剩 fastforward / hybrid 两类 feature 路径"
+    status: done
+
+  - action: "design 职责切分：让 cs-feat-design 只输出 approved design，并把用户引导到 cs-feat-plan"
+    exit_signal: "design 阶段不再直接落 plan/checklist，plan/checklist 生成责任已从 design 阶段移出"
+    status: done
+
+  - action: "新阶段落地：新增真实 cs-feat-plan skill 负责 plan 与 checklist 生成"
+    exit_signal: "仓库里存在真实 cs-feat-plan/SKILL.md，且输入输出边界清晰"
+    status: done
+
+  - action: "共享口径回写：同步 shared conventions、overview、architecture、impl、accept 的阶段说法，并删除 legacy 活跃口径"
+    exit_signal: "文档层与下游消费都已改成 design + plan + checklist 这条显式主线，legacy 只剩历史留档语义"
+    status: done
+
+  - action: "样板自证：让当前 feature 成为第一条显式 plan 阶段且删除 legacy 主线的样板"
+    exit_signal: "当前 feature 目录和顶层入口都能证明 plan 是独立 checkpoint，且活跃标准路径只剩 fastforward 与 hybrid"
+    status: done
+
+checks:
+  - item: "cs-feat 的顶层阶段表和路由规则显式包含 cs-feat-plan"
+    source: 编排骨架
+    status: passed
+
+  - item: "cs-feat-design 不再直接生成 plan/checklist，而是把 approved design 交给 cs-feat-plan"
+    source: 流程级约束
+    status: passed
+
+  - item: "仓库中存在真实 cs-feat-plan skill，且职责是生成 plan.md 与 checklist.yaml"
+    source: 名词契约
+    status: passed
+
+  - item: "shared conventions 说明 checklist 生成责任已从 design 阶段迁到 plan 阶段，并删除 legacy 作为活跃标准口径"
+    source: 名词契约
+    status: passed
+
+  - item: "cs-feat-impl 只有在 design + plan + checklist 已齐时才启动"
+    source: 流程级约束
+    status: passed
+
+  - item: "fastforward 继续兼容，不被强制拉进 cs-feat-plan"
+    source: 范围守护
+    status: passed
+
+  - item: "plan 没有越权成为新的 scope source"
+    source: 范围守护
+    status: passed

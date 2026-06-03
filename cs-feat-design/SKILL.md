@@ -1,6 +1,6 @@
 ---
 name: cs-feat-design
-description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作为后续实现和验收的唯一输入，拍板后抽出 checklist。触发：用户说"开始设计方案"、"写 design doc"、"准备实现 XX"，前提是已知道做什么、为谁、怎么算成功。
+description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作为后续 plan、实现和验收的唯一方案输入。触发：用户说"开始设计方案"、"写 design doc"、"准备实现 XX"，前提是已知道做什么、为谁、怎么算成功。
 ---
 
 # cs-feat-design
@@ -9,7 +9,7 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 
 开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
 
-这一阶段的产出是一份方案文件 `{slug}-design.md`，加上从中抽出的行动清单 `{slug}-checklist.yaml`。对 hybrid feature，会在 approved design 后生成真实 `{slug}-plan.md` 这份详细执行步骤正文，再从 design + plan 抽 checklist。design 继续是范围与约束的唯一方案源；plan 只承接已批准 design 的详细步骤说明；checklist 只承接机器可读状态。
+这一阶段的产出是一份方案文件 `{slug}-design.md`。design 继续是范围与约束的唯一方案源；后续由 `cs-feat-plan` 基于已批准 design 生成 `{slug}-plan.md` 与 `{slug}-checklist.yaml`。
 
 > 共享路径和命名约定看 `.codestable/reference/shared-conventions.md`。本阶段一般 feature 目录已经由 brainstorm 创建好了；没有的话在这一步建。
 
@@ -84,8 +84,7 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 当用户不是起一条全新 feature，而是**重开历史 feature** 时，先在设计阶段把迁移路径讲清楚：
 
 - **保持原样**：历史 feature 不继续推进，只读取，不补 `workflow` / `plan.md`
-- **重开 legacy**：要继续推进，但仍按 `design + checklist + acceptance` 跑；此时补最小必要字段，如 `workflow: legacy`
-- **升级 hybrid**：明确切到新口径；此时必须补 `workflow: hybrid`，并在继续实现前生成真实 `plan.md`
+- **升级 hybrid**：若历史 feature 要继续推进，必须先升级到新口径；此时补 `workflow: hybrid`，并在继续实现前交给 `cs-feat-plan` 生成真实 `plan.md` 与 `{slug}-checklist.yaml`
 
 默认原则是 forward-only + minimal backfill：**不为了整齐回填全部旧文档**。
 
@@ -218,16 +217,15 @@ AI 默认翻车的姿势是**不思考就往眼前最顺手的文件里加**。
 
 发一次整体 review 提示（提示词在 reference.md 第 5 节）。用户提意见就改，反复直到放行，把 `status` 从 `draft` 改 `approved`。
 
-### 6. 生成 `{slug}-plan.md`（hybrid）与 `{slug}-checklist.yaml`
+### 6. 引导进入 `cs-feat-plan`
 
 方案确认后：
 
-- legacy feature：从 `{slug}-design.md` 直接抽出 `steps` + `checks` 落到 `{slug}-checklist.yaml`
-- hybrid feature：先基于 `{slug}-design.md` 生成 `{slug}-plan.md`，再从 design + plan 抽出 `steps` + `checks` 落到 `{slug}-checklist.yaml`
+- `cs-feat-design` 在本阶段只负责把 `{slug}-design.md` 定稿为 `status: approved`
+- 之后由 `cs-feat-plan` 读取这份已批准 design，生成 `{slug}-plan.md` 与 `{slug}-checklist.yaml`
+- `cs-feat-design` 不再直接落盘 plan/checklist
 
-完整格式、提取规则、典型节奏看 reference.md 第 3/4 节。
-
-落盘后 `python .codestable/tools/validate-yaml.py --file {path} --yaml-only` 校验。
+完整格式、提取规则、典型节奏看 `cs-feat-plan/reference.md` 与共享约定。
 
 ### 7. 退出
 

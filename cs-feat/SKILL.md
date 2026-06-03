@@ -1,6 +1,6 @@
 ---
 name: cs-feat
-description: 新功能开发的子流程入口，把"加个 X 能力"从想法走到验收闭环。触发：用户说"做新功能"、"加个 X"、"实现 XX"。只做路由，根据已有产物决定走 brainstorm / design / fastforward / implement / acceptance。不处理 bug。
+description: 新功能开发的子流程入口，把"加个 X 能力"从想法走到验收闭环。触发：用户说"做新功能"、"加个 X"、"实现 XX"。只做路由，根据已有产物决定走 brainstorm / design / plan / fastforward / implement / acceptance。不处理 bug。
 ---
 
 # cs-feat
@@ -12,7 +12,7 @@ description: 新功能开发的子流程入口，把"加个 X 能力"从想法�
 新功能流程在"需求"和"代码"之间塞了一份方案文件，让两边有交接点——AI 直接拿到需求就写代码会出三个老问题：名字跟原代码对不上、改着改着改出范围、改完不留存档。
 
 ```
-(想法模糊先去 cs-brainstorm 分诊) → 方案设计（名词层 + 编排层 + 验收契约 + 推进策略切片）→ 分步实现 → 验收闭环
+(想法模糊先去 cs-brainstorm 分诊) → 方案设计（名词层 + 编排层 + 验收契约 + 推进策略切片）→ 执行计划（plan + checklist）→ 分步实现 → 验收闭环
 ```
 
 brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 design）/ case 2（小需求继续讨论 → 落 brainstorm note）/ case 3（大需求 → 移交 `cs-roadmap`）。只有 case 2 在 feature 目录产出 brainstorm note。
@@ -28,9 +28,9 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 ├── {slug}-brainstorm.md       ← 阶段 0 产物（仅 case 2 落盘）
 ├── {slug}-intent.md           ← 可选前置草稿（用户自己写半成品，供 design 读取）
 ├── {slug}-design.md           ← 阶段 1 方案文件（范围与约束唯一方案源）
-├── {slug}-plan.md             ← hybrid 分支必备执行计划（详细步骤正文）
-├── {slug}-checklist.yaml      ← 阶段 1 生成 steps + checks，2/3 阶段更新 status
-└── {slug}-acceptance.md       ← 阶段 3 验收报告
+├── {slug}-plan.md             ← 阶段 2 执行计划正文（标准 feature 必备）
+├── {slug}-checklist.yaml      ← 阶段 2 生成 steps + checks，3/4 阶段更新 status
+└── {slug}-acceptance.md       ← 阶段 4 验收报告
 ```
 
 目录命名 `YYYY-MM-DD-{英文 slug}`，日期取首次创建当天定了不动；slug 小写字母 / 数字 / 连字符。
@@ -41,14 +41,15 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 
 ---
 
-## 四个阶段
+## 五个阶段
 
 | 阶段 | 子技能 | 产出 | 谁主导 |
 |---|---|---|---|
 | 0 brainstorm（可选，独立入口） | `cs-brainstorm` | case 2 时产出 brainstorm note | AI 思考伙伴，用户拍板 |
-| 1 方案设计 | `cs-feat-design` | design.md + checklist.yaml（初始化模式可先建 intent.md；若采用 hybrid，则在本阶段生成 plan.md，再从 design + plan 抽 checklist） | AI 起草，用户整体 review |
-| 2 分步实现 | `cs-feat-impl` | 代码 + 阶段汇报 | AI 按方案执行 |
-| 3 验收闭环 | `cs-feat-accept` | acceptance.md | AI 逐层核对，用户终审 |
+| 1 方案设计 | `cs-feat-design` | design.md（初始化模式可先建 intent.md） | AI 起草，用户整体 review |
+| 2 执行计划 | `cs-feat-plan` | plan.md + checklist.yaml | AI 起草，用户整体 review |
+| 3 分步实现 | `cs-feat-impl` | 代码 + 阶段汇报 | AI 按方案执行 |
+| 4 验收闭环 | `cs-feat-accept` | acceptance.md | AI 逐层核对，用户终审 |
 
 阶段间有人工 checkpoint。上一阶段没拿到用户明确放行，下一阶段别开始——防止 AI 一口气从需求跑到代码、跑出来才发现走偏。
 
@@ -56,7 +57,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 
 ### Fastforward 模式
 
-需求清楚 + 范围小时走完整四阶段太啰嗦。fastforward 把 design 压成 4 节（需求摘要 / 设计方案 / 验收标准 / 推进步骤），用户一次确认后直接实现。触发："快速模式"、"fastforward"、"直接开干"、"别那么多步骤"，去 `cs-feat-ff`。
+需求清楚 + 范围小时走完整五阶段太啰嗦。fastforward 把 design 压成 4 节（需求摘要 / 设计方案 / 验收标准 / 推进步骤），用户一次确认后直接实现。触发："快速模式"、"fastforward"、"直接开干"、"别那么多步骤"，去 `cs-feat-ff`。
 
 **别走** fastforward：跨多个子系统、有术语冲突风险、推进步骤超过 4 步——这些情况跳过 design 意味着 AI 和用户没共同确认过同一份方案，实现完容易发现彼此理解不一样。
 
@@ -75,8 +76,8 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 | `{slug}-intent.md` 已填好 | `cs-feat-design`（读 intent 作输入） |
 | 用户说"快速模式 / fastforward" | `cs-feat-ff` |
 | `{slug}-brainstorm.md` 已存在，要进设计 | `cs-feat-design` |
-| `{slug}-design.md` 已 approved，若为 hybrid 且 `plan.md` / checklist 还没落齐 | `cs-feat-design`（补齐 plan + checklist，再进入实现） |
-| `{slug}-design.md` 已 approved、代码没动 | `cs-feat-impl` |
+| `{slug}-design.md` 已 approved，`plan.md` / checklist 还没落齐 | `cs-feat-plan` |
+| `{slug}-plan.md` + `{slug}-checklist.yaml` 已齐、代码没动 | `cs-feat-impl` |
 | fastforward design 已确认 | `cs-feat-impl` |
 | 代码已写完要验收 | `cs-feat-accept` |
 | 用户说"我想要一个 X 系统"大需求 | 转 `cs-brainstorm` 分诊（大概率 case 3 → `cs-roadmap`） |
