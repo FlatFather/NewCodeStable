@@ -17,6 +17,8 @@
 - 运行 `.codestable/tools/*.py` 时优先使用 `.venv/bin/python`，因为本项目已在 `.venv` 中安装 `PyYAML`，系统 Python 可能只会走 fallback parser。
 ### 路径与目录约定
 
+- 本地 `~/.claude/skills/*` 可能是 symlink，真实生效目录常在 `~/.agents/skills/*`；更新 skill 时优先改仓库源码，再用 `.codestable/tools/sync-skills.sh` 同步并开新会话验证。
+
 ### 环境变量与凭证
 
 ### 其他
