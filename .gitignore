@@ -1,3 +1,6 @@
 .claude
 __pycache__
 *.pyc
+.codestable/features/.DS_Store
+.codestable/.DS_Store
+/.ccg
