@@ -32,6 +32,7 @@ NewCodeStable 旨在演进为一个融合式工作流体系：保留 CodeStable 
 
 - **feature intent 边界**：`{slug}-intent.md` 是 feature 的可选前置草稿（pre-design seed），共享身份由 `.codestable/reference/shared-conventions.md` 定义；`cs-feat` 只负责 intent/brainstorm 的路由判断；`cs-feat-design` 负责初始化模式的草稿骨架与读取。详见 `.codestable/compound/2026-06-02-decision-feature-intent-artifact-boundary.md`。
 - **workflow 顶层关口可见性**：凡是决定用户能否进入下一阶段的硬门槛 / 必备产物，不能只藏在子技能内部，必须同时暴露在顶层入口、阶段产出和路由表中。详见 `.codestable/compound/2026-06-02-decision-expose-workflow-gates-at-top-level.md`。
+- **continuation-first**：本仓库内 workflow skills 遇到短回复时先尝试恢复已有 task / 阶段状态；`.ccg/tasks/*/task.json` 只作恢复桥，不替代 `.codestable/` 产物真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
 - **hybrid 默认方向**：legacy 目录只作历史留档兼容读取，项目的活跃标准 feature 主线固定为 `design + plan + checklist + acceptance`；fastforward 保持为独立快路径。详见 `.codestable/compound/2026-06-02-decision-hybrid-as-default-feature-mode.md`。
 
 ## 5. 已知约束 / 硬边界

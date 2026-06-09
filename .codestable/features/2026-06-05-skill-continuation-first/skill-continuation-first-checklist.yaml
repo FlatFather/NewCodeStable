@@ -1,0 +1,72 @@
+feature: 2026-06-05-skill-continuation-first
+created: 2026-06-05
+
+steps:
+  - action: "拆 continuation-first 共享协议：新增独立 reference 文件，并让 shared-conventions 只保留摘要与指针"
+    exit_signal: "workflow-continuation reference 已落盘，shared-conventions 只保留摘要入口，且两份文档都满足单文档长度约束"
+    status: done
+
+  - action: "改顶层入口：让 cs / cs-feat / cs-issue 先恢复再路由"
+    exit_signal: "顶层入口已写清楚：唯一候选续作才自动继续；多候选停下让用户选；无候选才走现有路由"
+    status: done
+
+  - action: "改阶段技能：统一 feature / issue 主线的续作恢复口径"
+    exit_signal: "阶段 skill 已明确先恢复已有阶段，再决定是否补问或回退；task 文件只作桥接索引"
+    status: done
+
+  - action: "补用户可见文档：解释 continuation-first 的目的、边界、独立 reference 位置与重复路由问题"
+    exit_signal: "至少一份开发文档已说明为什么短回复不会重复进入流程，且口径与 skill / shared conventions / workflow-continuation 一致"
+    status: done
+
+  - action: "完成静态收口：校验 feature 产物并交叉检查仓库现状口径一致"
+    exit_signal: "plan/checklist 校验通过，grep continuation 相关关键词时仓库内现状口径一致"
+    status: done
+
+checks:
+  - item: "短回复优先恢复已有 task / spec 阶段状态，而不是默认按新诉求路由"
+    source: 名词契约
+    status: passed
+
+  - item: "只有唯一候选续作时才自动继续；多个候选时必须让用户选择"
+    source: 流程级约束
+    status: passed
+
+  - item: "`.ccg/tasks/*/task.json` 只是 task 状态桥，不是第二套 workflow 真相源"
+    source: 流程级约束
+    status: passed
+
+  - item: "continuation-first 详细协议位于独立 reference 文件，shared-conventions 只保留摘要与指针"
+    source: 名词契约
+    status: passed
+
+  - item: "shared-conventions 与 workflow-continuation 两份文档都满足单文档长度约束"
+    source: 验收场景
+    status: passed
+
+  - item: "feature 与 issue 阶段 skill 都先恢复已有产物状态，再决定是否补问或回退"
+    source: 编排骨架
+    status: passed
+
+  - item: "没有 in-progress task 或没有可恢复产物时，技能仍保持原有路由行为，不凭空猜测续作对象"
+    source: 验收场景
+    status: passed
+
+  - item: "本 feature 不修改全局 `/ccg:go` 或 `~/.claude/commands/*`"
+    source: 范围守护
+    status: passed
+
+  - item: "本 feature 不把 `.ccg/tasks/` 提升为项目主 workflow 真相源"
+    source: 范围守护
+    status: passed
+
+  - item: "系统文档已解释 continuation-first 的目的、边界与独立 reference 位置"
+    source: 挂载点
+    status: passed
+
+  - item: "顶层入口与阶段 skill 的文档说明对 continuation 语义一致"
+    source: 挂载点
+    status: passed
+
+  - item: "feature 与 issue 两条主线都覆盖了 continuation-first 规则"
+    source: 验收场景
+    status: passed

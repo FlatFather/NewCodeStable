@@ -20,7 +20,7 @@ description: feature 流程阶段 2——基于已批准的 `{slug}-design.md` �
 1. **design 已批准**——`{slug}-design.md` 必须存在且 `status=approved`
 2. **尚未进入实现**——若代码已开始改动，先和用户确认是回补 plan，还是回 design 重新收口
 3. **feature 目录已存在**——不在本阶段新建 feature 目录
-4. **上下文读全**——读 approved design 全文 + `.codestable/attention.md` + 相关 shared conventions / architecture
+4. **上下文读全**——读 approved design 全文 + `.codestable/attention.md` + 相关 shared conventions / architecture + `.codestable/reference/workflow-continuation.md`（如本次是短回复续作或涉及 task 状态桥）
 
 缺任一项 → 退回 `cs-feat-design` 或让用户先澄清。
 
@@ -50,6 +50,12 @@ description: feature 流程阶段 2——基于已批准的 `{slug}-design.md` �
 - checklist 不写大段解释，解释留在 plan
 
 ### 3. 本阶段有独立 checkpoint
+
+如果用户这轮输入只是 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复，先按 continuation-first 恢复已有 feature 目录状态：
+- 已有 `plan.md` + `checklist.yaml` 且内容完整 → 直接汇报当前执行顺序，不重复生成
+- 只有其一存在或内容不完整 → 补缺失项再统一汇报
+- 多个候选 feature 目录 → 停下来让用户选，不猜
+- `.ccg/tasks/*/task.json` 只作恢复桥，不替代 feature 目录中的 design / plan / checklist 真相源
 
 plan/checklist 落盘后，要先让用户确认“这就是执行顺序”，再进入 `cs-feat-impl`。不要一口气从 design 直接跳进代码。
 

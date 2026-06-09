@@ -21,6 +21,7 @@ description: issue 流程阶段 2——读 report + 读代码定位根因、评�
 
 1. **问题报告存在且已确认**——读 `{slug}-report.md`，确认 `doc_type=issue-report` 且 `status=confirmed`，5 节都有内容。不完整 / 状态不对 → 回 `cs-issue-report`。`cs-issue-report` 已判走标准路径就按标准路径走，不二次改判
 2. **断点恢复**——`{slug}-analysis.md` 已存在则检查 5 节哪些已填：
+   - 如果用户这轮输入只是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步`，先按 continuation-first 恢复已有 analysis 状态；必要时再参考 `.ccg/tasks/*/task.json` 作为恢复桥，但不把 task 文件当成 analysis 真相源
    - 全部填满但 `status=draft` → 跳到 checkpoint
    - 部分填写 → 汇报"上次做到第 X 步，从第 Y 步继续"
 3. **把上下文读全**：

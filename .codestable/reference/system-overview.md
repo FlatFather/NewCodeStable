@@ -96,6 +96,8 @@ feature 走 brainstorm(可选) → design → plan → implement → acceptance�
 
 AI 最常见的问题是一口气铺几百行代码才让人看——等发现问题已经很难中止。阶段间的人工 checkpoint 就是为了早一步中止。每个 checkpoint 具体检查什么,对应子技能里讲。
 
+此外，本仓库内 skills 统一采用 **continuation-first**：用户只输入 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复时，先尝试恢复已有 task / 阶段状态；只有恢复失败时才回到普通路由。详细协议见 `.codestable/reference/workflow-continuation.md`。
+
 例外两种:issue 根因一眼确定时走快速通道,跳过 analyze 直接 fix;feature 范围小时走 `cs-feat-ff`,写完 spec 直接进实现。
 
 

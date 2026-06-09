@@ -73,6 +73,11 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 通常第 1 步；接续上次中断从已 `done` 的下一步继续。
 
+如果用户这轮输入只是 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复，先按 continuation-first 恢复：
+- 优先读取 `{slug}-checklist.yaml` 判断哪些 steps 已 `done`
+- 必要时再参考 `.ccg/tasks/*/task.json` 作为恢复桥，帮助解释“上次停在第几步”，但**不把 task 文件当成 checklist 的真相源**
+- 恢复时先向用户汇报："检测到上次工作到第 X 步，我从第 Y 步继续"
+
 标准 feature：以 design 为 scope source、以 plan 为 detailed step source、以 checklist 为状态推进清单。
 
 design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 → 持久化 → 测试），**具体每步改哪个文件由你执行时决定**。如果某一步实际是 3 个独立子动作、或发现微重构是它的前置（参考反射检查），跟用户对齐后追加 / 拆分 steps，**不偷偷做**。

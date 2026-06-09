@@ -152,6 +152,7 @@ design 只管"编排-计算分离"里的编排那一侧：**这次 feature 在�
 **必做 4 条**：
 
 1. **续作检查**——Glob `{slug}-design.md` / `{slug}-intent.md` / `{slug}-brainstorm.md`：
+   - 如果用户这轮输入只是 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复，先按 continuation-first 处理：优先恢复已有 design / intent / brainstorm 产物状态；必要时再参考 `.ccg/tasks/*/task.json` 作为恢复桥，但**不把 task 文件当成 design 真相源**
    - intent / brainstorm：当作输入读入，不重复问已讲清的部分
    - design `status=draft` 各节基本完整 → 跳到本流程"5. 整体 review"
    - design 部分节缺失 → 补缺失节，汇报"上次写到 X，补齐统一给你 review"

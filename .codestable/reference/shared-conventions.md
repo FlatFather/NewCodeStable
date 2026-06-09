@@ -5,7 +5,6 @@
 skill 本身不共享文件系统（每个 skill 是独立安装单元），共享口径不能放在某个 skill 内部被别的 skill 引用。放在"工作项目"里对所有 skill 都可达。
 
 ---
-
 ## 0. 目录结构与路径命名
 
 onboard 完成后骨架（`cs-onboard` 负责搭建）：
@@ -80,7 +79,6 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 改 `cs-onboard/reference/shared-conventions.md` 模板，新项目 onboard 时带上新版本；已有项目手动同步 `.codestable/reference/shared-conventions.md`。
 
 ---
-
 ## 1. 共享元数据口径
 
 **feature spec**：design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。design 采用标准口径时固定写 `workflow: hybrid`；历史 legacy 目录若保留原字段，可继续只读兼容。
@@ -101,9 +99,10 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 **外部读者文档**（guidedoc / libdoc）：frontmatter 由各自子技能定义。无特殊说明：`draft` = 待 review，`current` = 当前有效，`outdated` = 代码已变更待同步。
 
 **写作约束**：子技能提字段时优先写"额外字段"或"阶段状态变化"，不重复展开整套通用字段。
-
+### 1.5 continuation-first 摘要
+- 本仓库内 skills 遇到 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复时，默认先做 continuation-first 检测；只有存在**唯一候选续作**时才自动继续，多个候选必须停下来让用户选。
+- `.ccg/tasks/*/task.json` 只作**task 状态桥**，不替代 feature / issue spec 产物的真相源地位；详细共享协议见 `.codestable/reference/workflow-continuation.md`，本文件只保留摘要与指针。
 ---
-
 ## 2. feature 产物职责边界
 
 feature 的活跃标准口径固定为：
@@ -139,7 +138,6 @@ fastforward 继续作为独立快路径存在；历史 legacy 目录（`design +
 - **legacy removal**：legacy 从活跃 workflow 定义中删除；新 feature 与重开 feature 都不再允许沿用 `design + checklist + acceptance` 作为主线。
 - 历史 design 缺 `workflow` 字段不算错；新的标准 feature 设计固定写 `workflow: hybrid`。
 - workflow-check 的默认适用边界是**新 feature 和被重开的 feature**；未重开的历史 legacy 目录不因缺 `workflow` 或 `plan.md` 被直接视为错误。
-
 ---
 
 ## 3. {slug}-checklist.yaml 生命周期

@@ -69,6 +69,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 
 | 当前状态 | 触发哪个子技能 |
 |---|---|
+| 用户只回 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复，且存在唯一候选 feature 目录 | **先按 continuation-first 续作**：直接根据该目录现有产物判断 design / plan / impl / accept，不重复给新的路由结论 |
 | 想法模糊，说不清真问题 / 边界 / 不做什么 | `cs-brainstorm` |
 | 想法清晰（知道做什么 / 为谁 / 怎么算成功） | `cs-feat-design` |
 | 用户说"开一个新需求 / 起草稿 / 新建 feature"想自己写半成品 | `cs-feat-design` 的"初始化模式"（建目录并起一份 intent 草稿，让用户填完再回） |
@@ -83,6 +84,17 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 | 用户说"我想要一个 X 系统"大需求 | 转 `cs-brainstorm` 分诊（大概率 case 3 → `cs-roadmap`） |
 | roadmap 里某条子 feature 该启动 | `cs-feat-design` 的"从 roadmap 条目起头"入口 |
 | 不确定 design 是否完整 | 自己读一遍，按上面对号 |
+
+### continuation-first 约束
+
+当用户输入是 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复时，本技能先做 continuation-first：
+
+1. 先看是否存在**唯一候选 feature 目录**
+2. 命中 → 直接按该目录现有产物判断当前阶段（design / plan / impl / accept）
+3. 多个候选 → 列给用户选，不猜
+4. 没有候选 → 才按普通 feature 路由处理
+
+如果需要恢复桥接信息，可参考 `.ccg/tasks/*/task.json`，但它**只作 task 状态桥**，不能替代 feature 目录里的 design / plan / checklist / acceptance 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
 
 ### 怎么判断该不该走阶段 0
 

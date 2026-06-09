@@ -28,6 +28,7 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 
 - `.codestable/attention.md`
 - `.codestable/reference/shared-conventions.md`
+- `.codestable/reference/workflow-continuation.md`
 - `.codestable/reference/system-overview.md`
 - `.codestable/architecture/ARCHITECTURE.md`
 
@@ -60,6 +61,8 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 - `{slug}-checklist.yaml`
 
 并形成进入实现前的独立确认关口。
+
+如果用户在这条主线中只输入 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复，仓库内 skills 默认先按 **continuation-first** 恢复已有 feature 目录状态，再决定是否重新路由。详细协议见 `.codestable/reference/workflow-continuation.md`。
 
 ### 3. 进入实现阶段
 
@@ -209,6 +212,7 @@ plan 的意义不是“把 design 写得更长”，而是提供**文件级改�
 ## 相关文档
 
 - `.codestable/reference/shared-conventions.md`
+- `.codestable/reference/workflow-continuation.md`
 - `.codestable/reference/system-overview.md`
 - `.codestable/architecture/ARCHITECTURE.md`
 - `.codestable/features/2026-06-03-feature-plan-stage/feature-plan-stage-design.md`

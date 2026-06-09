@@ -77,11 +77,25 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 
 | 当前状态 | 触发哪个子技能 |
 |---|---|
+| 用户只回 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复，且存在唯一候选 issue 目录 | **先按 continuation-first 续作**：直接根据该目录现有产物判断 report / analyze / fix，不重复按新 issue 路由 |
 | 刚发现问题，没有任何文件 | `cs-issue-report`（那里判断走标准还是快速） |
 | `report.md` 已存在，没 `analysis.md` | `cs-issue-analyze` |
 | `analysis.md` 已存在，代码还没改 | `cs-issue-fix` |
 | 代码已改，还没修复验证记录 | `cs-issue-fix`（走验证） |
 | 不确定 | 自己读已有文件按上表对号 |
+
+### continuation-first 约束
+
+当用户输入是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复时，本技能先做 continuation-first：
+
+1. 先看是否存在**唯一候选 issue 目录**
+2. 命中 → 直接按该目录现有产物判断 report / analyze / fix
+3. 多个候选 → 列给用户选，不猜
+4. 没有候选 → 才按普通 issue 路由处理
+
+如果需要恢复桥接信息，可参考 `.ccg/tasks/*/task.json`，但它**只作 task 状态桥**，不能替代 issue 目录里的 report / analysis / fix-note 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
+
+---
 
 用户描述的是**新功能需求而不是 bug** → 告诉用户走 `cs-feat`。
 
