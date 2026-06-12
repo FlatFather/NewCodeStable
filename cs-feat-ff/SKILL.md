@@ -184,7 +184,8 @@ tags: [...]
 
 1. 暴露的坑 → "沉淀 learning？（`cs-learn`）"
 2. 拍板的长期约束 → "归档决定？（`cs-decide`）"
-3. 最后问是否代为 scoped-commit
+3. 环境坑点 → "发现需要记到 attention.md 的吗？（`cs-note`）"
+4. 最后问是否代为 scoped-commit
 
 ---
 
