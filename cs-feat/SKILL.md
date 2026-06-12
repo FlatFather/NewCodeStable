@@ -118,7 +118,9 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 ## 与 issue 工作流的边界
 
 - feature：从来没有的东西要加进来（新功能 / 新能力）
-- issue：本来应该好的东西坏了（bug / 异常 / 文档错误）
+- issue：本来应该好的东西坏了（bug / 异常 / 文档错误 / 性能问题）
+
+完整判据见 `.codestable/reference/terminology.md` 第 1 节。
 
 灰色地带：feature 实现时发现的 bug 记成新 issue，不在 feature PR 顺手修。
 

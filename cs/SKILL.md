@@ -125,7 +125,7 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 
 ### 沉淀类技能的细分
 
-判别口诀：
+判别口诀（完整判据见 `.codestable/reference/terminology.md` 第 2 节）：
 
 - 回顾"做 X 时踩了 Y" → `cs-learn`
 - 处方"以后做 X 就这样做" → `cs-trick`

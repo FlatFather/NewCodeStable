@@ -68,14 +68,9 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 ## 沉淀类四个子技能如何区分
 
-learning / trick / decision / explore 都是存档文档类型,区别在记录内容的性质:
+learning / trick / decision / explore 都是存档文档类型，区别在记录内容的性质。完整判据见 `.codestable/reference/terminology.md` 第 2 节。
 
-- 回顾某次做 X 时发现了 Y —— `cs-learn`(产出 `doc_type: learning`)
-- 以后做 X 就这样做的处方 —— `cs-trick`(产出 `doc_type: trick`)
-- 全项目今后都得遵守的规定 —— `cs-decide`(产出 `doc_type: decision`)
-- 调查了一个问题,留份证据 —— `cs-explore`(产出 `doc_type: explore`)
-
-四者共用 `.codestable/compound/` 目录,靠 frontmatter 的 `doc_type` 字段和文件名中间的类型段(`YYYY-MM-DD-{doc_type}-{slug}.md`)区分。每个子技能只认自己的 `doc_type`,不读写别家产物——**"A 和 B 有什么不同"这种判断由本节负责,子技能里不再重复**。
+四者共用 `.codestable/compound/` 目录，靠 frontmatter 的 `doc_type` 字段和文件名中间的类型段区分。每个子技能只认自己的 `doc_type`，不读写别家产物——**"A 和 B 有什么不同"这种判断由 terminology.md 负责，子技能里不再重复**。
 
 
 ## 愿景档案 vs 结构档案 vs 规划档案 vs 单次动作
@@ -104,6 +99,7 @@ AI 最常见的问题是一口气铺几百行代码才让人看——等发现�
 ## 进一步参考
 
 - `.codestable/reference/shared-conventions.md` — 目录结构、YAML frontmatter 口径、`{slug}-checklist.yaml` 生命周期、收尾 commit 约定、归档类共享规则
+- `.codestable/reference/terminology.md` — 关键术语与路由判据（feature vs issue、沉淀类技能区分、fastforward 判据等）
 - `.codestable/reference/tools.md` — `search-yaml.py` / `validate-yaml.py` 用法
 - `.codestable/reference/maintainer-notes.md` — 断点恢复、新增子工作流的登记
 
