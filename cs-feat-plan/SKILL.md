@@ -9,7 +9,7 @@ description: feature 流程阶段 2——基于已批准的 `{slug}-design.md` �
 
 开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
 
-`cs-feat-design` 负责把“做什么 / 为什么做 / 范围到哪”为人类拍板清楚；`cs-feat-plan` 接手后只做一件事：把已批准 design 展开成可执行的 `plan.md`，并从 `design + plan` 抽出 `checklist.yaml`，让用户在进入实现前有一个单独的执行计划确认关口。
+`cs-feat-design` 负责把”做什么 / 为什么做 / 范围到哪”为人类拍板清楚；`cs-feat-plan` 接手后只做一件事：基于已批准 design 生成 `plan.md` (step source) 与 `checklist.yaml` (status carrier)。其中 checklist 的 `steps` 从 plan 的推进顺序派生，`checks` 从 design 各节约束派生。用户在进入实现前有一个单独的执行计划确认关口。
 
 > 共享路径与命名约定看 `.codestable/reference/shared-conventions.md`。`plan.md` 是 step source，`checklist.yaml` 是 status carrier；本阶段不改 scope。
 

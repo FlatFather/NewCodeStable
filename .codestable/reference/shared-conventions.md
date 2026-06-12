@@ -143,7 +143,7 @@ fastforward 继续作为独立快路径存在；历史 legacy 目录（`design +
 ## 3. {slug}-checklist.yaml 生命周期
 
 - 是 feature 工作流的机器可读状态载体，不是详细执行步骤正文
-- 由 `cs-feat-plan` 在 approved design 后生成；`cs-feat-plan` 先落 `plan.md`，再从 design + plan 抽 `steps` + `checks`
+- `cs-feat-plan` 基于已批准 design 生成 `plan.md` (step source) 与 `checklist.yaml` (status carrier)。其中 checklist 的 `steps` 从 plan 的推进顺序派生，`checks` 从 design 各节约束派生
 - 标准 feature 的 checklist 步骤顺序和状态推进必须与 `{slug}-plan.md` 对齐；详细步骤解释仍写在 plan，不回流到 checklist
 - `cs-feat-ff` **不生成** checklist（也不写 design / acceptance），是跳过 spec 流程直接写代码的超轻量通道；唯一留下的痕迹是动手后回写的 `{slug}-ff-note.md`（轻量回顾，参与 scoped-commit、可被 cs-arch / cs-req backfill 检索到）
 
@@ -153,7 +153,7 @@ fastforward 继续作为独立快路径存在；历史 legacy 目录（`design +
 
 - 提供 plan/checklist 派生所需的推进策略切片（第 2.4），但不直接落盘 `steps` / `checks`
 - 提取 `checks` 的来源：第 1 节"明确不做"→ 范围守护；第 2.1 接口 → 名词契约；第 2.2 主流程 + 流程级约束 → 编排骨架；第 2.3 挂载点 → 挂载点；第 3 节场景清单 → 验收场景
-- `cs-feat-plan` 基于已批准 design 生成 `plan.md` 与 `checklist.yaml`；design 仍然只决定范围和切片策略，不把 detailed step narrative 塞回 checklist
+- `cs-feat-plan` 基于已批准 design 生成 `plan.md` (step source) 与 `checklist.yaml` (status carrier)。其中 checklist 的 `steps` 从 plan 的推进顺序派生，`checks` 从 design 各节约束派生
 
 **implement 的职责**：
 
