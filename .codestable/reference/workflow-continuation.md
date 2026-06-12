@@ -1,3 +1,7 @@
+---
+protocol_version: 1.0
+---
+
 # Workflow Continuation Protocol
 
 本文件定义本仓库内 skills 的 **continuation-first** 共享协议：当用户输入短回复时，先判断是否在继续已有流程，再决定是否重新路由。

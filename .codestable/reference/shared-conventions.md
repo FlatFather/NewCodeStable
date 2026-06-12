@@ -101,7 +101,7 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 **写作约束**：子技能提字段时优先写"额外字段"或"阶段状态变化"，不重复展开整套通用字段。
 ### 1.5 continuation-first 摘要
 - 本仓库内 skills 遇到 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复时，默认先做 continuation-first 检测；只有存在**唯一候选续作**时才自动继续，多个候选必须停下来让用户选。
-- `.ccg/tasks/*/task.json` 只作**task 状态桥**，不替代 feature / issue spec 产物的真相源地位；详细共享协议见 `.codestable/reference/workflow-continuation.md`，本文件只保留摘要与指针。
+- `.ccg/tasks/*/task.json` 只作**task 状态桥**，不替代 feature / issue spec 产物的真相源地位；详细共享协议见 `.codestable/reference/workflow-continuation.md` (v1.0)，本文件只保留摘要与指针。
 ---
 ## 2. feature 产物职责边界
 
