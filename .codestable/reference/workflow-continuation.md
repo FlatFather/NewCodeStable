@@ -10,7 +10,7 @@
 
 只适用于**本项目仓库内**的 workflow skills：
 
-- 顶层入口：`cs`、`cs-feat`、`cs-issue`
+- 顶层入口：`cs`、`cs-feat`、`cs-issue`、`cs-refactor`、`cs-audit`
 - feature 阶段：`cs-feat-design`、`cs-feat-plan`、`cs-feat-impl`、`cs-feat-accept`
 - issue 阶段：`cs-issue-report`、`cs-issue-analyze`、`cs-issue-fix`
 

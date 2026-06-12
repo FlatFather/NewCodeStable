@@ -50,6 +50,25 @@ description: 系统审计——从代码中主动发现 bug 隐患、安全漏�
 
 ---
 
+## 短回复 continuation-first
+
+当用户输入 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复时，先按 continuation-first 处理：
+
+1. **检查是否存在唯一候选 audit 目录**——Glob `.codestable/audits/`
+2. **命中唯一候选**：
+   - 读取该目录下的产物状态
+   - 根据已有文件判断当前阶段：
+     - 只有 `index.md` 且内容不完整 → 继续 Phase 2 扫描
+     - `index.md` 完整但 `finding-*.md` 不完整 → 继续 Phase 3 产出
+     - 所有文件完整 → 进入 Phase 4 建议下一步
+   - 汇报"检测到上次审计 {范围}，从 {阶段} 继续"
+3. **多个候选**——列出来让用户选，不猜
+4. **没有候选**——才按普通审计流程处理（从 Phase 1 范围收敛开始）
+
+必要时可参考 `.ccg/tasks/*/task.json` 作为恢复桥，但它**只作 task 状态桥**，不替代 audit 目录里的 index / finding 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
+
+---
+
 ## 工作流
 
 ### Phase 1：范围收敛

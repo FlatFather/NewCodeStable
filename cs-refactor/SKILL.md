@@ -57,6 +57,26 @@ scan（扫优化点清单）→ design（和用户定做哪几条 + 顺序）→
 
 ---
 
+## 短回复 continuation-first
+
+当用户输入 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复时，先按 continuation-first 处理：
+
+1. **检查是否存在唯一候选 refactor 目录**——Glob `.codestable/refactors/`
+2. **命中唯一候选**：
+   - 读取该目录下的产物状态
+   - 根据已有文件判断当前阶段：
+     - 只有 `{slug}-scan.md` → 继续 scan 或进入 design
+     - 有 `{slug}-refactor-design.md` 但 `status=draft` → 继续 design
+     - design `status=approved` 且有 `{slug}-checklist.yaml` → 进入 apply
+     - 有 `{slug}-apply-notes.md` → 继续 apply 或已完成
+   - 汇报"检测到上次工作到 {阶段}，从 {下一步} 继续"
+3. **多个候选**——列出来让用户选，不猜
+4. **没有候选**——才按普通 refactor 路由处理
+
+必要时可参考 `.ccg/tasks/*/task.json` 作为恢复桥，但它**只作 task 状态桥**，不替代 refactor 目录里的 scan / design / checklist / apply-notes 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
+
+---
+
 ## 阶段 1：scan
 
 ### 先跑前置检查（7 条），命中就停
