@@ -7,7 +7,13 @@ description: feature 流程的超轻量通道——不写 design / checklist 直
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 用户让你做小功能时本来 AI 就会直接动手——这个技能**不改变这件事**。它只做一件事：动手前把项目里已沉淀的 CodeStable 知识指给你，按需搜一下，写出来的代码就比裸写多一层保护；动手后回写一份**最简的 `{slug}-ff-note.md`** 让这次工作可追溯、可被 cs-arch / cs-req backfill 看到、能纳入 scoped-commit 提交。
 
@@ -95,7 +101,7 @@ design / implement 的硬约束在 fastforward 的精简版。没 design doc 不
 - 往 `utils.ts` / `helpers.ts` 万能 util 堆东西
 - 新起概念名时先 grep 同名 / 近义命名
 
-完整清单看 `.codestable/reference/shared-conventions.md` 第 7 节。
+完整清单看 `.codestable/reference/shared-conventions.md` 第 7 节（写代码时的反射检查）。
 
 ---
 
@@ -175,12 +181,12 @@ tags: [...]
 
 ## 收尾提交
 
-按 `.codestable/reference/shared-conventions.md` 第 4 节"scoped-commit"规则执行。本通道：
+按 `.codestable/reference/shared-conventions.md` 第 4 节（收尾提交）"scoped-commit"规则执行。本通道：
 
 - **提交范围**：本次代码改动 + `{slug}-ff-note.md`
 - ff-note 落盘后告诉用户"已就绪，是否代为 commit？"，用户明确同意才执行
 
-按 `shared-conventions.md` 第 3 节"feature-ff"收尾推荐顺序逐项一句话提示（用户"不用"立即跳过）：
+按 `shared-conventions.md` 第 3 节（阶段收尾推荐）"feature-ff"收尾推荐顺序逐项一句话提示（用户"不用"立即跳过）：
 
 1. 暴露的坑 → "沉淀 learning？（`cs-learn`）"
 2. 拍板的长期约束 → "归档决定？（`cs-decide`）"

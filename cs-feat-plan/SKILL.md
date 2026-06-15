@@ -7,11 +7,19 @@ description: feature 流程阶段 2——基于已批准的 `{slug}-design.md` �
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
+- `.codestable/reference/shared-conventions-feature.md` — feature 产物职责边界
+- `.codestable/reference/shared-conventions-checklist.md` — checklist 生命周期
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出”已复用上下文”并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 `cs-feat-design` 负责把”做什么 / 为什么做 / 范围到哪”为人类拍板清楚；`cs-feat-plan` 接手后只做一件事：基于已批准 design 生成 `plan.md` (step source) 与 `checklist.yaml` (status carrier)。其中 checklist 的 `steps` 从 plan 的推进顺序派生，`checks` 从 design 各节约束派生。用户在进入实现前有一个单独的执行计划确认关口。
 
-> 共享路径与命名约定看 `.codestable/reference/shared-conventions.md`。`plan.md` 是 step source，`checklist.yaml` 是 status carrier；本阶段不改 scope。
+> 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。`plan.md` 是 step source，`checklist.yaml` 是 status carrier；详细生命周期看 `.codestable/reference/shared-conventions-feature.md` 和 `.codestable/reference/shared-conventions-checklist.md`；本阶段不改 scope。
 
 ---
 

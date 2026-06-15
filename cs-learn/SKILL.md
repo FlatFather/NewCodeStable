@@ -7,7 +7,13 @@ description: 把踩过的坑或好做法沉淀成可检索的 learning 文档，
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 每次做 feature 或修 issue 都会留下 spec 文件。但 spec 记录的是"做了什么"和"怎么做的"，**不会记录"踩了什么坑"和"发现了什么更好的做法"**。没有沉淀的团队总在重复解决同一个问题。
 
@@ -16,7 +22,7 @@ description: 把踩过的坑或好做法沉淀成可检索的 learning 文档，
 - **坑点轨道**（pitfall）：记录问题 / 根因 / 解法，防止下次再掉进同一个坑
 - **知识轨道**（knowledge）：记录最佳实践 / 工作流改进 / 可复用模式
 
-两者都写入 `.codestable/compound/`（共享目录见 `shared-conventions.md` 第 1 节"归档类文档"）。本技能产出 frontmatter 带 `doc_type: learning`，命名 `YYYY-MM-DD-learning-{slug}.md`。
+两者都写入 `.codestable/compound/`（共享目录见 `shared-conventions.md` 第 1 节（共享元数据口径）。本技能产出 frontmatter 带 `doc_type: learning`，命名 `YYYY-MM-DD-learning-{slug}.md`。
 
 ---
 
@@ -57,7 +63,7 @@ frontmatter / 正文模板 / 完整示例见同目录 `reference.md`。
 
 ### Phase 1.5：查重叠与意图分流（必做）
 
-按 `shared-conventions.md` §6 第 5/6 条：
+按 `shared-conventions.md` 第 6 节 第 5/6 条：
 
 - 含"改 / 更新 / 补充 / 某条 learning"或指向某份旧文档 → 直接走**更新已有**
 - 否则用搜索工具按 `--filter tags~=` 或 `--query` 查一遍，命中相近旧文档时把候选列给用户
@@ -89,7 +95,7 @@ AI 一次性起草完整文档（YAML frontmatter + 所有正文节）。一次�
 
 - 新建：写入 `compound/YYYY-MM-DD-learning-{slug}.md`（日期取**归档当天**），frontmatter 带 `doc_type: learning`
 - 更新：写回 Phase 1.5 定位的原文件 + `updated: YYYY-MM-DD`
-- supersede：按 `shared-conventions.md` §6 第 5 条处理
+- supersede：按 `shared-conventions.md` 第 6 节 第 5 条处理
 
 ### Phase 5：可发现性检查
 
@@ -119,7 +125,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_
 
 ## 守护规则
 
-> 归档类共享规则见 `shared-conventions.md` 第 6 节。本技能特有：
+> 归档类共享规则见 `shared-conventions.md` 第 6 节（归档类守护规则）。本技能特有：
 
 1. **不混入 spec**——learning 不放进 `features/` 或 `issues/`；spec 也不放进 `compound/`
 2. **只认自己的 doc_type**——只读写 `doc_type: learning`

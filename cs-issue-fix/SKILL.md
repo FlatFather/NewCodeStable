@@ -7,13 +7,20 @@ description: issue 流程阶段 3——按已确认根因和方案定点修复�
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
+- `.codestable/reference/shared-conventions.md` — 反射检查与收尾规则
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 根因和方案已经确定（标准路径在 analysis、快速通道在 report 阶段口头确认过），你的活是按方案改代码、验证效果、写下修复记录。
 
 fix 阶段最容易出问题的不是改代码本身，而是**改的过程中冒出的"顺手"冲动**——顺手优化、顺手重构、顺手加抽象。每项单独看说得通，但合在一个 PR 里让别人分不清"这次到底为了修 bug 改了什么"。
 
-> 共享路径与命名约定看 `.codestable/reference/shared-conventions.md` 第 0 节和 `cs-issue` 的"文件放哪儿"。
+> 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md` 和 `cs-issue` 的"文件放哪儿"。
 
 ---
 
@@ -62,7 +69,7 @@ fix 阶段最容易出问题的不是改代码本身，而是**改的过程中�
 
 ### 代码质量反射检查
 
-修 bug 看似动作小但 AI 写修复代码一样会漂——大文件再塞特殊处理、大类再加方法、为绕开边界加 `if` 分支。反射检查见 `shared-conventions.md` 第 7 节。
+修 bug 看似动作小但 AI 写修复代码一样会漂——大文件再塞特殊处理、大类再加方法、为绕开边界加 `if` 分支。反射检查见 `shared-conventions.md` 第 7 节（写代码时的反射检查）。
 
 issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该拆"时默认不在本次 PR 做**——按"改动最小化"记成顺手发现。唯一例外是"不拆就没法干净修这个 bug"，那停下来跟用户确认"修这个 bug 的前置是 {重构动作}，合进来还是拆出去单独做"。
 
@@ -113,7 +120,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 ## 收尾提交
 
-按 `shared-conventions.md` 第 4 节"scoped-commit"规则执行。本阶段：
+按 `shared-conventions.md` 第 4 节（收尾提交）"scoped-commit"规则执行。本阶段：
 
 - **提交范围**：修复代码 + `{slug}-fix-note.md` + 本次一并更新的 report / analysis
 - 修复闭环后告诉用户"修复验证已完成，`{slug}-fix-note.md` 已落盘"，紧接着问是否需要 commit
@@ -124,7 +131,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 告诉用户："issue 修复完成，工作流闭环。report + analysis + fix-note 已存档。"
 
-按 `shared-conventions.md` 第 3 节"issue-fix"收尾推荐顺序各问一句（用户"不用"立即跳过）：
+按 `shared-conventions.md` 第 3 节（阶段收尾推荐）"issue-fix"收尾推荐顺序各问一句（用户"不用"立即跳过）：
 
 1. 暴露了值得复用的坑点 → "沉淀 learning？（`cs-learn`）"
 2. 沉淀出长期约束 / 规约 / 技术决定 → "归档决定？（`cs-decide`）"

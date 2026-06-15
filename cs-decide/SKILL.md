@@ -7,7 +7,13 @@ description: 把已拍板的技术选型、架构决定、长期约束、编码�
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 项目里"有意做出的选择"——技术选型 / 架构决定 / 长期约束 / 编码规约——特别容易丢失。它不会触发报错、没人会注意到它消失，但消失代价很具体：
 
@@ -58,7 +64,7 @@ frontmatter / 正文模板 / 示例见同目录 `reference.md`。本技能流程
 
 ### Phase 1.5：查重叠与意图分流（必做）
 
-按 `shared-conventions.md` §6 第 5/6 条执行：
+按 `shared-conventions.md` 第 6 节 第 5/6 条执行：
 
 - 用户话里含"改 / 更新 / 推翻 / 某条决策 / 某个选型"或明确指向某份旧决策 → 直接走**更新或 supersede**。决策文档特性：**结论本身变更几乎总要 supersede**（旧结论留痕不能原地覆盖）；只补背景 / 替代方案 / 影响描述时走"更新已有条目"
 - 否则用下面"搜索工具"按 category + 关键词查一遍，命中相近旧决策时把候选列给用户
@@ -83,7 +89,7 @@ AI 根据对话起草完整文档（YAML frontmatter + 所有正文节）。一�
 
 - 新建：写入 `.codestable/compound/YYYY-MM-DD-decision-{slug}.md`，frontmatter 顶部带 `doc_type: decision`
 - 更新：写回 Phase 1.5 定位到的原文件，frontmatter 补 `updated: YYYY-MM-DD`
-- supersede：按 `shared-conventions.md` §6 第 5 条处理；旧文档 `status: superseded` + `superseded-by`
+- supersede：按 `shared-conventions.md` 第 6 节 第 5 条处理；旧文档 `status: superseded` + `superseded-by`
 
 ### Phase 5：相关工作流更新提示
 
@@ -116,7 +122,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_
 
 ## 守护规则
 
-> 归档类工作流共享守护规则（只增不删 / 宁缺毋滥 / 不替用户写 / 可发现性 / 归档后查重叠）见 `shared-conventions.md` 第 6 节。本技能特有：
+> 归档类工作流共享守护规则（只增不删 / 宁缺毋滥 / 不替用户写 / 可发现性 / 归档后查重叠）见 `shared-conventions.md` 第 6 节（归档类守护规则）。本技能特有：
 
 1. **只归档已拍板的决定**——讨论中的方案不归档
 2. **status=superseded 不等于删除**——被取代的保留原文 + `superseded-by` + 正文顶部 `**[已取代]** 见 {新文档 slug}`

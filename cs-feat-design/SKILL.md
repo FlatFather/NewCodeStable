@@ -7,11 +7,20 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
+- `.codestable/reference/shared-conventions-feature.md` — feature 产物职责边界
+- `.codestable/reference/shared-conventions-roadmap.md` — roadmap ↔ feature 衔接（从 roadmap 起头时）
+- `.codestable/reference/shared-conventions.md` — 归档检索规则
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 这一阶段的产出是一份方案文件 `{slug}-design.md`。design 继续是范围与约束的唯一方案源；后续由 `cs-feat-plan` 基于已批准 design 生成 `{slug}-plan.md` 与 `{slug}-checklist.yaml`。
 
-> 共享路径和命名约定看 `.codestable/reference/shared-conventions.md`。本阶段一般 feature 目录已经由 brainstorm 创建好了；没有的话在这一步建。
+> 共享路径和命名约定看 `.codestable/reference/shared-conventions-core.md`。本阶段一般 feature 目录已经由 brainstorm 创建好了；没有的话在这一步建。
 
 本阶段有三个入口：
 
@@ -19,7 +28,7 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 - **初始化模式**：用户说"开一个新需求 / 起个草稿 / 新建一个 feature"，但想自己先写半成品方案而不是口述。走下一节"初始化模式"，建好目录和空 `{slug}-intent.md` 就结束本轮，等用户填完再回来。
 - **从 roadmap 条目起头**：用户说"开始做 roadmap 里的 {子 feature slug}"或"推进 {roadmap} 的下一条"。slug 从 roadmap items.yaml 取，不另起；动笔前要读 roadmap 主文档和 items.yaml 了解上下文和依赖状态；落盘时 frontmatter 要带 `roadmap` / `roadmap_item` 两个字段，同时回写 items.yaml 把对应条目 `status` 改为 `in-progress`、`feature` 填为 feature 目录名。详见下文"从 roadmap 条目起头"。
 
-`intent.md` 作为 feature 可选前置草稿的共享身份看 `.codestable/reference/shared-conventions.md`；本技能负责的是**初始化模式如何建这份草稿、以及正式起草时如何读取它**。
+`intent.md` 作为 feature 可选前置草稿的共享身份看 `.codestable/reference/shared-conventions-feature.md`；本技能负责的是**初始化模式如何建这份草稿、以及正式起草时如何读取它**。
 
 ---
 
@@ -77,7 +86,7 @@ description: feature 流程阶段 1——为新功能起草 {slug}-design.md 作
 3. **走"流程"一节**，frontmatter 加 `roadmap` / `roadmap_item` 两字段
 4. **落盘 `status: approved` 同时回写 items.yaml**：对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`，用 `validate-yaml.py` 校验。若该 feature 后续采用 hybrid 口径，`roadmap` / `roadmap_item` 继续由 design frontmatter 承载，plan 不另起第二套状态机；`feature` 目录名继续作为 design / plan / checklist / acceptance / items.yaml 的唯一绑定键
 
-完整衔接协议看 `.codestable/reference/shared-conventions.md` 第 2.5 节。
+完整衔接协议看 `.codestable/reference/shared-conventions-roadmap.md`。
 
 ### 历史 feature 重开
 
@@ -171,7 +180,7 @@ design 只管"编排-计算分离"里的编排那一侧：**这次 feature 在�
 - **复杂度档位对齐**——需求里出现"对外 SDK / 高并发 / 一次性工具"等偏离信号时，打开 `.codestable/reference/code-dimensions.md` 列偏离点；无信号写"走默认档位"
 - **grep 找"叫法不同的类似模块"**——直觉"可能已有人做过但命名不同"时，grep 同义词
 
-详细规则看 `.codestable/reference/shared-conventions.md` 第 5 节。
+详细规则看 `.codestable/reference/shared-conventions.md` 第 5 节（归档检索规则）（归档检索规则）。
 
 ### 2. 想清楚这功能该放在哪儿
 

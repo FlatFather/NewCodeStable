@@ -7,11 +7,19 @@ description: feature 流程阶段 3——按 `{slug}-plan.md` 与 `{slug}-checkl
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
+- `.codestable/reference/shared-conventions-feature.md` — feature 产物职责边界
+- `.codestable/reference/shared-conventions.md` — 反射检查规则
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 到这一步用户已经在方案上签过字了，你的活是把方案变成代码。容易出问题的不是写代码本身，而是**实现路上发现方案没覆盖到的情况时怎么办**——硬冲下去就把方案当摆设了。下面整套规则就是为了让"停下来"成为默认动作。
 
-> 共享路径与命名约定看 `.codestable/reference/shared-conventions.md` 第 0 节。
+> 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。
 
 ---
 
@@ -104,7 +112,7 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 ### 不做方案外的改动
 
-发现值得重构的点（参考 `.codestable/reference/shared-conventions.md` 第 7 节"写代码时的反射检查"），只要**不在本次功能影响面内**就记成后续 issue：
+发现值得重构的点（参考 `.codestable/reference/shared-conventions.md` 第 7 节（写代码时的反射检查）"写代码时的反射检查"），只要**不在本次功能影响面内**就记成后续 issue：
 
 ```markdown
 > 顺手发现：{文件:行号} {问题简述}。不在本次范围，记录待后续 issue。
@@ -126,7 +134,7 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 ### 代码质量反射检查
 
-除上面流程约束外，还有一组针对代码质量的反射检查——看 `.codestable/reference/shared-conventions.md` 第 7 节。
+除上面流程约束外，还有一组针对代码质量的反射检查——看 `.codestable/reference/shared-conventions.md` 第 7 节（写代码时的反射检查）。
 
 核心：**不是"超过 N 行必须拆"，而是"遇到 X 情况就停下来问自己"**。每条对应 AI 默认会走进去的坑（往大文件继续追加、往大类加方法、补丁分支、复制粘贴、第 4+ 个参数、往万能 util 堆东西）。
 

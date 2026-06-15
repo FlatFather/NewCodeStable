@@ -7,7 +7,13 @@ description: 对仓库做定向代码探索并把"提问→读代码→得结论
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 同一个问题第一次花两小时查代码，第二次应该五分钟内找到答案——前提是第一次做完留下证据化的记录。cs-explore 把"提问 → 读代码 → 得结论"沉淀成可检索的探索文档。
 
@@ -62,7 +68,7 @@ frontmatter / 正文结构 / 各节写法说明和示例见同目录 `reference.
 
 ### Phase 1.5：查重叠与意图分流（必做）
 
-按 `shared-conventions.md` §6 第 5/6 条执行：
+按 `shared-conventions.md` 第 6 节 第 5/6 条执行：
 
 - 含"更新 / 复查 / 某次 explore / 这个模块之前探过"或指向某份旧 explore → 走**更新或 supersede**。explore 特性：**代码已变导致旧结论失效**时旧文档 `status: outdated` + 新建一份（supersede）；只补证据 / 收紧结论但核心结论未变时走"更新已有"
 - 否则用搜索工具按关键词 / 模块查一遍，命中相近旧 explore 时先读它，能直接回答就告诉用户"已有一份在 {路径}，复用还是重探一遍？"
@@ -89,7 +95,7 @@ frontmatter / 正文结构 / 各节写法说明和示例见同目录 `reference.
 
 - 新建：写入 `.codestable/compound/YYYY-MM-DD-explore-{slug}.md`，frontmatter 带 `doc_type: explore`
 - 更新：写回 Phase 1.5 定位的原文件 + `updated: YYYY-MM-DD`
-- supersede：按 `shared-conventions.md` §6 第 5 条；旧文档 `status: outdated` + `superseded-by`
+- supersede：按 `shared-conventions.md` 第 6 节 第 5 条；旧文档 `status: outdated` + `superseded-by`
 
 ### Phase 5：给出下一步建议
 
@@ -126,7 +132,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_
 
 ## 守护规则
 
-> 归档类共享规则见 `shared-conventions.md` 第 6 节。本技能特有反模式：
+> 归档类共享规则见 `shared-conventions.md` 第 6 节（归档类守护规则）。本技能特有反模式：
 
 - 不读代码直接给结论
 - 证据只写"看起来像"不写 file:line

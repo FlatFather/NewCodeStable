@@ -7,7 +7,13 @@ description: 新功能开发的子流程入口，把"加个 X 能力"从想法�
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions-feature.md` — feature 产物职责边界
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 新功能流程在"需求"和"代码"之间塞了一份方案文件，让两边有交接点——AI 直接拿到需求就写代码会出三个老问题：名字跟原代码对不上、改着改着改出范围、改完不留存档。
 
@@ -109,7 +115,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 - brainstorm：用户脑子里模糊，AI 通过 `cs-brainstorm` 对话收敛；判 case 3 时移交 `cs-roadmap`，只有 case 2 落 brainstorm note
 - intent：用户自己已经想好大致做法，想先写一份 `{slug}-intent.md` 前置草稿；路由到 `cs-feat-design` 的初始化模式
 
-这里的职责只到**路由判断**为止：`intent.md` 作为 feature 可选前置草稿的共享身份看 `.codestable/reference/shared-conventions.md`，草稿骨架和初始化步骤看 `cs-feat-design`。
+这里的职责只到**路由判断**为止：`intent.md` 作为 feature 可选前置草稿的共享身份看 `.codestable/reference/shared-conventions-feature.md`，草稿骨架和初始化步骤看 `cs-feat-design`。
 
 用户模糊触发"开一个新需求"时默认问"你想先聊清楚（brainstorm）还是自己写草稿（intent）？"，别自己挑。
 

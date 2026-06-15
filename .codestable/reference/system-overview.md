@@ -15,7 +15,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 **做事**——从一段模糊想法走到上线的功能、或者从一份错误报告走到修好的 bug:
 
-- `cs-feat` — 新功能,design → plan → 分步实现 → 验收闭环；`cs-feat-design` 只负责范围与约束，`cs-feat-plan` 负责生成 `plan.md` + `checklist.yaml` 并形成进入实现前的独立确认关口（想法还模糊时先走讨论层 `cs-brainstorm` 做分诊，不属于 feature 流程内部）。fastforward 保持为独立快路径。
+- `cs-feat` — 新功能，design → plan → 分步实现 → 验收闭环；`cs-feat-design` 只负责范围与约束，`cs-feat-plan` 负责生成 `plan.md` + `checklist.yaml` 并形成进入实现前的独立确认关口。想法模糊时先走讨论层 `cs-brainstorm` 做分诊（阶段 0，可选且是 feature 流程的外部入口）；fastforward 保持为独立快路径。
 - `cs-issue` — 修 bug,report → analyze → fix
 - `cs-refactor` — 代码优化(行为不变、结构/性能/可读性变),scan → design → apply
 

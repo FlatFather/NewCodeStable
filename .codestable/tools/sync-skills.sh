@@ -6,15 +6,39 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 DEST_ROOT="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
 DRY_RUN=0
 
+# Safety: whitelist of allowed destination roots
+ALLOWED_DESTS=(
+  "$HOME/.claude/skills"
+  "$HOME/.agents/skills"
+)
+
+check_dest_allowed() {
+  local dest="$1"
+  local allowed
+  for allowed in "${ALLOWED_DESTS[@]}"; do
+    if [[ "$dest" == "$allowed"* ]]; then
+      return 0
+    fi
+  done
+  echo "ERROR: Destination '$dest' is not in the allowed whitelist:" >&2
+  printf "  %s\n" "${ALLOWED_DESTS[@]}" >&2
+  exit 3
+}
+
 usage() {
   cat <<'EOF'
 Usage:
   sync-skills.sh [--dry-run] [skill-name ...]
 
 Examples:
-  sync-skills.sh
+  sync-skills.sh --dry-run
   sync-skills.sh --dry-run cs cs-feat cs-feat-design
+  sync-skills.sh cs-feat
   CLAUDE_SKILLS_DIR=$HOME/.claude/skills sync-skills.sh cs-feat
+
+Safety:
+  - Destination root must be in the whitelist: ~/.claude/skills or ~/.agents/skills
+  - Use --dry-run first to preview changes before applying
 
 Behavior:
   - Scans the repository root for top-level skill directories containing SKILL.md
@@ -48,6 +72,9 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+# Safety check: validate destination root is in whitelist
+check_dest_allowed "$DEST_ROOT"
 
 matches_selected() {
   local slug="$1"

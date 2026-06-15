@@ -7,7 +7,16 @@ description: feature 流程阶段 4——验收闭环：对照 design / plan 核
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
+- `.codestable/reference/shared-conventions-feature.md` — feature 产物职责边界
+- `.codestable/reference/shared-conventions-roadmap.md` — roadmap ↔ feature 衔接
+- `.codestable/reference/shared-conventions.md` — 收尾推荐与提交规则
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 代码已经写完，但流程没结束。本阶段做四件事，缺一不可：
 
@@ -20,7 +29,7 @@ description: feature 流程阶段 4——验收闭环：对照 design / plan 核
 
 **没产出报告 = 工作流未完成**。后人查"上次这个功能验收时确认了哪些行为"，没报告就只能翻 git diff 重新推断。
 
-> 共享路径与命名约定看 `.codestable/reference/shared-conventions.md` 第 0 节。
+> 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。
 
 ---
 
@@ -63,7 +72,7 @@ description: feature 流程阶段 4——验收闭环：对照 design / plan 核
 
 ## 验收报告模板
 
-逐节填写**别跳节**。报告路径在 feature 目录下（位置看 `shared-conventions.md` 第 0 节）。
+逐节填写**别跳节**。报告路径在 feature 目录下（位置看 `.codestable/reference/shared-conventions-core.md`）。
 
 ```markdown
 # {功能名称} 验收报告
@@ -184,7 +193,7 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
   - 同步 `{roadmap}-roadmap.md` 主文档第 3 节子 feature 清单的对应条目状态
 - [ ] 两字段不一致（只填了一个）→ 停下来补齐或澄清
 
-衔接协议看 `shared-conventions.md` 第 2.5 节。和归并 / req 同规则：实际写文件的动作。
+衔接协议看 `.codestable/reference/shared-conventions-roadmap.md`。和归并 / req 同规则：实际写文件的动作。
 
 ## 8. attention.md 候选盘点
 
@@ -231,7 +240,7 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 
 告诉用户："验收报告已就绪，架构文档已归并，cs-feat 工作流走完。后续 BUG 走 issue 流程。"
 
-按 `shared-conventions.md` 第 3 节收尾推荐顺序逐项一句话提示（用户说"不用"立刻跳过）：
+按 `.codestable/reference/shared-conventions.md` 第 3 节（阶段收尾推荐）（阶段收尾推荐）收尾推荐顺序逐项一句话提示（用户说"不用"立刻跳过）：
 
 1. 复用价值的坑点 / 经验 → "需要沉淀 learning 吗？（`cs-learn`）"
 2. 长期约束 / 技术选型 → "需要归档决定吗？（`cs-decide`）"
@@ -241,7 +250,7 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 5. 第 8 节有 attention.md 候选 → 逐条问"候选 X 加到 attention.md 吗？" 用户明确同意 → 触发 `cs-note` 走分节归类 / 查重 / 软上限检查（不在 accept 里手写，避免和 cs-note 各搞一套口径）；**一次一条**
 6. 最后问是否代为 scoped-commit
 
-收尾提交规则看 `shared-conventions.md` 第 4 节。提交范围：功能代码 + 方案 doc + 验收报告 + 本次实际更新的架构 doc / req doc / roadmap items.yaml + 主文档。
+收尾提交规则看 `.codestable/reference/shared-conventions.md` 第 4 节（收尾提交）（收尾提交）。提交范围：功能代码 + 方案 doc + 验收报告 + 本次实际更新的架构 doc / req doc / roadmap items.yaml + 主文档。
 
 ---
 

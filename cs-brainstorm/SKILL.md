@@ -5,6 +5,16 @@ description: 想法还模糊时的讨论入口，做分诊后路由到 feature-d
 
 # cs-brainstorm
 
+## 启动必读
+
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
+
 brainstorm 是"讨论层"统一入口。
 
 三件最重要的事：

@@ -7,7 +7,13 @@ description: 把可复用的编程模式 / 库用法 / 技术技巧整理成处�
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 cs-trick 是面向问题的**处方性参考库**，回答：**要做 X，经过验证的正确做法是什么？** 不需要触发事件，任何时候发现值得沉淀的模式或用法都可以直接写。
 
@@ -54,7 +60,7 @@ frontmatter / 正文模板 / 长示例见同目录 `reference.md`。流程约束
 
 ### Phase 1.5：查重叠与意图分流（必做）
 
-按 `shared-conventions.md` §6 第 5/6 条：
+按 `shared-conventions.md` 第 6 节 第 5/6 条：
 
 - 含"改 / 更新 / 修订 / 补充 / 某条 trick"或指向某份旧文档 → 直接走**更新已有**，不进新建流程
 - 否则用搜索工具 `--query` 查一遍 `topic`，命中相近时把候选列给用户
@@ -93,7 +99,7 @@ AI 一次性起草完整文档（YAML frontmatter + 正文）。示例代码优�
 
 - 新建：写入 `compound/YYYY-MM-DD-trick-{slug}.md`，frontmatter 带 `doc_type: trick`
 - 更新：写回 Phase 1.5 定位的原文件 + `updated: YYYY-MM-DD`
-- supersede：按 `shared-conventions.md` §6 第 5 条处理
+- supersede：按 `shared-conventions.md` 第 6 节 第 5 条处理
 
 ### Phase 6：可发现性检查
 
@@ -123,7 +129,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_
 
 ## 守护规则
 
-> 归档类共享规则见 `shared-conventions.md` 第 6 节。本技能特有：
+> 归档类共享规则见 `shared-conventions.md` 第 6 节（归档类守护规则）。本技能特有：
 
 1. **只归档已验证的做法**——"也许应该这样做"不归档；必须用户或 AI 确认过有效
 2. **必须调查代码仓**——Phase 2 不可跳过。示例代码优先用项目真实代码不凭空编写

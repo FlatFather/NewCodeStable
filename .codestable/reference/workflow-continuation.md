@@ -4,9 +4,18 @@ protocol_version: 1.0
 
 # Workflow Continuation Protocol
 
-本文件定义本仓库内 skills 的 **continuation-first** 共享协议：当用户输入短回复时，先判断是否在继续已有流程，再决定是否重新路由。
+本文件是 **continuation-first** 协议的入口与完整合集。
 
-它是 continuation 细节的唯一权威正文；`.codestable/reference/shared-conventions.md` 只保留摘要与指针。
+**推荐阅读顺序**：
+1. 先读本文件（核心原则 + feature/issue 续作规则）
+2. 需要深入了解时，再读拆分后的模块化文档
+
+**拆分后的文档结构**（v1.1+）：
+- `workflow-continuation-base.md` — 核心原则与通用规则
+- `workflow-continuation-feature.md` — feature 主线续作细则
+- `workflow-continuation-issue.md` — issue 主线续作细则
+
+本文件保留完整内容以兼容已有引用；未来可考虑仅保留摘要 + 指针。
 
 ---
 

@@ -7,7 +7,14 @@ description: 维护 `.codestable/architecture/` 这份只记现状的系统地�
 
 ## 启动必读
 
-开始任何判断或动作前，先读取 `.codestable/attention.md`；缺失则视为骨架不完整，提示先补齐或运行 `cs-onboard`，不要回退到外部 AI 入口文件。
+本技能启动前需读取：
+- `.codestable/attention.md` — 项目注意事项
+- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
+- `.codestable/reference/shared-conventions.md` — 归档检索规则与守护规则
+
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+
+**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
 `.codestable/architecture/` 是项目"地图"——design 写方案前读它定位、issue-analyze 做根因时读它理解模块边界、新人读它知道系统大致长什么样。本技能是"起草 / 刷新 / 体检"三件事的统一入口。
 
@@ -110,7 +117,7 @@ Phase 6：落盘（backfill/update）或 等用户拍板（check）
 
 **backfill**：
 
-- 写入 `architecture/{type}-{slug}.md`（命名规则见 `shared-conventions.md` 第 0 节），frontmatter `status: current`、`last_reviewed` 填当天
+- 写入 `architecture/{type}-{slug}.md`（命名规则见 `shared-conventions-core.md`），frontmatter `status: current`、`last_reviewed` 填当天
 - **同类聚合检查**（落盘前必跑）：按"架构 doc 分组规则"判断本次落盘后某 type 在根目录 ≥6 份——命中就把这类全搬进 `architecture/{type}/`、去掉文件名前缀、同步改 `ARCHITECTURE.md` 链接；搬迁清单在 Phase 5 一并 review
 - **索引更新**：`ARCHITECTURE.md` 加新文档引用——backfill **必定**要加，否则写了没人会读；改动同样 review，不偷偷改
 
