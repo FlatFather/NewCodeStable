@@ -2,7 +2,7 @@
 doc_type: refactor-checklist
 refactor: 2026-06-15-reuse-first-workflow
 feature: 2026-06-15-reuse-first-workflow
-status: in-progress
+status: completed
 ---
 
 # reuse-first-workflow 执行清单
@@ -127,24 +127,35 @@ checks:
 steps:
   - id: step-3-1
     title: 提交代码
-    status: pending
+    status: done
     verification: human
+    note: |
+      ✓ Commit: 1b5ebee
+      ✓ 10 个文件变更：6 个修改 + 3 个新增 + 1 个权限
+      ✓ +1192 行 / -21 行
 
   - id: step-3-2
     title: 同步本地技能
-    status: pending
+    status: done
     verification: human
+    note: |
+      ✓ 27 个技能同步到 ~/.agents/skills/
+      ✓ 所有优化立即生效
 
   - id: step-3-3
     title: 产出完成报告
-    status: pending
+    status: done
     verification: ai
+    note: |
+      ✓ reuse-first-workflow-completion-report.md
+      ✓ 完整记录 3 个阶段执行情况
+      ✓ 变更统计、预期效果、验证计划
 
 checks:
   - id: check-7
     title: 代码已提交
-    status: pending
+    status: passed
 
   - id: check-8
     title: 本地技能已同步
-    status: pending
+    status: passed
