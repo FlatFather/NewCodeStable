@@ -146,7 +146,7 @@ tags: []
 
 ## 退出后
 
-告诉用户："问题报告已就绪。下一步阶段 2 根因分析，触发 `cs-issue-analyze`。"
+告诉用户："问题报告已就绪。下一步阶段 2 根因分析。**如果用户接着回复 `确认 / 继续 / 同意` 这类短回复，应回到 `cs-issue` 入口，由它按 continuation-first 检测到当前是 `report.md` 已存在且无 `analysis.md`，再续到 `cs-issue-analyze`。**"
 
 别自己顺手开始分析根因——阶段间的人工 checkpoint 是工作流硬约束。
 

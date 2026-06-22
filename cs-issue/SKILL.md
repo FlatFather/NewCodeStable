@@ -85,7 +85,7 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 |---|---|
 | 用户只回 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复，且存在唯一候选 issue 目录 | **先按 continuation-first 续作**：直接根据该目录现有产物判断 report / analyze / fix，不重复按新 issue 路由 |
 | 刚发现问题，没有任何文件 | `cs-issue-report`（那里判断走标准还是快速） |
-| `report.md` 已存在，没 `analysis.md` | `cs-issue-analyze` |
+| `report.md` 已存在，没 `analysis.md` | `cs-issue-analyze`（包括用户刚在 report 阶段明确回复“确认 / 继续”的续作场景） |
 | `analysis.md` 已存在，代码还没改 | `cs-issue-fix` |
 | 代码已改，还没修复验证记录 | `cs-issue-fix`（走验证） |
 | 不确定 | 自己读已有文件按上表对号 |
