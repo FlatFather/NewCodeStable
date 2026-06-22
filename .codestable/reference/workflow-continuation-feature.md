@@ -42,6 +42,8 @@ extends: workflow-continuation-base.md
 
 先看 design / intent / brainstorm 已有产物。
 
+当 design 阶段已经整体 review 通过并且用户明确回复 `同意 / 继续 / 确认` 时，design skill 只负责结束当前 checkpoint；**真正的续作恢复应回到 `cs-feat` 顶层入口**，由它根据 `design.md` 已 approved 且 `plan.md` / `checklist.yaml` 未落齐的状态续到 `cs-feat-plan`。
+
 ### cs-feat-plan
 
 先看 design 是否 approved、plan/checklist 是否已存在。

@@ -167,7 +167,7 @@ AI：  "让我先搜索一下... {fast-context 搜索 '权限 / permission / aut
 | `{slug}-intent.md` 已填好 | `cs-feat-design`（读 intent 作输入） |
 | 用户说"快速模式 / fastforward" | `cs-feat-ff` |
 | `{slug}-brainstorm.md` 已存在，要进设计 | `cs-feat-design` |
-| `{slug}-design.md` 已 approved，`plan.md` / checklist 还没落齐 | `cs-feat-plan` |
+| `{slug}-design.md` 已 approved，`plan.md` / checklist 还没落齐 | `cs-feat-plan`（包括 design 阶段刚确认后的续作场景） |
 | `{slug}-plan.md` + `{slug}-checklist.yaml` 已齐、代码没动 | `cs-feat-impl` |
 | fastforward design 已确认 | `cs-feat-impl` |
 | 代码已写完要验收 | `cs-feat-accept` |
