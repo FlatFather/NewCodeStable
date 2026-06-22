@@ -6,7 +6,10 @@ nature: performance
 severity: P2
 confidence: medium
 title: .codestable/attention.md 在每个技能启动时都重复读取
-status: open
+status: fixed
+fixed_by: inline
+fixed_date: 2026-06-18
+notes: 所有技能已实现"缓存优化"机制 - 已在本轮对话读取的文件跳过重复 Read
 tags: [performance, context-cost, attention-md, repetitive-read]
 ---
 

@@ -6,7 +6,10 @@ nature: maintainability
 severity: P1
 confidence: high
 title: continuation-first 摘要与详细协议存在口径漂移风险
-status: open
+status: fixed
+fixed_by: inline
+fixed_date: 2026-06-18
+notes: 已引入 protocol_version 1.0 机制，shared-conventions 引用时标注版本号
 tags: [continuation, shared-conventions, workflow-continuation, sync-risk]
 ---
 

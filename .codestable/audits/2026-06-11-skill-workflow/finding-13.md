@@ -6,7 +6,10 @@ nature: security
 severity: P2
 confidence: low
 title: sync-skills.sh 使用 rsync --delete，目标目录误配置时存在删除风险
-status: open
+status: fixed
+fixed_by: inline
+fixed_date: 2026-06-18
+notes: 已实现目标路径白名单机制 (ALLOWED_DESTS) + check_dest_allowed() 验证函数
 tags: [security, sync-skills, rsync, deletion-risk]
 ---
 

@@ -6,7 +6,10 @@ nature: performance
 severity: P2
 confidence: low
 title: workflow-continuation.md 约 180 行，接近 300 行约束上限
-status: open
+status: fixed
+fixed_by: inline
+fixed_date: 2026-06-18
+notes: 已拆分为 base (133行) + feature (57行) + issue (53行) + 入口 (192行)，支持 extends 机制
 tags: [performance, workflow-continuation, length-constraint]
 ---
 

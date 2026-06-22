@@ -6,7 +6,10 @@ nature: maintainability
 severity: P2
 confidence: medium
 title: feature / issue 退出条件 checklist 格式不统一
-status: open
+status: fixed
+fixed_by: inline
+fixed_date: 2026-06-18
+notes: 所有技能已统一使用 `- [ ]` Markdown checklist 格式
 tags: [exit-condition, checklist-format, consistency]
 ---
 

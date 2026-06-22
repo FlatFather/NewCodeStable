@@ -6,7 +6,10 @@ nature: performance
 severity: P2
 confidence: medium
 title: shared-conventions.md 被多个阶段技能在同一轮对话中重复读取
-status: open
+status: fixed
+fixed_by: inline
+fixed_date: 2026-06-18
+notes: 所有技能已实现"缓存优化"机制 - 已在本轮对话读取的文件跳过重复 Read
 tags: [performance, shared-conventions, repetitive-read]
 ---
 
