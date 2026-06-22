@@ -131,7 +131,7 @@ plan/checklist 落盘后，要先让用户确认”这就是执行顺序”，�
 
 ### 1. 生成 `{slug}-plan.md`
 
-按 `cs-feat-design/reference.md` 里的 plan 模板生成：
+按 `cs-feat-design/reference-templates.md` 里的 plan 模板生成：
 - 执行目标
 - 分步计划
 - 风险与回退
