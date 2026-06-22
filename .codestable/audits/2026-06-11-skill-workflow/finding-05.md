@@ -6,7 +6,9 @@ nature: bug
 severity: P1
 confidence: high
 title: cs-refactor / cs-audit 未显式实现 continuation-first
-status: open
+status: fixed
+fixed_by: .codestable/issues/2026-06-11-refactor-audit-continuation-missing/refactor-audit-continuation-missing-fix-note.md
+fixed_date: 2026-06-11
 tags: [continuation, cs-refactor, cs-audit, missing-rule]
 ---
 

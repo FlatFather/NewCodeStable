@@ -6,7 +6,9 @@ nature: arch-drift
 severity: P2
 confidence: low
 title: system-overview.md 主线描述与 cs-feat 实际阶段表存在微小差异
-status: open
+status: fixed
+fixed_by: inline
+fixed_date: 2026-06-18
 tags: [arch-drift, system-overview, cs-feat, description-mismatch]
 ---
 

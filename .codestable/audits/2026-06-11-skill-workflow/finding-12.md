@@ -6,7 +6,9 @@ nature: bug
 severity: P2
 confidence: medium
 title: cs-feat-accept 第 8 节 attention.md 候选盘点规则未在 cs-feat-ff 中同步
-status: open
+status: fixed
+fixed_by: inline
+fixed_date: 2026-06-18
 tags: [cs-feat-accept, cs-feat-ff, attention-md, rule-sync]
 ---
 

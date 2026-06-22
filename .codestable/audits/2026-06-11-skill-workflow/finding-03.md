@@ -6,7 +6,10 @@ nature: maintainability
 severity: P1
 confidence: medium
 title: 术语判据分散在多个技能，无统一权威定义
-status: open
+status: partially-fixed
+fixed_by: inline
+fixed_date: 2026-06-18
+notes: 核心路由判据（cs/cs-feat/cs-issue）已引用 terminology.md；其他技能提到相关概念时可继续补充引用
 tags: [terminology, fragmentation, decision-criteria]
 ---
 

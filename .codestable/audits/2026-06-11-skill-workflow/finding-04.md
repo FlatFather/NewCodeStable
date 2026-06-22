@@ -6,7 +6,10 @@ nature: arch-drift
 severity: P1
 confidence: high
 title: cs-feat-plan 职责边界在不同文档中表述不一致
-status: open
+status: fixed
+fixed_by: inline
+fixed_date: 2026-06-18
+notes: 已统一为标准术语 - plan.md (step source), checklist.yaml (status carrier), design.md (scope source)
 tags: [cs-feat-plan, responsibility-boundary, arch-drift]
 ---
 

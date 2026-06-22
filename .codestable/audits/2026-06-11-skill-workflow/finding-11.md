@@ -6,7 +6,9 @@ nature: bug
 severity: P2
 confidence: medium
 title: cs-issue-report 快速通道判定点描述为"唯一正式判定点"，但无后续防重判机制
-status: open
+status: fixed
+fixed_by: .codestable/issues/2026-06-12-issue-fast-track-rejudgment-guard/issue-fast-track-rejudgment-guard-fix-note.md
+fixed_date: 2026-06-12
 tags: [cs-issue-report, fast-track, decision-point, re-judgment]
 ---
 
