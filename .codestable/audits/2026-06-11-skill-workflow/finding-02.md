@@ -6,7 +6,10 @@ nature: maintainability
 severity: P1
 confidence: high
 title: "启动必读"段落在 10+ 个技能中逐字重复，修改时易遗漏
-status: open
+status: fixed
+fixed_by: .codestable/tools/inject-startup-boilerplate.py
+fixed_date: 2026-06-18
+notes: 创建自动化脚本统一管理启动必读段落；修复 cs-feat-plan 中文引号问题
 tags: [duplication, skills, boilerplate, maintenance-cost]
 ---
 

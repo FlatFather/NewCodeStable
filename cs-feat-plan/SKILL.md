@@ -13,11 +13,11 @@ description: feature 流程阶段 2——基于已批准的 `{slug}-design.md` �
 - `.codestable/reference/shared-conventions-feature.md` — feature 产物职责边界
 - `.codestable/reference/shared-conventions-checklist.md` — checklist 生命周期
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出”已复用上下文”并跳过 Read；否则执行 Read。
+**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
-`cs-feat-design` 负责把”做什么 / 为什么做 / 范围到哪”为人类拍板清楚；`cs-feat-plan` 接手后只做一件事：基于已批准 design 生成 `plan.md` (step source) 与 `checklist.yaml` (status carrier)。其中 checklist 的 `steps` 从 plan 的推进顺序派生，`checks` 从 design 各节约束派生。用户在进入实现前有一个单独的执行计划确认关口。
+`cs-feat-design` 负责把"做什么 / 为什么做 / 范围到哪"为人类拍板清楚；`cs-feat-plan` 接手后只做一件事：基于已批准 design 生成 `plan.md` (step source) 与 `checklist.yaml` (status carrier)。其中 checklist 的 `steps` 从 plan 的推进顺序派生，`checks` 从 design 各节约束派生。用户在进入实现前有一个单独的执行计划确认关口。
 
 > 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。`plan.md` 是 step source，`checklist.yaml` 是 status carrier；详细生命周期看 `.codestable/reference/shared-conventions-feature.md` 和 `.codestable/reference/shared-conventions-checklist.md`；本阶段不改 scope。
 
@@ -70,11 +70,11 @@ description: feature 流程阶段 2——基于已批准的 `{slug}-design.md` �
 - 多个候选 feature 目录 → 停下来让用户选，不猜
 - `.ccg/tasks/*/task.json` 只作恢复桥，不替代 feature 目录中的 design / plan / checklist 真相源
 
-plan/checklist 落盘后，要先让用户确认”这就是执行顺序”，再进入 `cs-feat-impl`。不要一口气从 design 直接跳进代码。
+plan/checklist 落盘后，要先让用户确认"这就是执行顺序"，再进入 `cs-feat-impl`。不要一口气从 design 直接跳进代码。
 
 ### 4. 扩展场景的特殊处理（复用优先）
 
-当 design 第 1.5 节策略是”扩展为主”时，plan 的推进顺序必须体现扩展逻辑：
+当 design 第 1.5 节策略是"扩展为主"时，plan 的推进顺序必须体现扩展逻辑：
 
 **扩展场景的 plan 模板**：
 ```markdown
@@ -105,12 +105,12 @@ plan/checklist 落盘后，要先让用户确认”这就是执行顺序”，�
 - **验证**：测试通过
 ```
 
-**新增场景的 plan 模板**（design 1.5 节是”新增为主”）：
+**新增场景的 plan 模板**（design 1.5 节是"新增为主"）：
 ```markdown
 ## 2. 分步计划
 
 ### Step 1 — 确认无法复用（复查）
-- **目标**：再次确认 design 1.5 节的”不扩展”理由仍然成立
+- **目标**：再次确认 design 1.5 节的"不扩展"理由仍然成立
 - **触碰范围**：复用清单中列出的候选函数
 - **退出信号**：确认每个候选函数确实不可扩展
 - **验证**：快速阅读相关代码
@@ -121,9 +121,9 @@ plan/checklist 落盘后，要先让用户确认”这就是执行顺序”，�
 ```
 
 **判断规则**：
-- design 第 1.5 节策略 = “扩展为主” → 使用扩展场景模板
-- design 第 1.5 节策略 = “新增为主” → 使用新增场景模板（含复查步骤）
-- design 缺少第 1.5 节 → 按传统流程，但在 plan 开头提示”建议回 design 补充复用策略”
+- design 第 1.5 节策略 = "扩展为主" → 使用扩展场景模板
+- design 第 1.5 节策略 = "新增为主" → 使用新增场景模板（含复查步骤）
+- design 缺少第 1.5 节 → 按传统流程，但在 plan 开头提示"建议回 design 补充复用策略"
 
 ---
 
