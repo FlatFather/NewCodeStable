@@ -1,0 +1,12 @@
+{
+  "id": "improve-project-workflow",
+  "title": "分析当前项目工作流程可改进点",
+  "status": "completed",
+  "strategy": "deep-research",
+  "currentPhase": "4-discuss",
+  "nextAction": "研究完成，可按建议落地 workflow contract hardening",
+  "gate": null,
+  "branch": "main",
+  "scope": "improve-project-workflow",
+  "createdAt": "2026-06-24T09:04:41Z"
+}

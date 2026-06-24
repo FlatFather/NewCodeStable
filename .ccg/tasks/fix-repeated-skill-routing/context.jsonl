@@ -1,0 +1,5 @@
+{"_example": "Fill with {\"file\": \"path\", \"reason\": \"why\"}. Seed rows are skipped."}
+{"file": "cs-feat/SKILL.md", "reason": "入口技能只负责路由判断，不执行后续阶段"}
+{"file": "cs-feat-design/SKILL.md", "reason": "设计阶段退出时应引导进入 plan，而不是停留在 design"}
+{"file": "cs-feat-impl/SKILL.md", "reason": "实现阶段依赖 approved design 和 plan/checklist，说明 continuation 需要读当前产物状态"}
+{"file": "docs/dev/feature-workflow.md", "reason": "仓库文档描述 feature 各阶段和路由职责"}

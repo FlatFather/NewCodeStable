@@ -1,0 +1,12 @@
+{
+  "id": "fix-repeated-skill-routing",
+  "title": "诊断并修复 skill 流程重复进入问题",
+  "status": "completed",
+  "strategy": "debug-investigate",
+  "currentPhase": "5-fix",
+  "nextAction": "等待用户复现验证 /ccg:go 的续作行为",
+  "gate": null,
+  "branch": "main",
+  "scope": "fix-repeated-skill-routing",
+  "createdAt": "2026-06-05T09:39:20Z"
+}
