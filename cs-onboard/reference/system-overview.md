@@ -15,7 +15,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 **做事**——从一段模糊想法走到上线的功能、或者从一份错误报告走到修好的 bug:
 
-- `cs-feat` — 新功能,design → implement → acceptance（想法还模糊时先走讨论层 `cs-brainstorm` 做分诊，不属于 feature 流程内部）
+- `cs-feat` — 新功能，design → plan → 分步实现 → 验收闭环；`cs-feat-design` 只负责范围与约束，`cs-feat-plan` 负责生成 `plan.md` + `checklist.yaml` 并形成进入实现前的独立确认关口。想法模糊时先走讨论层 `cs-brainstorm` 做分诊（阶段 0，可选且是 feature 流程的外部入口）；fastforward 保持为独立快路径。
 - `cs-issue` — 修 bug,report → analyze → fix
 - `cs-refactor` — 代码优化(行为不变、结构/性能/可读性变),scan → design → apply
 
@@ -68,14 +68,9 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 ## 沉淀类四个子技能如何区分
 
-learning / trick / decision / explore 都是存档文档类型,区别在记录内容的性质:
+learning / trick / decision / explore 都是存档文档类型，区别在记录内容的性质。完整判据见 `.codestable/reference/terminology.md` 第 2 节。
 
-- 回顾某次做 X 时发现了 Y —— `cs-learn`(产出 `doc_type: learning`)
-- 以后做 X 就这样做的处方 —— `cs-trick`(产出 `doc_type: trick`)
-- 全项目今后都得遵守的规定 —— `cs-decide`(产出 `doc_type: decision`)
-- 调查了一个问题,留份证据 —— `cs-explore`(产出 `doc_type: explore`)
-
-四者共用 `.codestable/compound/` 目录,靠 frontmatter 的 `doc_type` 字段和文件名中间的类型段(`YYYY-MM-DD-{doc_type}-{slug}.md`)区分。每个子技能只认自己的 `doc_type`,不读写别家产物——**"A 和 B 有什么不同"这种判断由本节负责,子技能里不再重复**。
+四者共用 `.codestable/compound/` 目录，靠 frontmatter 的 `doc_type` 字段和文件名中间的类型段区分。每个子技能只认自己的 `doc_type`，不读写别家产物——**"A 和 B 有什么不同"这种判断由 terminology.md 负责，子技能里不再重复**。
 
 
 ## 愿景档案 vs 结构档案 vs 规划档案 vs 单次动作
@@ -85,16 +80,44 @@ learning / trick / decision / explore 都是存档文档类型,区别在记录�
 - **愿景档案**(requirements)——描述"用户需要什么、系统提供什么能力来满足"。`status` 区分三个时间深度：`draft`（未来愿景）、`current`（现在的能力）、`outdated`（过去的痕迹）。draft req 可独立于实现存在——先把愿景定下来，后续 roadmap 排期和 design 实现才有稳定对齐基准
 - **结构档案**(architecture)——描述"系统现在用什么结构实现"。只记现状,默认在 feature-acceptance 时跟着代码同步;必要时由 cs-arch 主动刷新。**不写"未来会加什么层"**
 - **规划档案**(roadmap)——描述"接下来打算怎么分步实现"。独立于愿景和结构档案,改动不牵连 requirements / architecture。所有条目 done / dropped 后 roadmap 进入 `completed` 状态,作为历史档案留存
-- **单次动作**(feature / issue / refactor)——本次要做的一件具体事情的 spec。动作走完后,相关沉淀提炼进愿景档案、结构档案和沉淀类文档
+- **单次动作**(feature / issue / refactor)——本次要做的一件具体事情的 spec。feature 的活跃标准口径为 `design + plan + checklist + acceptance`；fastforward 是独立快路径；历史 legacy 目录仅作为留档兼容读取。动作走完后,相关沉淀提炼进愿景档案、结构档案和沉淀类文档
 
 用户说"我想要一个 X 系统"这种大需求,先走 roadmap 拆成若干子 feature,再一条一条走 feature 流程。直接起 feature 会变成巨型 design 塞不下、拆了又没有追踪抓手。
 
 
 ## feature 和 issue 的阶段不可跳
 
-feature 走 brainstorm(可选) → design → implement → acceptance,issue 走 report → analyze → fix。每个阶段有退出条件,上一个没满足,下一个不开始。
+feature 走 brainstorm(可选) → design → plan → implement → acceptance；`plan` 是进入实现前的独立阶段，负责生成详细步骤正文与 checklist，issue 走 report → analyze → fix。每个阶段有退出条件,上一个没满足,下一个不开始。
 
 AI 最常见的问题是一口气铺几百行代码才让人看——等发现问题已经很难中止。阶段间的人工 checkpoint 就是为了早一步中止。每个 checkpoint 具体检查什么,对应子技能里讲。
+
+这些阶段顺序、active workflow truth source、continuation-first 边界都以 `workflow-contract.md` 及其模块为准；本文件只保留体系级摘要。
+
+### 复用优先机制（2026-06-15 新增）
+
+CodeStable 建立"**复用优先、扩展为主、新增为辅**"的文化，通过三大支柱防止 AI 倾向新增而忽略扩展现有代码：
+
+**支柱 1：design 前强制复用分析**
+- `cs-feat` 增加"扩展 vs 新增"分诊，识别扩展场景
+- `cs-feat-design` 启动检查第 3 条：强制搜索相关代码并产出复用清单
+- 复用清单格式：可直接复用 / 可扩展后复用 / 不可复用（需新增）
+
+**支柱 2：design 第 1.5 节"复用与扩展策略"**
+- 必填章节，基于复用清单选择策略：复用为主 / 扩展为主 / 新增为主
+- 选择"新增为主"时，必须对每个"可扩展"项说明不扩展理由
+- `cs-feat-plan` 验证策略，扩展场景使用专用 plan 模板
+
+**支柱 3：accept 复用策略审查**
+- `cs-feat-accept` 验收报告第 2.5 节：复用策略审查
+- 验证策略执行、核对复用清单、主动检查过度新增
+- 发现遗漏的复用机会 → 记入"遗留 - 后续优化"
+
+**预期效果**：
+- 复用分析覆盖率：0% → 100%（强制）
+- 新增 vs 扩展比例：8:2 → 3:7
+- AI 主动发现复用点，减少用户手动指出
+
+此外，本仓库内 skills 统一采用 **continuation-first**；规范性定义见 `.codestable/reference/workflow-contract-continuation.md`，lane-facing 摘要见 `.codestable/reference/workflow-continuation.md`。
 
 例外两种:issue 根因一眼确定时走快速通道,跳过 analyze 直接 fix;feature 范围小时走 `cs-feat-ff`,写完 spec 直接进实现。
 
@@ -102,6 +125,8 @@ AI 最常见的问题是一口气铺几百行代码才让人看——等发现�
 ## 进一步参考
 
 - `.codestable/reference/shared-conventions.md` — 目录结构、YAML frontmatter 口径、`{slug}-checklist.yaml` 生命周期、收尾 commit 约定、归档类共享规则
+- `.codestable/reference/workflow-contract.md` — workflow 规范性契约入口（truth source、continuation、generated state、distribution）
+- `.codestable/reference/terminology.md` — 关键术语与路由判据（feature vs issue、沉淀类技能区分、fastforward 判据等）
 - `.codestable/reference/tools.md` — `search-yaml.py` / `validate-yaml.py` 用法
 - `.codestable/reference/maintainer-notes.md` — 断点恢复、新增子工作流的登记
 

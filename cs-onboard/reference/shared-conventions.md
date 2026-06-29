@@ -1,87 +1,42 @@
 # CodeStable 共享口径
 
-由 `cs-onboard` 复制到项目的 `.codestable/reference/shared-conventions.md`。所有 CodeStable 子技能用项目相对路径 `.codestable/reference/shared-conventions.md` 引用本文件——跨子技能共享但不适合堆在单个技能里的规范的唯一权威版本。
+由 `cs-onboard` 复制到项目的 `.codestable/reference/shared-conventions.md`。所有 CodeStable 子技能用项目相对路径引用——跨子技能共享但不适合堆在单个技能里的规范的唯一权威版本。
 
 skill 本身不共享文件系统（每个 skill 是独立安装单元），共享口径不能放在某个 skill 内部被别的 skill 引用。放在"工作项目"里对所有 skill 都可达。
 
+## workflow 契约入口
+
+工作流的规范性规则已集中到 `workflow-contract.md` 及其模块：
+
+- truth source / authority ordering → `workflow-contract-authority.md`
+- continuation-first / 恢复边界 → `workflow-contract-continuation.md`
+- generated state 语义 → `workflow-contract-generated-state.md`
+- source/copy 分发关系 → `workflow-contract-distribution.md`
+
 ---
 
-## 0. 目录结构与路径命名
+## 模块导航
 
-onboard 完成后骨架（`cs-onboard` 负责搭建）：
+本文档已按主题拆分为多个模块，按需引用：
 
-```
-.codestable/
-├── attention.md           CodeStable 技能启动必读的项目注意事项
-├── requirements/          能力愿景层（"用户需要什么、系统提供什么能力来满足"，过去/现在/未来）
-│   ├── VISION.md           中心索引（按 status 分组，每条带 pitch 一句话）
-│   └── {slug}.md           一个能力一份，扁平（cs-req 产出）
-├── architecture/          架构中心目录（"用什么结构实现"，只记现状）
-│   ├── ARCHITECTURE.md    总入口（索引 + 关键架构决定）
-│   └── {type}-{slug}.md   子系统 / 模块 doc（cs-arch 产出）
-├── roadmap/               规划层（"接下来怎么做这块大需求 + 模块怎么切 + 接口怎么定"）
-│   └── {slug}/            一个大需求一个子目录（cs-roadmap 产出）
-│       ├── {slug}-roadmap.md   主文档：背景 / 范围 / 模块拆分 / 接口契约 / 子 feature 清单 / 排期
-│       ├── {slug}-items.yaml   机器可读子 feature 清单，acceptance 回写状态
-│       └── drafts/             可选
-├── features/              feature spec 聚合根
-│   └── YYYY-MM-DD-{slug}/  每个 feature 一个目录
-│       ├── {slug}-brainstorm.md  （可选，case 2 时产出）
-│       ├── {slug}-design.md      （标准流程）
-│       ├── {slug}-checklist.yaml （标准流程）
-│       ├── {slug}-acceptance.md  （标准流程）
-│       └── {slug}-ff-note.md     （fastforward 通道唯一产物，与上面四份互斥）
-├── issues/                issue spec 聚合根
-│   └── YYYY-MM-DD-{slug}/
-│       ├── {slug}-report.md
-│       ├── {slug}-analysis.md   （根因不显然才有）
-│       └── {slug}-fix-note.md
-├── refactors/             refactor spec 聚合根
-│   └── YYYY-MM-DD-{slug}/
-│       ├── {slug}-scan.md
-│       ├── {slug}-refactor-design.md
-│       ├── {slug}-checklist.yaml
-│       └── {slug}-apply-notes.md
-├── compound/              沉淀类文档统一目录
-│   └── YYYY-MM-DD-{doc_type}-{slug}.md
-│                          doc_type ∈ {learning, trick, decision, explore}
-├── brainstorm/            brainstorm 阶段 spike 实验代码区（cs-brainstorm 临时产出）
-│   └── {slug}/            一次 spike 一个子目录，文件名随意
-│                          验完不强制清理，结论回写到对应 brainstorm note
-├── tools/                 跨工作流共享脚本（onboard 从技能包释放）
-└── reference/             共享参考文档（onboard 从技能包释放）
-```
+- **`shared-conventions-core.md`** — 目录结构与命名规则（第 0 节）
+  - 骨架目录定义、命名规则、架构 doc 分组规则
+- **`shared-conventions-feature.md`** — feature 产物职责边界（第 2 节）
+  - hybrid feature 标准口径、四类产物职责、迁移总则
+- **`shared-conventions-checklist.md`** — checklist 生命周期（第 3 节）
+  - checklist 职责划分、design / implement / acceptance 各阶段读写规则
+- **`shared-conventions-roadmap.md`** — roadmap ↔ feature 衔接（第 2.5 节）
+  - items.yaml 状态机、cs-roadmap / cs-feat-design / cs-feat-accept 职责
 
-### 命名规则
-
-- 需求文档：`requirements/{slug}.md`（能力愿景，不带日期前缀，扁平不分组）；中心索引 `requirements/VISION.md`
-- roadmap：`roadmap/{slug}/`（不带日期前缀，平铺不嵌套）
-- feature / issue / refactor 目录：带日期前缀 `YYYY-MM-DD-{slug}`
-- 沉淀类：`compound/YYYY-MM-DD-{doc_type}-{slug}.md`，日期用**归档当天**
-- 架构 doc：`architecture/{type}-{slug}.md`（长效，不带日期前缀）；总入口固定 `ARCHITECTURE.md`
-- 项目注意事项入口固定为 `.codestable/attention.md`，所有 CodeStable 子技能启动前必须读取；不再兼容 `AGENTS.md` / `CLAUDE.md` 等外部入口
-
-### 架构 doc 分组规则（同类聚合）
-
-`architecture/` 下用文件名第一段作 type 标记：`ui-chat.md` 和 `ui-events.md` 同 `ui` 类。**所有架构 doc 必须 `{type}-{slug}.md`**——只有一份的也要带合理 type 段（如 `cli-entry.md`），否则未来同类出现时聚合不了。
-
-**触发**：某 type 在 `architecture/` 根目录达到 ≥6 份时（即新加第 6 份那次），把这一类全部收进同名子目录。
-
-**收入后**：去掉 type 前缀。`ui-chat.md` → `ui/chat.md`。
-
-**只升不降**：删到 ≤5 份也不折回平铺。
-
-**触发时谁负责**：`cs-arch` 的 `backfill` / `update` 模式在 Phase 6 落盘前主动检查并搬迁；命中阈值时这次操作要把"本次新加 / 改的 + 已有同类全部"一起搬，并同步改 `ARCHITECTURE.md` 链接（搬迁本身要在 Phase 5 给用户 review，不偷偷做）。`check` 模式不主动搬迁，但发现 ≥6 仍平铺时在报告末尾列为观察项。
-
-### 改目录结构
-
-改 `cs-onboard/reference/shared-conventions.md` 模板，新项目 onboard 时带上新版本；已有项目手动同步 `.codestable/reference/shared-conventions.md`。
+本文件保留第 1、3-7 节（共享元数据、收尾提交、归档检索、守护规则、反射检查），为所有技能共用。
 
 ---
 
 ## 1. 共享元数据口径
 
-**feature spec**：brainstorm / design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。`status`：brainstorm = `confirmed`（落盘即确认无 draft）；design = `draft` / `approved`；acceptance 见对应技能。
+**feature spec**：design / acceptance 共用 `doc_type` / `feature` / `status` / `summary` / `tags`。子技能只补特有字段。design 采用标准口径时固定写 `workflow: hybrid`；历史 legacy 目录若保留原字段，可继续只读兼容。
+
+**feature intent**：`{slug}-intent.md` 是 feature 的**可选前置草稿**，用于用户在 design 前先写下需求概要 / 大致做法 / 相关数据结构。frontmatter 固定为 `doc_type=feature-intent`、`feature`、`status=draft`、`summary`；它供 `cs-feat-design` 的初始化模式和正式起草入口读取，不参与 implement / acceptance 生命周期，也不替代 brainstorm note。
 
 **issue spec**：report / analysis / fix-note 共用 `doc_type` / `issue` / `status` / `tags`。`severity` / `root_cause_type` / `path` 由对应阶段按需补。
 
@@ -98,66 +53,9 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 
 **写作约束**：子技能提字段时优先写"额外字段"或"阶段状态变化"，不重复展开整套通用字段。
 
----
-
-## 2. {slug}-checklist.yaml 生命周期
-
-- 是 feature 工作流的唯一执行清单
-- 由 `cs-feat-design` 在 design 确认通过后一次生成 `steps` + `checks`
-- `cs-feat-ff` **不生成** checklist（也不写 design / acceptance），是跳过 spec 流程直接写代码的超轻量通道；唯一留下的痕迹是动手后回写的 `{slug}-ff-note.md`（轻量回顾，参与 scoped-commit、可被 cs-arch / cs-req backfill 检索到）
-
-`steps` 的粒度是 **编排-计算分离维度的切片策略**——按"先编排骨架、后计算节点、最后持久化与测试"写（最简 Workflow 先行 → 逐个节点填充），**不下沉到 file:line / 函数级**。具体改哪个文件由 implement 阶段决定。
-
-**design 的职责**：
-
-- 提取 `steps`（4-8 步，每步独立可验证退出信号）：后端节奏 = 编排骨架 → 计算节点逐个填 → 接通持久化 → 测试覆盖；前端 = 静态结构 → 交互逻辑 → 状态接入 → 联调收尾
-- 提取 `checks`：第 1 节"明确不做"→ 范围守护；第 2.1 接口 → 名词契约；第 2.2 主流程 + 流程级约束 → 编排骨架；第 2.3 挂载点 → 挂载点；第 3 节场景清单 → 验收场景
-
-**implement 的职责**：
-
-- 按 `steps` 顺序执行，每步完成把 status `pending` → `done`
-- 实现到具体文件级时需要拆分某步、或发现微重构是其前置（参考第 7 节反射检查）→ 跟用户对齐后追加 / 拆分 steps，**不偷偷做**
-- 不改写 `checks`
-
-**acceptance 的职责**：只更新 `checks[].status`（`pending` → `passed` / `failed`），不重写 `steps`。
-
-**写作约束**：子技能描述 checklist 时只补本阶段读 / 写哪一部分，不重新定义生命周期。
-
----
-
-## 2.5 roadmap ↔ feature 衔接协议
-
-`.codestable/roadmap/{slug}/{slug}-items.yaml` 是规划层和 feature 执行层的唯一接口。三个技能共同读写它——是 skill 都读写项目共享产物，不算耦合。
-
-**items.yaml 状态机**：
-
-```
-planned  → in-progress  （cs-feat-design 启动 feature 时改）
-in-progress → done      （cs-feat-accept 验收完成时改）
-planned  → dropped      （cs-roadmap update 模式，用户决定不做时改）
-```
-
-`done` / `dropped` 是终态。需要回退重做的新加一条 slug 略改的条目，不改终态。
-
-**cs-roadmap 的职责**：生成和维护 roadmap 主文档 + items.yaml；把 `planned` 改 `dropped`（用户放弃时）；不改 `in-progress` / `done`（feature 技能负责）。
-
-**cs-feat-design 的职责**（从 roadmap 起头时）：
-
-1. design.md frontmatter 加 `roadmap: {roadmap-slug}` + `roadmap_item: {子 feature slug}`
-2. items.yaml 对应条目 `status: in-progress` + `feature: YYYY-MM-DD-{slug}`
-3. 校验 yaml
-
-直接起 feature（非 roadmap 来）两字段留空，不触发 roadmap 写。
-
-**cs-feat-accept 的职责**：
-
-1. 读 design frontmatter `roadmap` / `roadmap_item`
-2. 空 → 跳过
-3. 有值 → items.yaml 对应条目 `status: done`；同步主文档子 feature 清单显示状态；校验 yaml
-
-回写是**实际写文件的动作**，验收报告要明确记录回写结果。
-
-**最小闭环标记**：items.yaml 每份只有一条 `minimal_loop: true`，标记"做完后系统能端到端跑通最窄路径"。design 启动 `minimal_loop` 条目时优先级最高。
+### 1.5 continuation-first 摘要
+- 本仓库内 skills 遇到 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复时，默认先做 continuation-first 检测；只有存在**唯一候选续作**时才自动继续，多个候选必须停下来让用户选。
+- `.ccg/tasks/*/task.json` 只作**task 状态桥**，不替代 feature / issue spec 产物的真相源地位；规范性定义见 `.codestable/reference/workflow-contract-continuation.md` 与 `.codestable/reference/workflow-contract-authority.md`，本文件只保留摘要与指针。
 
 ---
 

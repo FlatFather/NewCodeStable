@@ -91,6 +91,8 @@ feature 走 brainstorm(可选) → design → plan → implement → acceptance�
 
 AI 最常见的问题是一口气铺几百行代码才让人看——等发现问题已经很难中止。阶段间的人工 checkpoint 就是为了早一步中止。每个 checkpoint 具体检查什么,对应子技能里讲。
 
+这些阶段顺序、active workflow truth source、continuation-first 边界都以 `workflow-contract.md` 及其模块为准；本文件只保留体系级摘要。
+
 ### 复用优先机制（2026-06-15 新增）
 
 CodeStable 建立"**复用优先、扩展为主、新增为辅**"的文化，通过三大支柱防止 AI 倾向新增而忽略扩展现有代码：
@@ -115,7 +117,7 @@ CodeStable 建立"**复用优先、扩展为主、新增为辅**"的文化，通
 - 新增 vs 扩展比例：8:2 → 3:7
 - AI 主动发现复用点，减少用户手动指出
 
-此外，本仓库内 skills 统一采用 **continuation-first**：用户只输入 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复时，先尝试恢复已有 task / 阶段状态；只有恢复失败时才回到普通路由。详细协议见 `.codestable/reference/workflow-continuation.md`。
+此外，本仓库内 skills 统一采用 **continuation-first**；规范性定义见 `.codestable/reference/workflow-contract-continuation.md`，lane-facing 摘要见 `.codestable/reference/workflow-continuation.md`。
 
 例外两种:issue 根因一眼确定时走快速通道,跳过 analyze 直接 fix;feature 范围小时走 `cs-feat-ff`,写完 spec 直接进实现。
 
@@ -123,6 +125,7 @@ CodeStable 建立"**复用优先、扩展为主、新增为辅**"的文化，通
 ## 进一步参考
 
 - `.codestable/reference/shared-conventions.md` — 目录结构、YAML frontmatter 口径、`{slug}-checklist.yaml` 生命周期、收尾 commit 约定、归档类共享规则
+- `.codestable/reference/workflow-contract.md` — workflow 规范性契约入口（truth source、continuation、generated state、distribution）
 - `.codestable/reference/terminology.md` — 关键术语与路由判据（feature vs issue、沉淀类技能区分、fastforward 判据等）
 - `.codestable/reference/tools.md` — `search-yaml.py` / `validate-yaml.py` 用法
 - `.codestable/reference/maintainer-notes.md` — 断点恢复、新增子工作流的登记

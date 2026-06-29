@@ -40,7 +40,7 @@ AI 对话随时可能中断（token 超限、网络断开、用户换设备）�
 
 ### 跨工作流状态一览
 
-目前查看"项目当前有几个 feature 在进行中、几个 issue 未关闭"仍需要手动查询。未来如要补 `status.py` 或 `.codestable/STATUS.md`，先在 `shared-conventions.md` 登记方向，再实现。
+目前查看"项目当前有几个 feature 在进行中、几个 issue 未关闭"仍需要手动查询。现在统一使用 `.codestable/tools/build-status.py` 生成 `.codestable/status.json` 作为 machine-readable spine；`STATUS.md` 仍然可选，不是路由前提。
 
 ---
 

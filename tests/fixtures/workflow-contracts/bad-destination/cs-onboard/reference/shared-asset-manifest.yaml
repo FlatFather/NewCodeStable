@@ -1,0 +1,10 @@
+version: 1
+parity_scope: manifest-declared-assets-only
+
+references:
+  - source: cs-onboard/reference/example.md
+    destination: .codestable/reference/example.md
+
+tools:
+  - source: cs-onboard/tools/check-workflow-contracts.py
+    destination: codestable/tools/check-workflow-contracts.py

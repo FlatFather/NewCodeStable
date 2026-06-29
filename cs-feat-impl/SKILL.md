@@ -77,7 +77,7 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 - 标准 feature：把 `{slug}-plan.md` 与 design 一起读全；plan 是 detailed step source，checklist 是状态载体；当 feature 命中标准主线时，plan 不再是抽象占位词，而是必须存在的真实输入，缺失时当前实现阶段必须停下并退回 design / 产物生成阶段
 - 第 2.1 节接口示例的来源位置 / fastforward 第 1 节改动点提到的代码文件——读相关函数即可
 
-### 4. 跟用户确认从哪一步开始
+### 4. 自动恢复起点并汇报
 
 通常第 1 步；接续上次中断从已 `done` 的下一步继续。
 
@@ -88,7 +88,7 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 标准 feature：以 design 为 scope source、以 plan 为 detailed step source、以 checklist 为状态推进清单。
 
-design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 → 持久化 → 测试），**具体每步改哪个文件由你执行时决定**。如果某一步实际是 3 个独立子动作、或发现微重构是它的前置（参考反射检查），跟用户对齐后追加 / 拆分 steps，**不偷偷做**。
+当 design 已 approved、plan/checklist 已齐备且 canonical artifacts 唯一表明实现前提成立时，`cs-feat-impl` 直接从当前应执行的 step 开始推进；**不再追加一轮仅用于"现在开始实现吗"的启动确认**。只有出现 scope 扩张、多候选歧义、design 未覆盖的新概念/边界条件，或反射检查触发需要新增前置步骤时，才停下来要求人工拍板。
 
 **design 第 2.5 节微重构的衔接**：
 
@@ -151,6 +151,8 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 
 固定模板的意义：含糊汇报等于把验证责任推回用户。固定模板逼你把改了哪些文件、是否触碰方案外、是否引入新概念一一说清楚。
 
+如果汇报时 checklist 已全部 `done`，且没有 scope blocker / 多候选歧义 / 新概念未决，则后续 continuation 短回复默认自动切到 `cs-feat-accept`；不要再补问一轮"是不是现在进入验收"。
+
 ```markdown
 ## 实现完成汇报
 
@@ -208,6 +210,8 @@ design 给的 `steps` 是 paradigm 维度切片（编排骨架 → 计算节点 
 ## 退出后
 
 告诉用户："所有步骤完成，方案 doc 已同步。下一步阶段 4 验收闭环，触发 cs-feat-accept。"
+
+在 continuation-first 场景下，如果唯一 canonical 候选已表明实现完成且只差验收，收到 `继续 / 确认 / 同意 / 继续下一步` 时直接进入 `cs-feat-accept`。
 
 别自己顺手开始写验收报告——验收需要独立的 checklist 节奏，提前进入会让把关失效。
 

@@ -70,7 +70,7 @@ description: feature 流程阶段 2——基于已批准的 `{slug}-design.md` �
 - 多个候选 feature 目录 → 停下来让用户选，不猜
 - `.ccg/tasks/*/task.json` 只作恢复桥，不替代 feature 目录中的 design / plan / checklist 真相源
 
-plan/checklist 落盘后，要先让用户确认"这就是执行顺序"，再进入 `cs-feat-impl`。不要一口气从 design 直接跳进代码。
+plan/checklist 落盘后，要明确进入实现前的独立关口：确认对象是**执行顺序与步骤切分**，不是再次确认已经 approved 的 design 意图。若 canonical artifacts 已唯一表明"plan/checklist 已确认可执行"，则后续由 `cs-feat-impl` 直接接手，不再重复补一轮"要不要现在开始实现"。
 
 ### 4. 扩展场景的特殊处理（复用优先）
 
@@ -171,7 +171,7 @@ plan/checklist 落盘后，要先让用户确认"这就是执行顺序"，再进
 - checklist yaml：通过 / 失败
 ```
 
-汇报后停等用户确认，再进入 `cs-feat-impl`。
+汇报后停在实现前关口：如果当前只完成了 plan/checklist 生成，就等待用户对执行顺序本身的反馈；如果随后收到 `继续 / 确认 / 同意 / 继续下一步` 且唯一候选已由 canonical artifacts 表明可以进入实现，则自动切到 `cs-feat-impl`，不再重复确认已批准的 design 意图。
 
 ---
 

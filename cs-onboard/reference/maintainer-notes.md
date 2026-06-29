@@ -8,6 +8,7 @@
 
 AI 对话随时可能中断（token 超限、网络断开、用户换设备）。各阶段发现自己不是从零开始时，必须优先检查已有产物的完成度，从上次停下的地方继续：
 
+- **顶层短回复**：用户只回 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 时，先查是否存在唯一候选续作；命中才自动继续，多个候选停下来让用户选；`.ccg/tasks/*/task.json` 只作恢复桥，不是真相源
 - **brainstorm**：如 `{slug}-brainstorm.md` 已有部分内容，读取后问用户"上次聊到 X，要接着聊还是推翻重来？"
 - **design**：如 `{slug}-design.md` 已有部分节，逐节检查完成度，补齐缺失节，不重写已完成节
 - **implement**：`{slug}-checklist.yaml` 中已 `done` 的步骤不重做，从第一个 `pending` 步骤开始
@@ -39,7 +40,7 @@ AI 对话随时可能中断（token 超限、网络断开、用户换设备）�
 
 ### 跨工作流状态一览
 
-目前查看"项目当前有几个 feature 在进行中、几个 issue 未关闭"仍需要手动查询。未来如要补 `status.py` 或 `.codestable/STATUS.md`，先在 `shared-conventions.md` 登记方向，再实现。
+目前查看"项目当前有几个 feature 在进行中、几个 issue 未关闭"仍需要手动查询。现在统一使用 `.codestable/tools/build-status.py` 生成 `.codestable/status.json` 作为 machine-readable spine；`STATUS.md` 仍然可选，不是路由前提。
 
 ---
 

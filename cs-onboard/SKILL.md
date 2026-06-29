@@ -126,6 +126,8 @@ attention.md 已创建但默认只有空骨架。汇报时提醒用户：有编�
 
 **`.codestable/tools/` 和 `.codestable/reference/` 一律用技能包新版本覆盖**——这两个目录是技能包维护的共享资产，权威源在 `cs-onboard/tools/` 和 `cs-onboard/reference/`，项目里的只是落盘副本。技能包升级后再跑 onboard 的目的之一就是刷新副本，留旧版本会让子技能按过时口径工作。
 
+**共享资产清单**：source→destination 映射以 `cs-onboard/reference/shared-asset-manifest.yaml` 为准；项目内副本同步保存在 `.codestable/reference/shared-asset-manifest.yaml`，便于 parity 校验和仓库内验证。manifest-declared assets 必须完整覆盖，repo-local 额外脚本可保留但不自动视为共享合同的一部分。
+
 覆盖前在汇报列出被覆盖文件让用户知道；用户明确说"我改过 tools/xxx.py 请保留"才例外保留并标红。这是迁移路径**唯一强制覆盖**的动作，其他已有文件遵守"不经确认不动"。
 
 **落盘命令**：

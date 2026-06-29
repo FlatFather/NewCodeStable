@@ -67,7 +67,7 @@ scan（扫优化点清单）→ design（和用户定做哪几条 + 顺序）→
 
 当用户输入 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复时，先按 continuation-first 处理：
 
-1. **检查是否存在唯一候选 refactor 目录**——Glob `.codestable/refactors/`
+1. **检查是否存在唯一候选 refactor 目录**——优先参考 fresh `status.json` 的 refactor lanes；若 `status.json` 缺失、`freshness.state != fresh`、或与目录现状矛盾，则回退为 `Glob .codestable/refactors/`
 2. **命中唯一候选**：
    - 读取该目录下的产物状态
    - 根据已有文件判断当前阶段：
@@ -79,7 +79,7 @@ scan（扫优化点清单）→ design（和用户定做哪几条 + 顺序）→
 3. **多个候选**——列出来让用户选，不猜
 4. **没有候选**——才按普通 refactor 路由处理
 
-必要时可参考 `.ccg/tasks/*/task.json` 作为恢复桥，但它**只作 task 状态桥**，不替代 refactor 目录里的 scan / design / checklist / apply-notes 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
+必要时可参考 `.ccg/tasks/*/task.json` 作为恢复桥，但它**只作 task 状态桥 / recovery hint**，不替代 refactor 目录里的 scan / design / checklist / apply-notes 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
 
 ---
 

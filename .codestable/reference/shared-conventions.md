@@ -4,6 +4,15 @@
 
 skill 本身不共享文件系统（每个 skill 是独立安装单元），共享口径不能放在某个 skill 内部被别的 skill 引用。放在"工作项目"里对所有 skill 都可达。
 
+## workflow 契约入口
+
+工作流的规范性规则已集中到 `workflow-contract.md` 及其模块：
+
+- truth source / authority ordering → `workflow-contract-authority.md`
+- continuation-first / 恢复边界 → `workflow-contract-continuation.md`
+- generated state 语义 → `workflow-contract-generated-state.md`
+- source/copy 分发关系 → `workflow-contract-distribution.md`
+
 ---
 
 ## 模块导航
@@ -43,9 +52,10 @@ skill 本身不共享文件系统（每个 skill 是独立安装单元），共�
 **外部读者文档**（guidedoc / libdoc）：frontmatter 由各自子技能定义。无特殊说明：`draft` = 待 review，`current` = 当前有效，`outdated` = 代码已变更待同步。
 
 **写作约束**：子技能提字段时优先写"额外字段"或"阶段状态变化"，不重复展开整套通用字段。
+
 ### 1.5 continuation-first 摘要
 - 本仓库内 skills 遇到 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复时，默认先做 continuation-first 检测；只有存在**唯一候选续作**时才自动继续，多个候选必须停下来让用户选。
-- `.ccg/tasks/*/task.json` 只作**task 状态桥**，不替代 feature / issue spec 产物的真相源地位；详细共享协议见 `.codestable/reference/workflow-continuation.md` (v1.0)，本文件只保留摘要与指针。
+- `.ccg/tasks/*/task.json` 只作**task 状态桥**，不替代 feature / issue spec 产物的真相源地位；规范性定义见 `.codestable/reference/workflow-contract-continuation.md` 与 `.codestable/reference/workflow-contract-authority.md`，本文件只保留摘要与指针。
 
 ---
 

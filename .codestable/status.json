@@ -1,0 +1,1025 @@
+{
+  "schema_version": "1.1",
+  "generator": {
+    "name": "build-status.py",
+    "version": "0.2.0",
+    "deterministic_sort": true,
+    "canonical_roots": [
+      ".codestable/features",
+      ".codestable/issues",
+      ".codestable/refactors",
+      ".codestable/audits"
+    ]
+  },
+  "authority": {
+    "canonical_precedence": true,
+    "generated_state_rank": 3,
+    "bridge_hints_rank": 4,
+    "status_md_required": false
+  },
+  "freshness": {
+    "state": "fresh",
+    "canonical_digest": "sha256:67d1cb5f38d596e34219dba20eff2155ef8d32848e3669c46681a94694a43567",
+    "source_count": 92,
+    "stale_if_digest_changes": true,
+    "check_command": "python .codestable/tools/build-status.py --check",
+    "reasons": []
+  },
+  "bridge_hints": {
+    "included": false,
+    "sources": [
+      ".ccg/tasks/*/task.json"
+    ],
+    "note": "Bridge-only hints are intentionally excluded and can never outrank canonical artifacts."
+  },
+  "lanes": {
+    "features": {
+      "count": 9,
+      "active_count": 1,
+      "items": [
+        {
+          "key": "2026-06-01-execution-plan-artifact",
+          "lane": "features",
+          "path": ".codestable/features/2026-06-01-execution-plan-artifact",
+          "canonical": {
+            "artifacts": {
+              "design": "execution-plan-artifact-design.md",
+              "plan": "execution-plan-artifact-plan.md",
+              "checklist": "execution-plan-artifact-checklist.yaml",
+              "acceptance": "execution-plan-artifact-acceptance.md",
+              "ff_note": null
+            },
+            "frontmatter": {
+              "status": "approved",
+              "workflow": "hybrid",
+              "roadmap": "workflow-hybridization",
+              "roadmap_item": "execution-plan-artifact"
+            },
+            "checklist_progress": {
+              "total": 5,
+              "done": 5
+            }
+          },
+          "derived": {
+            "stage": "accepted",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-01-feature-handoff-contract",
+          "lane": "features",
+          "path": ".codestable/features/2026-06-01-feature-handoff-contract",
+          "canonical": {
+            "artifacts": {
+              "design": "feature-handoff-contract-design.md",
+              "plan": null,
+              "checklist": "feature-handoff-contract-checklist.yaml",
+              "acceptance": "feature-handoff-contract-acceptance.md",
+              "ff_note": null
+            },
+            "frontmatter": {
+              "status": "approved",
+              "workflow": null,
+              "roadmap": "workflow-hybridization",
+              "roadmap_item": "feature-handoff-contract"
+            },
+            "checklist_progress": {
+              "total": 5,
+              "done": 5
+            }
+          },
+          "derived": {
+            "stage": "accepted",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-01-spec-structure-contract",
+          "lane": "features",
+          "path": ".codestable/features/2026-06-01-spec-structure-contract",
+          "canonical": {
+            "artifacts": {
+              "design": "spec-structure-contract-design.md",
+              "plan": null,
+              "checklist": "spec-structure-contract-checklist.yaml",
+              "acceptance": "spec-structure-contract-acceptance.md",
+              "ff_note": null
+            },
+            "frontmatter": {
+              "status": "approved",
+              "workflow": null,
+              "roadmap": "workflow-hybridization",
+              "roadmap_item": "spec-structure-contract"
+            },
+            "checklist_progress": {
+              "total": 5,
+              "done": 5
+            }
+          },
+          "derived": {
+            "stage": "accepted",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-02-first-hybrid-example",
+          "lane": "features",
+          "path": ".codestable/features/2026-06-02-first-hybrid-example",
+          "canonical": {
+            "artifacts": {
+              "design": "first-hybrid-example-design.md",
+              "plan": "first-hybrid-example-plan.md",
+              "checklist": "first-hybrid-example-checklist.yaml",
+              "acceptance": "first-hybrid-example-acceptance.md",
+              "ff_note": null
+            },
+            "frontmatter": {
+              "status": "approved",
+              "workflow": null,
+              "roadmap": "workflow-hybridization",
+              "roadmap_item": "first-hybrid-example"
+            },
+            "checklist_progress": {
+              "total": 4,
+              "done": 4
+            }
+          },
+          "derived": {
+            "stage": "accepted",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "compatibility",
+            "reasons": [
+              "plan.md exists but design frontmatter is missing workflow: hybrid"
+            ]
+          }
+        },
+        {
+          "key": "2026-06-02-migration-guidance",
+          "lane": "features",
+          "path": ".codestable/features/2026-06-02-migration-guidance",
+          "canonical": {
+            "artifacts": {
+              "design": "migration-guidance-design.md",
+              "plan": null,
+              "checklist": "migration-guidance-checklist.yaml",
+              "acceptance": "migration-guidance-acceptance.md",
+              "ff_note": null
+            },
+            "frontmatter": {
+              "status": "approved",
+              "workflow": null,
+              "roadmap": "workflow-hybridization",
+              "roadmap_item": "migration-guidance"
+            },
+            "checklist_progress": {
+              "total": 4,
+              "done": 4
+            }
+          },
+          "derived": {
+            "stage": "accepted",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-02-plan-validation-rules",
+          "lane": "features",
+          "path": ".codestable/features/2026-06-02-plan-validation-rules",
+          "canonical": {
+            "artifacts": {
+              "design": "plan-validation-rules-design.md",
+              "plan": null,
+              "checklist": "plan-validation-rules-checklist.yaml",
+              "acceptance": "plan-validation-rules-acceptance.md",
+              "ff_note": null
+            },
+            "frontmatter": {
+              "status": "approved",
+              "workflow": null,
+              "roadmap": "workflow-hybridization",
+              "roadmap_item": "plan-validation-rules"
+            },
+            "checklist_progress": {
+              "total": 5,
+              "done": 5
+            }
+          },
+          "derived": {
+            "stage": "accepted",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-02-validation-failure-sample",
+          "lane": "features",
+          "path": ".codestable/features/2026-06-02-validation-failure-sample",
+          "canonical": {
+            "artifacts": {
+              "design": "validation-failure-sample-design.md",
+              "plan": null,
+              "checklist": "validation-failure-sample-checklist.yaml",
+              "acceptance": null,
+              "ff_note": null
+            },
+            "frontmatter": {
+              "status": "approved",
+              "workflow": "hybrid",
+              "roadmap": "workflow-hybridization",
+              "roadmap_item": "plan-validation-rules"
+            },
+            "checklist_progress": {
+              "total": 1,
+              "done": 0
+            }
+          },
+          "derived": {
+            "stage": "planned",
+            "active": true,
+            "ready_for_next": false,
+            "canonical_complete": false,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "ask_user",
+            "needs_user_decision": true,
+            "blockers": [
+              "missing_required_artifact"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-03-feature-plan-stage",
+          "lane": "features",
+          "path": ".codestable/features/2026-06-03-feature-plan-stage",
+          "canonical": {
+            "artifacts": {
+              "design": "feature-plan-stage-design.md",
+              "plan": "feature-plan-stage-plan.md",
+              "checklist": "feature-plan-stage-checklist.yaml",
+              "acceptance": "feature-plan-stage-acceptance.md",
+              "ff_note": null
+            },
+            "frontmatter": {
+              "status": "approved",
+              "workflow": "hybrid",
+              "roadmap": null,
+              "roadmap_item": null
+            },
+            "checklist_progress": {
+              "total": 5,
+              "done": 5
+            }
+          },
+          "derived": {
+            "stage": "accepted",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-05-skill-continuation-first",
+          "lane": "features",
+          "path": ".codestable/features/2026-06-05-skill-continuation-first",
+          "canonical": {
+            "artifacts": {
+              "design": "skill-continuation-first-design.md",
+              "plan": "skill-continuation-first-plan.md",
+              "checklist": "skill-continuation-first-checklist.yaml",
+              "acceptance": "skill-continuation-first-acceptance.md",
+              "ff_note": null
+            },
+            "frontmatter": {
+              "status": "approved",
+              "workflow": "hybrid",
+              "roadmap": null,
+              "roadmap_item": null
+            },
+            "checklist_progress": {
+              "total": 5,
+              "done": 5
+            }
+          },
+          "derived": {
+            "stage": "accepted",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        }
+      ]
+    },
+    "issues": {
+      "count": 13,
+      "active_count": 0,
+      "items": [
+        {
+          "key": "2026-06-02-hybrid-plan-generation-visibility",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-02-hybrid-plan-generation-visibility",
+          "canonical": {
+            "artifacts": {
+              "report": null,
+              "analysis": null,
+              "fix_note": "hybrid-plan-generation-visibility-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "compatibility",
+            "reasons": [
+              "fast-path resolved issue without retained report/analysis"
+            ]
+          }
+        },
+        {
+          "key": "2026-06-02-workflow-step-alignment",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-02-workflow-step-alignment",
+          "canonical": {
+            "artifacts": {
+              "report": null,
+              "analysis": null,
+              "fix_note": "workflow-step-alignment-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "compatibility",
+            "reasons": [
+              "fast-path resolved issue without retained report/analysis"
+            ]
+          }
+        },
+        {
+          "key": "2026-06-11-continuation-protocol-drift",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-11-continuation-protocol-drift",
+          "canonical": {
+            "artifacts": {
+              "report": "continuation-protocol-drift-report.md",
+              "analysis": "continuation-protocol-drift-analysis.md",
+              "fix_note": "continuation-protocol-drift-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-11-feat-plan-boundary-drift",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-11-feat-plan-boundary-drift",
+          "canonical": {
+            "artifacts": {
+              "report": "feat-plan-boundary-drift-report.md",
+              "analysis": "feat-plan-boundary-drift-analysis.md",
+              "fix_note": "feat-plan-boundary-drift-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-11-refactor-audit-continuation-missing",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-11-refactor-audit-continuation-missing",
+          "canonical": {
+            "artifacts": {
+              "report": "refactor-audit-continuation-missing-report.md",
+              "analysis": "refactor-audit-continuation-missing-analysis.md",
+              "fix_note": "refactor-audit-continuation-missing-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-11-startup-boilerplate-duplication",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-11-startup-boilerplate-duplication",
+          "canonical": {
+            "artifacts": {
+              "report": "startup-boilerplate-duplication-report.md",
+              "analysis": "startup-boilerplate-duplication-analysis.md",
+              "fix_note": "startup-boilerplate-duplication-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-11-terminology-criteria-fragmented",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-11-terminology-criteria-fragmented",
+          "canonical": {
+            "artifacts": {
+              "report": "terminology-criteria-fragmented-report.md",
+              "analysis": "terminology-criteria-fragmented-analysis.md",
+              "fix_note": "terminology-criteria-fragmented-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-12-feat-ff-attention-inventory-missing",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-12-feat-ff-attention-inventory-missing",
+          "canonical": {
+            "artifacts": {
+              "report": "feat-ff-attention-inventory-missing-report.md",
+              "analysis": null,
+              "fix_note": "feat-ff-attention-inventory-missing-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-12-issue-fast-track-rejudgment-guard",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-12-issue-fast-track-rejudgment-guard",
+          "canonical": {
+            "artifacts": {
+              "report": "issue-fast-track-rejudgment-guard-report.md",
+              "analysis": null,
+              "fix_note": "issue-fast-track-rejudgment-guard-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-12-system-overview-feat-wording-mismatch",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-12-system-overview-feat-wording-mismatch",
+          "canonical": {
+            "artifacts": {
+              "report": "system-overview-feat-wording-mismatch-report.md",
+              "analysis": null,
+              "fix_note": "system-overview-feat-wording-mismatch-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-17-docs-exceed-300-line-limit",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-17-docs-exceed-300-line-limit",
+          "canonical": {
+            "artifacts": {
+              "report": "docs-exceed-300-line-limit-report.md",
+              "analysis": "docs-exceed-300-line-limit-analysis.md",
+              "fix_note": "docs-exceed-300-line-limit-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-18-feature-design-confirmation-does-not-continue",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-18-feature-design-confirmation-does-not-continue",
+          "canonical": {
+            "artifacts": {
+              "report": null,
+              "analysis": null,
+              "fix_note": "feature-design-confirmation-does-not-continue-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "compatibility",
+            "reasons": [
+              "fast-path resolved issue without retained report/analysis"
+            ]
+          }
+        },
+        {
+          "key": "2026-06-18-issue-report-confirmation-does-not-continue",
+          "lane": "issues",
+          "path": ".codestable/issues/2026-06-18-issue-report-confirmation-does-not-continue",
+          "canonical": {
+            "artifacts": {
+              "report": null,
+              "analysis": null,
+              "fix_note": "issue-report-confirmation-does-not-continue-fix-note.md"
+            }
+          },
+          "derived": {
+            "stage": "resolved",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "compatibility",
+            "reasons": [
+              "fast-path resolved issue without retained report/analysis"
+            ]
+          }
+        }
+      ]
+    },
+    "refactors": {
+      "count": 4,
+      "active_count": 2,
+      "items": [
+        {
+          "key": "2026-06-02-hybrid-plan-presence-wording",
+          "lane": "refactors",
+          "path": ".codestable/refactors/2026-06-02-hybrid-plan-presence-wording",
+          "canonical": {
+            "artifacts": {
+              "scan": "hybrid-plan-presence-wording-scan.md",
+              "design": "hybrid-plan-presence-wording-refactor-design.md",
+              "checklist": "hybrid-plan-presence-wording-checklist.yaml",
+              "apply_notes": "hybrid-plan-presence-wording-apply-notes.md",
+              "completion_report": null
+            }
+          },
+          "derived": {
+            "stage": "applied",
+            "active": true,
+            "ready_for_next": false,
+            "canonical_complete": false,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "ask_user",
+            "needs_user_decision": true,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-02-intent-artifact-boundary",
+          "lane": "refactors",
+          "path": ".codestable/refactors/2026-06-02-intent-artifact-boundary",
+          "canonical": {
+            "artifacts": {
+              "scan": "intent-artifact-boundary-scan.md",
+              "design": "intent-artifact-boundary-refactor-design.md",
+              "checklist": "intent-artifact-boundary-checklist.yaml",
+              "apply_notes": "intent-artifact-boundary-apply-notes.md",
+              "completion_report": null
+            }
+          },
+          "derived": {
+            "stage": "applied",
+            "active": true,
+            "ready_for_next": false,
+            "canonical_complete": false,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "ask_user",
+            "needs_user_decision": true,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-15-reuse-first-workflow",
+          "lane": "refactors",
+          "path": ".codestable/refactors/2026-06-15-reuse-first-workflow",
+          "canonical": {
+            "artifacts": {
+              "scan": null,
+              "design": "reuse-first-workflow-design.md",
+              "checklist": "reuse-first-workflow-checklist.yaml",
+              "apply_notes": null,
+              "completion_report": "reuse-first-workflow-completion-report.md"
+            }
+          },
+          "derived": {
+            "stage": "completed",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-15-skill-startup-cache",
+          "lane": "refactors",
+          "path": ".codestable/refactors/2026-06-15-skill-startup-cache",
+          "canonical": {
+            "artifacts": {
+              "scan": "skill-startup-cache-scan.md",
+              "design": "skill-startup-cache-refactor-design.md",
+              "checklist": "skill-startup-cache-checklist.yaml",
+              "apply_notes": null,
+              "completion_report": "skill-startup-cache-completion-report.md"
+            }
+          },
+          "derived": {
+            "stage": "completed",
+            "active": false,
+            "ready_for_next": false,
+            "canonical_complete": true,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "terminal",
+            "needs_user_decision": false,
+            "blockers": [
+              "terminal_stage"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        }
+      ]
+    },
+    "audits": {
+      "count": 2,
+      "active_count": 2,
+      "items": [
+        {
+          "key": "2026-06-02-skill-workflow",
+          "lane": "audits",
+          "path": ".codestable/audits/2026-06-02-skill-workflow",
+          "canonical": {
+            "artifacts": {
+              "index": "index.md",
+              "findings": [
+                "finding-01.md",
+                "finding-02.md",
+                "finding-03.md",
+                "finding-04.md"
+              ]
+            }
+          },
+          "derived": {
+            "stage": "reported",
+            "active": true,
+            "ready_for_next": false,
+            "canonical_complete": false,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "ask_user",
+            "needs_user_decision": true,
+            "blockers": [
+              "ambiguous_next_step"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        },
+        {
+          "key": "2026-06-11-skill-workflow",
+          "lane": "audits",
+          "path": ".codestable/audits/2026-06-11-skill-workflow",
+          "canonical": {
+            "artifacts": {
+              "index": "index.md",
+              "findings": [
+                "finding-01.md",
+                "finding-02.md",
+                "finding-03.md",
+                "finding-04.md",
+                "finding-05.md",
+                "finding-06.md",
+                "finding-07.md",
+                "finding-08.md",
+                "finding-09.md",
+                "finding-10.md",
+                "finding-11.md",
+                "finding-12.md",
+                "finding-13.md"
+              ]
+            }
+          },
+          "derived": {
+            "stage": "reported",
+            "active": true,
+            "ready_for_next": false,
+            "canonical_complete": false,
+            "next_skill": null,
+            "auto_continue_allowed": false,
+            "continuation_mode": "ask_user",
+            "needs_user_decision": true,
+            "blockers": [
+              "ambiguous_next_step"
+            ]
+          },
+          "consistency": {
+            "state": "clean",
+            "reasons": []
+          }
+        }
+      ]
+    }
+  },
+  "summary": {
+    "feature_count": 9,
+    "issue_count": 13,
+    "refactor_count": 4,
+    "audit_count": 2,
+    "active_count": 5,
+    "compatibility_count": 5,
+    "conflict_count": 0
+  }
+}

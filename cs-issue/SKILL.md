@@ -79,7 +79,7 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 
 ## 路由
 
-进入本技能先 Glob `.codestable/issues/`，自己读已有文件才有数。
+进入本技能先优先读取 fresh `.codestable/status.json`（如果存在）看 issue lanes 的当前索引，再 `Glob` `.codestable/issues/`，自己读已有文件才有数。若 `status.json` 缺失、`freshness.state != fresh`、或与实际 issue 目录现状矛盾，必须回退到 direct `.codestable/issues/` inspection。
 
 | 当前状态 | 触发哪个子技能 |
 |---|---|
@@ -94,12 +94,12 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 
 当用户输入是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复时，本技能先做 continuation-first：
 
-1. 先看是否存在**唯一候选 issue 目录**
-2. 命中 → 直接按该目录现有产物判断 report / analyze / fix
+1. 先看是否存在**唯一候选 issue 目录**（可优先参考 fresh `status.json` 的 issue lanes）
+2. 命中 → 直接按该目录现有产物判断 report / analyze / fix；若 `status.json` 缺失、stale、或与 canonical artifacts 冲突，则以 issue 目录里的 report / analysis / fix-note 为准
 3. 多个候选 → 列给用户选，不猜
 4. 没有候选 → 才按普通 issue 路由处理
 
-如果需要恢复桥接信息，可参考 `.ccg/tasks/*/task.json`，但它**只作 task 状态桥**，不能替代 issue 目录里的 report / analysis / fix-note 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
+如果需要恢复桥接信息，可参考 `.ccg/tasks/*/task.json`，但它**只作 task 状态桥 / recovery hint**，不能替代 issue 目录里的 report / analysis / fix-note 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
 
 ---
 

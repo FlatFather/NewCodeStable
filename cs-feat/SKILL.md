@@ -155,7 +155,7 @@ AI：  "让我先搜索一下... {fast-context 搜索 '权限 / permission / aut
 
 ## 路由：用户现在该走哪个子技能
 
-进入本技能先 Glob 一下 `.codestable/features/` 看已有产物。**不要只听用户口头描述**——用户说"设计写完了"不一定真完整，自己读一遍。
+进入本技能先优先读取 fresh `.codestable/status.json`（如果存在）看 feature lanes 的当前索引，再 `Glob` 一下 `.codestable/features/` 看已有产物。若 `status.json` 缺失、`freshness.state != fresh`、或与实际目录现状矛盾，必须回退到 direct `.codestable/features/` inspection。**不要只听用户口头描述**——用户说"设计写完了"不一定真完整，自己读一遍。
 
 | 当前状态 | 触发哪个子技能 |
 |---|---|
@@ -179,12 +179,12 @@ AI：  "让我先搜索一下... {fast-context 搜索 '权限 / permission / aut
 
 当用户输入是 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复时，本技能先做 continuation-first：
 
-1. 先看是否存在**唯一候选 feature 目录**
-2. 命中 → 直接按该目录现有产物判断当前阶段（design / plan / impl / accept）
+1. 先看是否存在**唯一候选 feature 目录**（可优先参考 fresh `status.json` 的 feature lanes）
+2. 命中 → 直接按该目录现有产物判断当前阶段（design / plan / impl / accept）；若 `status.json` 缺失、stale、或与 canonical artifacts 冲突，则以目录内 design / plan / checklist / acceptance 为准
 3. 多个候选 → 列给用户选，不猜
 4. 没有候选 → 才按普通 feature 路由处理
 
-如果需要恢复桥接信息，可参考 `.ccg/tasks/*/task.json`，但它**只作 task 状态桥**，不能替代 feature 目录里的 design / plan / checklist / acceptance 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
+如果需要恢复桥接信息，可参考 `.ccg/tasks/*/task.json`，但它**只作 task 状态桥 / recovery hint**，不能替代 feature 目录里的 design / plan / checklist / acceptance 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
 
 ### 怎么判断该不该走阶段 0
 

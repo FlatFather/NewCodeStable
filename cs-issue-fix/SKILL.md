@@ -32,7 +32,7 @@ fix 阶段最容易出问题的不是改代码本身，而是**改的过程中�
 2. **上下文读全**：analysis 全文 + report 全文 + analysis 第 1 节定位的所有代码 + `.codestable/attention.md` + 沉淀目录搜索：
    - `python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_type=trick --filter status=active --query "{关键词}"`——确认修复方式不违背已有库用法 / 模式
    - 同样命令换 `--filter doc_type=explore`——确认修复点和已有证据不冲突
-3. **确认起点**——告诉用户"我将按方案 X 修改 {文件列表}，开始修复"，等用户确认才动手
+3. **自动进入修复**——若 canonical artifacts 已唯一确认根因与方案路径，就直接按方案 X 修改 {文件列表} 并开始修复；只在影响面扩张、候选方案反复、或前置重构会改变 scope 时停下来要求用户重新拍板
 
 ### 快速通道（无 analysis，从 report 直接触发）
 
@@ -40,10 +40,11 @@ fix 阶段最容易出问题的不是改代码本身，而是**改的过程中�
 
 1. **明确陈述根因**："`{文件}:{行号}` 的 {具体代码} 存在 {问题描述}"，让用户确认根因判断准确
 2. **给修复方案**——改哪里、怎么改（一两句话，不写完整分析文档）
-3. **等用户明确说"对，就这样改"才动手**——不允许"我觉得对，直接改了"
+3. **等用户明确说"对，就这样改"才动手**——这是快速通道保留的人类拍板点，不允许"我觉得对，直接改了"
 4. 读 `.codestable/attention.md`
 5. **补搜沉淀目录**——快速通道也要查一遍 `compound/`（trick + explore），避免误把已知边界条件当新问题
 6. **短回复 continuation-first**——如果用户这轮输入只是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步`，先恢复已有 fix-note / 代码修改 / 验证状态；必要时再参考 `.ccg/tasks/*/task.json` 作为恢复桥，但不把 task 文件当成 fix 真相源
+7. 用户已在 report 阶段确认根因与修复方案后，后续 continuation 不再重复补问"现在开始修吗"；除非出现新的 scope blocker、多个候选根因、或前置重构分歧
 
 ---
 

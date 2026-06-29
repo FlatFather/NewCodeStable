@@ -1,0 +1,60 @@
+version: 1
+parity_scope: manifest-declared-assets-only
+
+references:
+  - source: cs-onboard/reference/code-dimensions.md
+    destination: .codestable/reference/code-dimensions.md
+  - source: cs-onboard/reference/maintainer-notes.md
+    destination: .codestable/reference/maintainer-notes.md
+  - source: cs-onboard/reference/requirement-example.md
+    destination: .codestable/reference/requirement-example.md
+  - source: cs-onboard/reference/shared-asset-manifest.yaml
+    destination: .codestable/reference/shared-asset-manifest.yaml
+  - source: cs-onboard/reference/shared-conventions-checklist.md
+    destination: .codestable/reference/shared-conventions-checklist.md
+  - source: cs-onboard/reference/shared-conventions-core.md
+    destination: .codestable/reference/shared-conventions-core.md
+  - source: cs-onboard/reference/shared-conventions-feature.md
+    destination: .codestable/reference/shared-conventions-feature.md
+  - source: cs-onboard/reference/shared-conventions-roadmap.md
+    destination: .codestable/reference/shared-conventions-roadmap.md
+  - source: cs-onboard/reference/shared-conventions.md
+    destination: .codestable/reference/shared-conventions.md
+  - source: cs-onboard/reference/status-schema.md
+    destination: .codestable/reference/status-schema.md
+  - source: cs-onboard/reference/system-overview.md
+    destination: .codestable/reference/system-overview.md
+  - source: cs-onboard/reference/terminology.md
+    destination: .codestable/reference/terminology.md
+  - source: cs-onboard/reference/tools.md
+    destination: .codestable/reference/tools.md
+  - source: cs-onboard/reference/workflow-continuation-base.md
+    destination: .codestable/reference/workflow-continuation-base.md
+  - source: cs-onboard/reference/workflow-continuation-feature.md
+    destination: .codestable/reference/workflow-continuation-feature.md
+  - source: cs-onboard/reference/workflow-continuation-issue.md
+    destination: .codestable/reference/workflow-continuation-issue.md
+  - source: cs-onboard/reference/workflow-continuation.md
+    destination: .codestable/reference/workflow-continuation.md
+  - source: cs-onboard/reference/workflow-contract-authority.md
+    destination: .codestable/reference/workflow-contract-authority.md
+  - source: cs-onboard/reference/workflow-contract-continuation.md
+    destination: .codestable/reference/workflow-contract-continuation.md
+  - source: cs-onboard/reference/workflow-contract-distribution.md
+    destination: .codestable/reference/workflow-contract-distribution.md
+  - source: cs-onboard/reference/workflow-contract-generated-state.md
+    destination: .codestable/reference/workflow-contract-generated-state.md
+  - source: cs-onboard/reference/workflow-contract-shared-concepts.md
+    destination: .codestable/reference/workflow-contract-shared-concepts.md
+  - source: cs-onboard/reference/workflow-contract.md
+    destination: .codestable/reference/workflow-contract.md
+
+tools:
+  - source: cs-onboard/tools/build-status.py
+    destination: .codestable/tools/build-status.py
+  - source: cs-onboard/tools/check-workflow-contracts.py
+    destination: .codestable/tools/check-workflow-contracts.py
+  - source: cs-onboard/tools/search-yaml.py
+    destination: .codestable/tools/search-yaml.py
+  - source: cs-onboard/tools/validate-yaml.py
+    destination: .codestable/tools/validate-yaml.py

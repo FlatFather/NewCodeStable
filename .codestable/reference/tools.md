@@ -6,6 +6,89 @@
 
 ---
 
+## 0. build-status.py
+
+生成 workflow 的 machine-readable status spine。它只读取 canonical `.codestable/` artifacts，确定性输出 `.codestable/status.json`，并显式记录 freshness / consistency / bridge-hint 边界。
+
+### 基本语法
+
+```bash
+python .codestable/tools/build-status.py
+python .codestable/tools/build-status.py --repo-root /path/to/repo
+python .codestable/tools/build-status.py --check
+```
+
+### 默认输入
+
+- `.codestable/features/**`
+- `.codestable/issues/**`
+- `.codestable/refactors/**`
+- `.codestable/audits/**`
+
+### 明确非输入
+
+- `.ccg/tasks/*/task.json`
+- `context.jsonl`
+- `STATUS.md`
+
+### 输出语义
+
+- `status.json` 是 **derived-only** 状态脊柱，不是 authority
+- `freshness.canonical_digest` 用于判断生成结果是否已 stale
+- lane item 同时区分：
+  - `canonical`：直接从正式产物读取的事实
+  - `derived`：由 canonical facts 推导出的阶段视图
+  - `consistency`：`clean | compatibility | conflict`
+- `bridge_hints` 只登记边界说明，不参与状态推导
+
+### 消费约束
+
+- 若当前 canonical digest 与 `status.json.freshness.canonical_digest` 不一致，消费方必须回退到 canonical inspection
+- 若 item 的 `consistency.state = conflict`，消费方不得把该 item 的 derived state 作为最终结论
+- `STATUS.md` 缺失不影响任何路由行为
+
+---
+
+## 0. check-workflow-contracts.py
+
+工作流契约只读校验器。用于检查共享资产 manifest parity、repo-local 副本、活跃 workflow 口径一致性，以及 Markdown 行数上限。脚本只读、确定性、无额外依赖。
+
+### 基本语法
+
+```bash
+python .codestable/tools/check-workflow-contracts.py
+python .codestable/tools/check-workflow-contracts.py --repo-root /path/to/repo
+python .codestable/tools/check-workflow-contracts.py --json
+```
+
+### 默认检查项
+
+- `cs-onboard/reference/shared-asset-manifest.yaml` 与 `.codestable/reference/shared-asset-manifest.yaml` 的 parity
+- manifest 声明的 `source` / `destination` 文件是否存在、是否仍落在共享合同路径前缀下
+- 被活跃 workflow 文档引用的 `.codestable/reference/*` / `.codestable/tools/*` 是否真实存在且已写入 manifest
+- 活跃 / 公共文档是否仍使用标准 feature 主线：`cs-feat → cs-feat-design → cs-feat-plan → cs-feat-impl → cs-feat-accept`
+- 活跃 workflow 文档是否违反 `.codestable/` 路径契约
+- Markdown 文档是否超过仓库当前行数上限（默认从 `CLAUDE.md` / `AGENTS.md` 读取，当前为 500）
+- 历史 legacy feature 是否被兼容读取而非误判为硬失败
+
+### 严格 / 兼容分层
+
+- **严格失败**：活跃 workflow 文档、公共文档、manifest parity、共享资产缺失、被重开的 hybrid feature 缺少 `plan.md` 或 `checklist.yaml`
+- **兼容警告**：历史 / 归档 artifact 的旧口径、未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`
+- **样板例外**：仓库内显式标记为 sample/example 的 feature，在仓库级运行中按 compatibility warning 处理；严格失败场景由 `tests/fixtures/workflow-contracts/` 单独覆盖
+
+### Fixtures
+
+推荐 fixtures 目录：`tests/fixtures/workflow-contracts/`。至少覆盖：
+
+- 缺失共享资产
+- destination 路径错误
+- 活跃 feature-flow wording drift
+- Markdown 超过行数上限
+- legacy feature 兼容例外
+
+---
+
 ## 1. search-yaml.py
 
 通用 YAML frontmatter 搜索工具。从项目根目录运行，无需安装额外依赖（PyYAML 可选，有则用，无则内建 fallback parser）。

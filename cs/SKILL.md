@@ -31,7 +31,7 @@ description: CodeStable 工作流根入口，介绍体系全貌并把诉求路�
 回应前每次都做（几个 tool 调用就够）：
 
 1. **看仓库有没有接入 CodeStable**——`Glob .codestable/` 看顶层目录
-2. **存在**——必须先 `Read .codestable/attention.md`（如果缺失提示骨架不完整，先补齐或重跑 `cs-onboard`）；再 `Read .codestable/reference/system-overview.md`（如果有）；`Glob` 一下 `features/` `issues/` `roadmap/` 看进行中的工作（拿目录名就够，不逐份读）
+2. **存在**——优先读取 `.codestable/status.json`（若存在）做快速发现；若缺失、`freshness.state != fresh`、或与当前诉求/目录现状矛盾，则回退为直接 `Read .codestable/attention.md`（如果缺失提示骨架不完整，先补齐或重跑 `cs-onboard`）；再 `Read .codestable/reference/system-overview.md`（如果有）；`Glob` 一下 `features/` `issues/` `roadmap/` 看进行中的工作（拿目录名就够，不逐份读）
 3. **不存在**——后面提示用户先走 `cs-onboard`
 4. **看用户原话**——开放式还是带具体诉求？带诉求匹配路由表，没诉求给体系介绍
 
@@ -57,13 +57,13 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 
 **三条流程**：
 
-- **新增能力**：`cs-feat-design` → `cs-feat-impl` → `cs-feat-accept`（想法模糊先 `cs-brainstorm` 分诊；若采用 hybrid，则由 `cs-feat-design` 在进入实现前生成 `plan.md`）
+- **新增能力**：`cs-feat-design` → `cs-feat-plan` → `cs-feat-impl` → `cs-feat-accept`（想法模糊先 `cs-brainstorm` 分诊）
 - **修 bug**：`cs-issue-report` → `cs-issue-analyze` → `cs-issue-fix`
 - **重构**（beta）：`cs-refactor` / `cs-refactor-ff`
 
 **横切**：流程跑完发现"值得记下来" → `cs-learn` / `cs-trick` / `cs-decide` / `cs-explore` 沉淀到 `compound/`。
 
-**核心理念**：编排的是软件本身的生命周期（需求、架构、特性、bug、决策），不是 Agent。人在环——程序员对整体把控负责，AI 是高效执行体。
+**核心理念**：编排的是软件本身的生命周期（需求、架构、特性、bug、决策），不是 Agent。规范性 workflow 规则统一见 `.codestable/reference/workflow-contract.md`。
 
 > 项目已 onboard 的话更详细总览看 `.codestable/reference/system-overview.md`。
 
@@ -116,18 +116,23 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 
 ### 进行中的工作
 
-扫描看到 `features/` 或 `issues/` 下已有相关目录 → 提一句"看到 `features/2026-04-22-xxx/` 已经存在，是接着做这个吗？" 让用户确认续作还是开新的。
+扫描看到 `features/` 或 `issues/` 下已有相关目录时，先判断是不是 continuation-first 场景：
+
+- **唯一 fresh 且无 blocker 的 canonical 候选** → 直接按该对象继续，告诉用户会回到哪个入口/阶段；**不要再追加"是不是这个"的确认题**
+- **多个候选** → 列出来让用户选，**不要猜最近一个**
+- **canonical artifacts 互相冲突、存在新 scope、或目录状态不够判定** → 明确指出冲突点/缺口，再让用户选或补充
 
 ### 短回复 continuation-first
 
 如果用户输入是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复，先别按新诉求路由。默认顺序是：
 
-1. 先看是否存在**唯一候选续作**（相关 feature / issue 目录，必要时再参考 `.ccg/tasks/*/task.json` 作为恢复桥）
-2. 命中唯一候选 → 直接告诉用户"检测到你在继续 {对象}，建议直接回到 {对应入口/阶段}"，不要再重复讲体系总览或重新做开放式分诊
+1. 先按 `.codestable/reference/workflow-contract-continuation.md` 检查是否满足 continuation-first
+2. 命中唯一候选且没有 blocker → 优先使用 fresh `status.json` 辅助定位对象与阶段；若 `status.json` 缺失、stale、或与实际 `.codestable/` 产物冲突，则回退到直接读取 canonical artifacts；定位完成后直接告诉用户"检测到你在继续 {对象}，接下来进入 {对应入口/阶段}"，不要再重复讲体系总览、重新做开放式分诊，或补问一轮"是不是继续这个"
 3. 多个候选 → 列出来让用户选，**不要猜最近一个**
-4. 没有候选 → 回到本技能原本的路由逻辑
+4. 命中 canonical 冲突 / scope 扩张 / 阶段前提不满足 → 停下来解释为什么不能自动续作，并要求用户明确选择
+5. 没有候选 → 回到本技能原本的路由逻辑
 
-`.ccg/tasks/*/task.json` 在这里**只作 task 状态桥**，不替代 `.codestable/features/` / `.codestable/issues/` 这些产物的真实阶段状态。详细协议见 `.codestable/reference/workflow-continuation.md`。
+`.ccg/tasks/*/task.json` 在这里**只作 task 状态桥 / recovery hint**，不替代 `.codestable/features/` / `.codestable/issues/` 这些产物的真实阶段状态。`status.json` 也只提供 discovery hint；只要与 canonical artifacts 冲突，就必须以 canonical artifacts 为准。authority、generated state 与 continuation 的规范性定义见 `.codestable/reference/workflow-contract.md`。
 
 ### 沉淀类技能的细分
 

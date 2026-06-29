@@ -21,6 +21,20 @@ description: feature 流程的超轻量通道——不写 design / checklist 直
 
 ---
 
+## Shared fastforward contract
+
+`cs-feat-ff` 与 `cs-refactor-ff` 共享同一条 fastforward 边界合同：
+
+- 只有在范围小、决策空间小、AI 可一次对话内完成并自证时，fastforward 才继续成立
+- fastforward 只降低 ceremony，不改变 truth source / authority ordering
+- 一旦超出 documented thresholds，workflow **自动 normalize** 到对应标准 lane
+- auto-normalize 是单向的：触发后不再沿用 fastforward 语义硬推到底
+- 不确定是否仍属于 fastforward 时，默认回标准 lane
+
+本 lane 的局部限制仍以本文件为准；跨 lane 的共享判据看 `.codestable/reference/terminology.md` 第 3 节。
+
+---
+
 ## 动手前先扫一眼 .codestable/
 
 Glob `.codestable/` 发现可用目录和文档，按需取用：
@@ -160,12 +174,13 @@ tags: [...]
 
 ## 什么时候跳出 fastforward
 
-干到一半发现下面任一情况，**停下来告诉用户"这比想象的复杂，建议切回完整流程"**：
+干到一半发现下面任一情况，**停下来告诉用户"这比想象的复杂，workflow 会自动回到标准 feature lane，建议切到 `cs-feat-design`"**：
 
 - 改动涉及 3 个以上子系统
 - 需要引入新术语或和现有术语冲突
 - 要动 `.codestable/architecture/` 既定的模块边界
 - 用户追加的要求让范围翻倍
+- 推进步骤已经需要 `plan` 才能稳定表达 scope / risk / acceptance
 
 切回方式：触发 `cs-feat-design`。已写的代码在 design 里标"已部分实现"即可。
 

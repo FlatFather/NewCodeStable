@@ -60,7 +60,7 @@ description: 系统审计——从代码中主动发现 bug 隐患、安全漏�
 
 当用户输入 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复时，先按 continuation-first 处理：
 
-1. **检查是否存在唯一候选 audit 目录**——Glob `.codestable/audits/`
+1. **检查是否存在唯一候选 audit 目录**——优先参考 fresh `status.json` 的 audit lanes；若 `status.json` 缺失、`freshness.state != fresh`、或与目录现状矛盾，则回退为 `Glob .codestable/audits/`
 2. **命中唯一候选**：
    - 读取该目录下的产物状态
    - 根据已有文件判断当前阶段：
@@ -71,7 +71,7 @@ description: 系统审计——从代码中主动发现 bug 隐患、安全漏�
 3. **多个候选**——列出来让用户选，不猜
 4. **没有候选**——才按普通审计流程处理（从 Phase 1 范围收敛开始）
 
-必要时可参考 `.ccg/tasks/*/task.json` 作为恢复桥，但它**只作 task 状态桥**，不替代 audit 目录里的 index / finding 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
+必要时可参考 `.ccg/tasks/*/task.json` 作为恢复桥，但它**只作 task 状态桥 / recovery hint**，不替代 audit 目录里的 index / finding 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
 
 ---
 

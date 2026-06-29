@@ -28,6 +28,7 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 
 - `.codestable/attention.md`
 - `.codestable/reference/shared-conventions.md`
+- `.codestable/reference/workflow-contract-continuation.md`
 - `.codestable/reference/workflow-continuation.md`
 - `.codestable/reference/system-overview.md`
 - `.codestable/architecture/ARCHITECTURE.md`
@@ -60,9 +61,11 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 - `{slug}-plan.md`
 - `{slug}-checklist.yaml`
 
-并形成进入实现前的独立确认关口。
+并形成进入实现前的独立确认关口。这个关口只确认**执行顺序与步骤切分**，不重复确认已经 approved 的 design 意图。
 
-如果用户在这条主线中只输入 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复，仓库内 skills 默认先按 **continuation-first** 恢复已有 feature 目录状态，再决定是否重新路由。详细协议见 `.codestable/reference/workflow-continuation.md`。
+如果用户在这条主线中只输入 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复，仓库内 skills 默认先按 **continuation-first** 恢复已有 feature 目录状态，再决定是否重新路由。规范性定义见 `.codestable/reference/workflow-contract-continuation.md`，lane-facing 摘要见 `.codestable/reference/workflow-continuation.md`。
+
+当 canonical artifacts 唯一表明 `design.md` 已 approved，且 `plan.md + checklist.yaml` 已确认可执行时，后续 handoff 自动进入 `cs-feat-impl`；不会再追加一轮仅重复 design 意图的"要不要开始实现"确认。
 
 ### 3. 进入实现阶段
 
@@ -75,6 +78,14 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 对应阶段：
 
 - `cs-feat-impl`
+
+当 canonical artifacts 唯一表明实现前提成立时，`cs-feat-impl` 自动从当前应执行的 step 开始推进；短回复 continuation 不要求额外的"现在开始实现吗"启动确认。
+
+仍然必须保留的人类拍板点包括：
+- feature design approval
+- scope expansion beyond approved scope
+- multi-candidate ambiguity
+- refactor prerequisites / new concepts / unresolved edge cases that would change scope
 
 ### 4. 进入验收阶段
 
@@ -93,6 +104,35 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 - requirement 回写（如需要）
 - roadmap 回写（如需要）
 - acceptance 报告
+
+当 checklist 已全部完成、实现汇报已输出、且没有 blocker 时，后续 continuation 会自动 handoff 到 `cs-feat-accept`；不会再额外追问一轮"是不是进入验收"。
+
+## 自动 handoff 与保留确认点
+
+### 自动 handoff
+
+以下 handoff 在 canonical artifacts 唯一、fresh 且无 blocker 时自动发生：
+
+- approved feature design → `cs-feat-plan`
+- approved feature plan/checklist → `cs-feat-impl`
+- completed feature checklist → `cs-feat-accept`
+- continuation 短回复（`继续 / 确认 / 同意 / 继续下一步`）→ 当且仅当唯一候选存在时，直接续到对应阶段
+
+### 仍然必须保留的确认
+
+以下情况不能自动跳过：
+
+- feature design approval
+- scope expansion beyond approved scope
+- multi-candidate ambiguity
+- refactor prerequisites / new concepts / unresolved edge cases that change scope
+
+### truth-source 优先级
+
+- `.codestable/features/{slug}/` 下的 `design.md` / `plan.md` / `checklist.yaml` 是 canonical artifacts
+- `status.json` 只提供 discovery / routing hint，**永远不能压过 canonical artifacts**
+- `status.json` 缺失、stale、或与 feature 目录冲突时，必须回退到直接读取 canonical artifacts
+- `.ccg/tasks/*/task.json` 只作 recovery hint，不提升为 workflow authority
 
 ## 核心概念
 
@@ -212,6 +252,7 @@ plan 的意义不是“把 design 写得更长”，而是提供**文件级改�
 ## 相关文档
 
 - `.codestable/reference/shared-conventions.md`
+- `.codestable/reference/workflow-contract-continuation.md`
 - `.codestable/reference/workflow-continuation.md`
 - `.codestable/reference/system-overview.md`
 - `.codestable/architecture/ARCHITECTURE.md`

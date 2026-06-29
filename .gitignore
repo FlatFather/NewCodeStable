@@ -6,5 +6,6 @@ __pycache__
 /.ccg
 /.agent
 /.ace-tool
-/.codex/skills
+/.codex
+.ace-tool/
 /openspec

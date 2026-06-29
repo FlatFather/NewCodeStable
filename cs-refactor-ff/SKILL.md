@@ -21,6 +21,20 @@ description: refactor 流程的超轻量通道——直接识别 1-3 条低风�
 
 ---
 
+## Shared fastforward contract
+
+`cs-refactor-ff` 与 `cs-feat-ff` 共享同一条 fastforward 边界合同：
+
+- 只有在范围小、决策空间小、AI 可一次对话内完成并自证时，fastforward 才继续成立
+- fastforward 只降低 ceremony，不改变 truth source / authority ordering
+- 一旦超出 documented thresholds，workflow **自动 normalize** 到对应标准 lane
+- auto-normalize 是单向的：触发后不再沿用 fastforward 语义硬推到底
+- 不确定是否仍属于 fastforward 时，默认回标准 lane
+
+本 lane 的局部限制仍以本文件为准；跨 lane 的共享判据看 `.codestable/reference/terminology.md` 第 3 节。
+
+---
+
 ## 入场 3 条硬检查（不过就退完整流程）
 
 任一不过就退到 `cs-refactor`：
@@ -89,7 +103,7 @@ fastforward 不读完整方法库，但要守住"**每一处改动都能对应�
 
 ## 什么时候跳出 fastforward
 
-改到一半出现以下任一，**停下告诉用户"比预期复杂，建议切回完整流程"**：
+改到一半出现以下任一，**停下告诉用户"比预期复杂，workflow 会自动回到标准 refactor lane，建议切到 `cs-refactor`"**：
 
 - 改动点从 3 个涨到 5+
 - 发现要动的文件不止 1 个
