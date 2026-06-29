@@ -4,3 +4,7 @@ __pycache__
 .codestable/features/.DS_Store
 .codestable/.DS_Store
 /.ccg
+/.agent
+/.ace-tool
+/.codex/skills
+/openspec
