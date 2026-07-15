@@ -20,7 +20,7 @@
 
 ```json
 {
-  "schema_version": "1.0",
+  "schema_version": "1.2",
   "generator": { ... },
   "authority": { ... },
   "freshness": { ... },
@@ -134,6 +134,8 @@
 - `canonical_conflict`
 - `missing_required_artifact`
 - `awaiting_design_approval`
+- `awaiting_plan_approval`
+- `awaiting_report_confirmation`
 - `awaiting_fix_option_selection`
 - `scope_expansion_required`
 - `multiple_candidates`
@@ -144,6 +146,8 @@
 - `canonical_conflict`：canonical artifacts 之间存在显式矛盾
 - `missing_required_artifact`：进入下一步所需的 canonical artifact 缺失
 - `awaiting_design_approval`：设计已产出但尚未获得进入下一阶段的批准
+- `awaiting_plan_approval`：plan/checklist 已产出但执行顺序尚未获得进入实现的批准
+- `awaiting_report_confirmation`：issue report 尚未确认，不能进入根因分析
 - `awaiting_fix_option_selection`：issue 分析后仍待用户在候选修复方案中做选择
 - `scope_expansion_required`：下一步会超出当前已批准范围，必须先扩 scope
 - `multiple_candidates`：存在多个合理续作候选，无法唯一恢复

@@ -54,7 +54,7 @@ description: feature 流程阶段 4——验收闭环：对照 design / plan 核
 1. **代码确实实现到位**——git status / 最近提交看到本功能改动，否则退回 implement
 2. **方案 doc 完整**——frontmatter `doc_type=feature-design` / `feature` 一致 / `status=approved` / `summary` 非空 / `tags` ≥ 2；标准 design 第 0/1/2/3 节 + 第 4 节已填写
 3. **`{slug}-checklist.yaml`**——存在且 `feature` 一致；`steps` 全 `done`（有 `pending` 退回 implement）；`checks` 非空全 `pending`
-4. **上下文读全**——方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + 必须存在且读全的 `{slug}-plan.md` + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）；若有 roadmap 起头，验收前还必须核对 `design.feature = items.yaml.feature` 与 `plan.feature = design.feature`
+4. **plan 已批准且上下文读全**——标准 feature 的 `{slug}-plan.md` 必须存在且 `status=approved`；缺失或仍为 draft 就退回 `cs-feat-plan` 完成 execution-order checkpoint。随后读方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + plan 全文 + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）；若有 roadmap 起头，验收前还必须核对 `design.feature = items.yaml.feature` 与 `plan.feature = design.feature`
 5. **断点恢复**——`{slug}-acceptance.md` 已存在且部分填好 → 从下一个未完成节继续，跳过 checks 中已 `passed` 的项；汇报"上次做到第 X 节，从第 Y 节继续"
 6. **短回复 continuation-first**——如果用户这轮输入只是 `继续 / 确认 / 同意 / 跳过 / 继续下一步`，先按已有 acceptance / checklist / plan 状态恢复；必要时再参考 `.ccg/tasks/*/task.json` 作为恢复桥，但不把 task 文件当成验收真相源
 

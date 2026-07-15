@@ -167,9 +167,11 @@ tags: []
 
 ## 退出后
 
-告诉用户："根因分析已就绪，方案已确认。下一步阶段 3 修复验证，触发 `cs-issue-fix`。"
+告诉用户：“根因分析已就绪，方案已确认，现在进入阶段 3 修复验证（`cs-issue-fix`）。”
 
-别自己顺手改代码——跨阶段无停顿往下跑会让用户来不及把关。
+用户在本阶段确认方案后，把 `analysis.md` 写为 `status=confirmed` 并立即 handoff 到 `cs-issue-fix`；方案选择本身就是修复授权，**不得再追加一次“是否开始修复”的确认题**。恢复场景由 `cs-issue` continuation-first 直接续到 fix。
+
+用户尚未确认修复方案时不得改代码；确认后直接 handoff 不属于绕过 checkpoint。
 
 ---
 

@@ -17,7 +17,7 @@ CodeStable 当前的活跃 feature 主线已经从过去的“design 后直接 i
 其中：
 - `design` 只负责确定范围、术语、约束和验收契约
 - `plan` 负责把已批准的 design 展开成**文件级改动计划**，并同时生成 `checklist.yaml`
-- `impl` 只在 `design + plan + checklist` 都已齐备后才能启动
+- `impl` 只在 design 与 plan 都已 approved、checklist 已齐备后才能启动
 - `accept` 对照 `design + plan + checklist` 做最终核验
 
 fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录只作留档兼容读取，不再作为新 feature 的活跃标准口径。
@@ -61,7 +61,7 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 - `{slug}-plan.md`
 - `{slug}-checklist.yaml`
 
-并形成进入实现前的独立确认关口。这个关口只确认**执行顺序与步骤切分**，不重复确认已经 approved 的 design 意图。
+并形成进入实现前的独立确认关口。这个关口只确认**执行顺序与步骤切分**，不重复确认已经 approved 的 design 意图；确认后把 `plan.md` 从 `status: draft` 写为 `status: approved` 并立即进入实现，不再索要第二次“继续”。
 
 如果用户在这条主线中只输入 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复，仓库内 skills 默认先按 **continuation-first** 恢复已有 feature 目录状态，再决定是否重新路由。规范性定义见 `.codestable/reference/workflow-contract-continuation.md`，lane-facing 摘要见 `.codestable/reference/workflow-continuation.md`。
 
@@ -72,7 +72,7 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 只有当下面三项都齐备时，才进入：
 
 - `design.md`
-- `plan.md`
+- `plan.md`，且 `status: approved`
 - `checklist.yaml`
 
 对应阶段：
@@ -83,6 +83,7 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 
 仍然必须保留的人类拍板点包括：
 - feature design approval
+- feature plan execution-order approval
 - scope expansion beyond approved scope
 - multi-candidate ambiguity
 - refactor prerequisites / new concepts / unresolved edge cases that would change scope
@@ -123,6 +124,7 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 以下情况不能自动跳过：
 
 - feature design approval
+- feature plan execution-order approval
 - scope expansion beyond approved scope
 - multi-candidate ambiguity
 - refactor prerequisites / new concepts / unresolved edge cases that change scope

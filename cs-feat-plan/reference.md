@@ -13,6 +13,8 @@ status: draft
 ---
 ```
 
+生成初稿时使用 `status: draft`；用户确认执行顺序与步骤切分后，`cs-feat-plan` 必须将其改为 `status: approved`，这是进入 `cs-feat-impl` 的 canonical 前提。
+
 ## 2. `{slug}-plan.md` 正文结构
 
 ```markdown

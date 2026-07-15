@@ -1,5 +1,6 @@
 ---
 doc_type: issue-fix
+status: completed
 issue: 2026-06-17-docs-exceed-300-line-limit
 path: standard
 fix_date: 2026-06-17

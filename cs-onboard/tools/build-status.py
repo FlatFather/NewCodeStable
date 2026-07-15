@@ -25,12 +25,14 @@ TERMINAL_STAGE = "terminal_stage"
 CANONICAL_CONFLICT = "canonical_conflict"
 MISSING_REQUIRED_ARTIFACT = "missing_required_artifact"
 AWAITING_DESIGN_APPROVAL = "awaiting_design_approval"
+AWAITING_PLAN_APPROVAL = "awaiting_plan_approval"
+AWAITING_REPORT_CONFIRMATION = "awaiting_report_confirmation"
 AWAITING_FIX_OPTION_SELECTION = "awaiting_fix_option_selection"
 SCOPE_EXPANSION_REQUIRED = "scope_expansion_required"
 MULTIPLE_CANDIDATES = "multiple_candidates"
 AMBIGUOUS_NEXT_STEP = "ambiguous_next_step"
-SCHEMA_VERSION = "1.1"
-GENERATOR_VERSION = "0.2.0"
+SCHEMA_VERSION = "1.2"
+GENERATOR_VERSION = "0.3.0"
 STATE_ORDER = {"clean": 0, "compatibility": 1, "conflict": 2}
 
 FEATURE_ARTIFACT_SPECS = [
@@ -309,16 +311,27 @@ def feature_stage(artifacts: dict, progress: dict) -> str:
     return "empty"
 
 
-def feature_transition(stage: str, artifacts: dict, design_status: str, progress: dict) -> dict:
-    canonical_complete = bool(artifacts["acceptance"])
-    active = stage not in {"accepted", "empty"}
+def feature_transition(
+    stage: str,
+    artifacts: dict,
+    design_status: str,
+    plan_status: str,
+    progress: dict,
+    workflow: str | None,
+) -> dict:
+    has_acceptance = bool(artifacts["acceptance"])
+    active = stage != "empty"
     design_approved = design_status == "approved"
+    plan_approved = plan_status == "approved"
     has_plan_and_checklist = bool(artifacts["plan"] and artifacts["checklist"])
     has_partial_plan_state = bool(artifacts["plan"] or artifacts["checklist"])
     checklist_complete = progress["total"] > 0 and progress["done"] == progress["total"]
+    legacy_accepted = has_acceptance and (
+        workflow == "legacy" or (workflow is None and not artifacts["plan"])
+    )
 
-    if canonical_complete:
-        return transition_result(active=active, canonical_complete=True)
+    if legacy_accepted:
+        return transition_result(active=False, canonical_complete=True)
     if artifacts["design"] and not design_approved:
         return transition_result(
             active=active,
@@ -326,12 +339,45 @@ def feature_transition(stage: str, artifacts: dict, design_status: str, progress
             needs_user_decision=True,
             blockers=[AWAITING_DESIGN_APPROVAL],
         )
+    if has_acceptance and not has_plan_and_checklist:
+        return transition_result(
+            active=active,
+            canonical_complete=False,
+            needs_user_decision=True,
+            blockers=[MISSING_REQUIRED_ARTIFACT],
+        )
+    if has_acceptance and not plan_approved:
+        return transition_result(
+            active=active,
+            canonical_complete=False,
+            next_skill="cs-feat-plan",
+            needs_user_decision=True,
+            blockers=[AWAITING_PLAN_APPROVAL],
+        )
+    if has_acceptance and not checklist_complete:
+        return transition_result(
+            active=active,
+            canonical_complete=False,
+            next_skill="cs-feat-impl",
+            needs_user_decision=True,
+            blockers=[MISSING_REQUIRED_ARTIFACT],
+        )
+    if has_acceptance:
+        return transition_result(active=False, canonical_complete=True)
     if design_approved and not has_partial_plan_state:
         return transition_result(
             active=active,
             canonical_complete=False,
             next_skill="cs-feat-plan",
             auto_continue_allowed=True,
+        )
+    if design_approved and has_plan_and_checklist and not plan_approved:
+        return transition_result(
+            active=active,
+            canonical_complete=False,
+            next_skill="cs-feat-plan",
+            needs_user_decision=True,
+            blockers=[AWAITING_PLAN_APPROVAL],
         )
     if design_approved and has_plan_and_checklist and not checklist_complete:
         return transition_result(
@@ -374,8 +420,10 @@ def feature_transition(stage: str, artifacts: dict, design_status: str, progress
 def feature_item(directory: Path, repo_root: Path) -> tuple[dict, list[Path]]:
     artifacts, state, reasons = gather_artifacts(directory, FEATURE_ARTIFACT_SPECS)
     design_path = directory / artifacts["design"] if artifacts["design"] else None
+    plan_path = directory / artifacts["plan"] if artifacts["plan"] else None
     checklist_path = directory / artifacts["checklist"] if artifacts["checklist"] else None
     meta = extract_frontmatter(design_path) if design_path else {}
+    plan_meta = extract_frontmatter(plan_path) if plan_path else {}
     progress = checklist_progress(checklist_path)
     workflow = meta.get("workflow") or None
 
@@ -388,12 +436,15 @@ def feature_item(directory: Path, repo_root: Path) -> tuple[dict, list[Path]]:
         state = note_consistency(state, reasons, "compatibility", "legacy workflow remains compatibility-only")
 
     stage = feature_stage(artifacts, progress)
-    derived = feature_transition(stage, artifacts, status_value(design_path), progress)
+    derived = feature_transition(
+        stage, artifacts, status_value(design_path), status_value(plan_path), progress, workflow
+    )
     files = file_list(directory, *artifacts.values())
     canonical = {
         "artifacts": artifacts,
         "frontmatter": {
             "status": meta.get("status"),
+            "plan_status": plan_meta.get("status"),
             "workflow": workflow,
             "roadmap": meta.get("roadmap"),
             "roadmap_item": meta.get("roadmap_item"),
@@ -422,32 +473,71 @@ def issue_stage(artifacts: dict) -> str:
     return "empty"
 
 
-def issue_transition(stage: str, artifacts: dict, report_status: str, analysis_status: str) -> dict:
-    canonical_complete = bool(artifacts["fix_note"])
-    active = stage not in {"resolved", "empty"}
+def issue_transition(
+    stage: str,
+    artifacts: dict,
+    report_status: str,
+    analysis_status: str,
+    fix_note_status: str,
+) -> dict:
+    has_fix_note = bool(artifacts["fix_note"])
+    active = stage != "empty"
+    has_report = bool(artifacts["report"])
+    has_analysis = bool(artifacts["analysis"])
+    fix_note_only_terminal = (
+        has_fix_note
+        and not has_report
+        and not has_analysis
+        and fix_note_status in {"", "completed"}
+    )
+    confirmed_fast_path_terminal = (
+        has_fix_note
+        and has_report
+        and report_status == "confirmed"
+        and not has_analysis
+        and fix_note_status == "completed"
+    )
 
-    if canonical_complete:
-        return transition_result(active=active, canonical_complete=True)
-    if artifacts["analysis"] and analysis_status != "confirmed":
+    if fix_note_only_terminal or confirmed_fast_path_terminal:
+        return transition_result(active=False, canonical_complete=True)
+    if has_fix_note and not has_report and not has_analysis:
+        return transition_result(
+            active=True,
+            canonical_complete=False,
+            next_skill="cs-issue-fix",
+            auto_continue_allowed=True,
+        )
+    if has_report and report_status != "confirmed":
         return transition_result(
             active=active,
             canonical_complete=False,
+            next_skill="cs-issue-report",
+            needs_user_decision=True,
+            blockers=[AWAITING_REPORT_CONFIRMATION],
+        )
+    if has_analysis and analysis_status != "confirmed":
+        return transition_result(
+            active=active,
+            canonical_complete=False,
+            next_skill="cs-issue-analyze",
             needs_user_decision=True,
             blockers=[AWAITING_FIX_OPTION_SELECTION],
         )
-    if artifacts["analysis"]:
+    if has_fix_note and has_analysis and fix_note_status == "completed":
+        return transition_result(active=False, canonical_complete=True)
+    if has_analysis:
         return transition_result(
             active=active,
             canonical_complete=False,
             next_skill="cs-issue-fix",
             auto_continue_allowed=True,
         )
-    if artifacts["report"]:
+    if has_report:
         return transition_result(
             active=active,
             canonical_complete=False,
             next_skill="cs-issue-analyze",
-            auto_continue_allowed=report_status == "confirmed",
+            auto_continue_allowed=True,
         )
     if stage != "empty":
         return transition_result(
@@ -463,12 +553,26 @@ def issue_item(directory: Path, repo_root: Path) -> tuple[dict, list[Path]]:
     artifacts, state, reasons = gather_artifacts(directory, ISSUE_ARTIFACT_SPECS)
     report_path = directory / artifacts["report"] if artifacts["report"] else None
     analysis_path = directory / artifacts["analysis"] if artifacts["analysis"] else None
+    fix_note_path = directory / artifacts["fix_note"] if artifacts["fix_note"] else None
 
     if artifacts["fix_note"] and not artifacts["report"] and not artifacts["analysis"]:
         state = note_consistency(state, reasons, "compatibility", "fast-path resolved issue without retained report/analysis")
+    if artifacts["analysis"] and status_value(report_path) != "confirmed":
+        state = note_consistency(
+            state,
+            reasons,
+            "conflict",
+            "analysis.md exists but report.md is absent or not status=confirmed",
+        )
 
     stage = issue_stage(artifacts)
-    derived = issue_transition(stage, artifacts, status_value(report_path), status_value(analysis_path))
+    derived = issue_transition(
+        stage,
+        artifacts,
+        status_value(report_path),
+        status_value(analysis_path),
+        status_value(fix_note_path),
+    )
     files = file_list(directory, artifacts["report"], artifacts["analysis"], artifacts["fix_note"])
     canonical = {"artifacts": artifacts}
     item = make_item(

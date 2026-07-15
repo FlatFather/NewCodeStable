@@ -1,6 +1,6 @@
 ---
 name: cs-feat-impl
-description: feature 流程阶段 3——按 `{slug}-plan.md` 与 `{slug}-checklist.yaml` 推进实现，每步具体改哪个文件由 implement 自决，写完用统一格式汇报。触发：用户说"方案确认了开始实现"、"按方案写代码"、"开工"。前提是 design 已 approved，且 plan/checklist 已齐备。遇到方案外情况要回方案谈不要硬冲。
+description: feature 流程阶段 3——按 `{slug}-plan.md` 与 `{slug}-checklist.yaml` 推进实现，每步具体改哪个文件由 implement 自决，写完用统一格式汇报。触发：用户说"方案确认了开始实现"、"按方案写代码"、"开工"。前提是 design 已 approved，且 plan 已 `status=approved`、checklist 已齐备。遇到方案外情况要回方案谈不要硬冲。
 ---
 
 # cs-feat-impl
@@ -20,6 +20,8 @@ description: feature 流程阶段 3——按 `{slug}-plan.md` 与 `{slug}-checkl
 到这一步用户已经在方案上签过字了，你的活是把方案变成代码。容易出问题的不是写代码本身，而是**实现路上发现方案没覆盖到的情况时怎么办**——硬冲下去就把方案当摆设了。下面整套规则就是为了让"停下来"成为默认动作。
 
 > 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。
+
+**启动前提**：读取 `{slug}-design.md`、`{slug}-plan.md` 与 `{slug}-checklist.yaml`；只有 design 为 `status=approved` 且 plan 为 `status=approved` 时才实施。plan 仍为 draft 时回 `cs-feat-plan` 完成执行顺序 checkpoint，不得再次向用户询问已经完成的 design review。
 
 ---
 
@@ -68,13 +70,13 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 - 文件存在，`feature` 字段一致
 - `steps` 非空（design 已产出，paradigm 维度切片，4-8 步）；`checks` 非空
-- 不存在 → 退回 `cs-feat-design` 生成
+- 不存在 → 退回 `cs-feat-plan` 生成；design 不负责 plan/checklist
 
 ### 3. 把上下文读全
 
 - 方案 doc 全文（标准 design 重点：第 1 节、2.1/2.2/2.3/2.4、3）
 - `{slug}-checklist.yaml`、需求来源（用户描述 + brainstorm note）、`.codestable/attention.md`
-- 标准 feature：把 `{slug}-plan.md` 与 design 一起读全；plan 是 detailed step source，checklist 是状态载体；当 feature 命中标准主线时，plan 不再是抽象占位词，而是必须存在的真实输入，缺失时当前实现阶段必须停下并退回 design / 产物生成阶段
+- 标准 feature：把 `{slug}-plan.md` 与 design 一起读全；plan 是 detailed step source，checklist 是状态载体；当 feature 命中标准主线时，plan 不再是抽象占位词，而是必须存在的真实输入，缺失时当前实现阶段必须停下并退回 `cs-feat-plan` 生成
 - 第 2.1 节接口示例的来源位置 / fastforward 第 1 节改动点提到的代码文件——读相关函数即可
 
 ### 4. 自动恢复起点并汇报
@@ -209,11 +211,9 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 ## 退出后
 
-告诉用户："所有步骤完成，方案 doc 已同步。下一步阶段 4 验收闭环，触发 cs-feat-accept。"
+完成汇报获得用户 review 通过后，告诉用户“所有步骤完成，方案 doc 已同步，现在进入阶段 4 验收闭环”，并立即 handoff 到 `cs-feat-accept`；不得再要求一次“继续验收”的确认。恢复场景中，如果唯一 canonical 候选已表明实现完成且只差验收，也直接进入 `cs-feat-accept`。
 
-在 continuation-first 场景下，如果唯一 canonical 候选已表明实现完成且只差验收，收到 `继续 / 确认 / 同意 / 继续下一步` 时直接进入 `cs-feat-accept`。
-
-别自己顺手开始写验收报告——验收需要独立的 checklist 节奏，提前进入会让把关失效。
+用户尚未 review 实现汇报时不得提前写验收报告；review 通过后的直接 handoff 不属于提前进入。
 
 **实现过程中如果踩到了项目通用的硬约束 / 命令陷阱 / 环境设置**（"啊原来这个项目要先 X 才能 Y"，一两行能讲清、下个 feature 的 AI 还会再撞一次）→ 在告诉用户去 accept 前**顺便提一句**："这次发现 {具体那条}，是不是要 `cs-note` 一下加到 attention.md，免得下次再踩？"——单条即可，不连写多条；用户说"等 accept 一起处理" 就跳过，accept 第 8 节会兜底盘点。
 

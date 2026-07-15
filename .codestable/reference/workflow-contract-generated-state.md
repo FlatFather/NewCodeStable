@@ -66,6 +66,8 @@ automatic continuation 仅当以下条件同时成立时允许：
 - `canonical_conflict`
 - `missing_required_artifact`
 - `awaiting_design_approval`
+- `awaiting_plan_approval`
+- `awaiting_report_confirmation`
 - `awaiting_fix_option_selection`
 - `scope_expansion_required`
 - `multiple_candidates`

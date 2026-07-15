@@ -65,7 +65,8 @@ description: feature 流程阶段 2——基于已批准的 `{slug}-design.md` �
 ### 3. 本阶段有独立 checkpoint
 
 如果用户这轮输入只是 `继续 / 确认 / 同意 / 跳过 / 继续下一步` 这类短回复，先按 continuation-first 恢复已有 feature 目录状态：
-- 已有 `plan.md` + `checklist.yaml` 且内容完整 → 直接汇报当前执行顺序，不重复生成
+- 已有 `plan.md` + `checklist.yaml` 且 `plan.md` 为 `status=approved` → 直接交给 `cs-feat-impl`，不重复生成或确认
+- 已有 `plan.md` + `checklist.yaml` 但 `plan.md` 为 `status=draft` → 恢复到本阶段 checkpoint，只等待用户确认执行顺序
 - 只有其一存在或内容不完整 → 补缺失项再统一汇报
 - 多个候选 feature 目录 → 停下来让用户选，不猜
 - `.ccg/tasks/*/task.json` 只作恢复桥，不替代 feature 目录中的 design / plan / checklist 真相源
@@ -148,7 +149,7 @@ plan/checklist 落盘后，要明确进入实现前的独立关口：确认对�
 - `python .codestable/tools/validate-yaml.py --file {slug}-plan.md`
 - `python .codestable/tools/validate-yaml.py --file {slug}-checklist.yaml --yaml-only`
 
-### 4. 汇报并停下
+### 4. 汇报、确认并落盘 plan 批准状态
 
 固定汇报：
 
@@ -171,7 +172,7 @@ plan/checklist 落盘后，要明确进入实现前的独立关口：确认对�
 - checklist yaml：通过 / 失败
 ```
 
-汇报后停在实现前关口：如果当前只完成了 plan/checklist 生成，就等待用户对执行顺序本身的反馈；如果随后收到 `继续 / 确认 / 同意 / 继续下一步` 且唯一候选已由 canonical artifacts 表明可以进入实现，则自动切到 `cs-feat-impl`，不再重复确认已批准的 design 意图。
+首次汇报后停在实现前关口：确认对象是执行顺序与步骤切分，不是已批准的 design 意图。用户明确回复 `继续 / 确认 / 同意 / 继续下一步` 后，必须把 `{slug}-plan.md` frontmatter 的 `status` 从 `draft` 改为 `approved`，再直接切到 `cs-feat-impl`；该 canonical 状态已存在时，不得重复补一轮“要不要开始实现”。
 
 ---
 
@@ -181,12 +182,13 @@ plan/checklist 落盘后，要明确进入实现前的独立关口：确认对�
 - [ ] `{slug}-checklist.yaml` 已生成
 - [ ] 两者校验通过
 - [ ] 未越权改写 design scope
-- [ ] 已向用户汇报并等待进入实现阶段
+- [ ] 已向用户汇报执行顺序
+- [ ] 用户已明确确认执行顺序时，`plan.md` 已写为 `status=approved`
 
 ---
 
 ## 退出后
 
-告诉用户：
+用户确认 plan 后告诉用户：
 
-> 执行计划已就绪。下一步阶段 3 分步实现，触发 `cs-feat-impl`。
+> 执行计划已批准，现在进入阶段 3 分步实现（`cs-feat-impl`）。

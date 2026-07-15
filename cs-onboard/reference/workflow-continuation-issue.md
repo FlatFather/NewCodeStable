@@ -42,7 +42,7 @@ extends: workflow-continuation-base.md
 
 先看是否已有同类 issue 目录，确认是更新还是新建。
 
-当 report 阶段已经收口并且用户明确回复 `确认 / 继续 / 同意` 时，report skill 只负责结束当前 checkpoint；**真正的续作恢复应回到 `cs-issue` 顶层入口**，由它根据 `report.md` 已存在且 `analysis.md` 缺失的状态续到 `cs-issue-analyze`。
+当 report 阶段已经收口并且用户明确回复 `确认 / 继续 / 同意` 时，report skill 把 `report.md` 写为 confirmed，并在同一回复中直接 handoff 到 `cs-issue-analyze`；不得要求用户再发一次 continuation。只有跨会话恢复时才回到 `cs-issue` 顶层入口，由 canonical artifacts 定位阶段。
 
 ### cs-issue-analyze
 

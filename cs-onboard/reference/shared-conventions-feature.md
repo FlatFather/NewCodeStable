@@ -29,7 +29,7 @@ fastforward 继续作为独立快路径存在；历史 legacy 目录（`design +
 
 - intent 是 design 前的可选前置草稿；它帮助用户离线起草，但不改变后续 fastforward / hybrid 流程划分。
 - design 永远是范围与约束的唯一方案源；plan、checklist、acceptance 都不能越权改 scope。
-- 标准 feature 中，plan 负责对人可读的详细执行步骤；checklist 只保留机器可读状态。
+- 标准 feature 中，plan 负责对人可读的详细执行步骤；checklist 只保留机器可读状态。plan 初稿为 `status: draft`，执行顺序获批后必须写为 `status: approved`，实现阶段只消费 approved plan。
 - 标准 feature 一旦进入实现，`plan.md` 与 `checklist.yaml` 就都必须存在；implement 与 acceptance 都必须把它们当作输入之一。
 - issue / refactor 流程不依赖 `feature-plan`；本节只约束 feature 流程。
 - **feature directory binding**：`YYYY-MM-DD-{slug}` 目录名是 roadmap item、design、plan、checklist、acceptance 之间的唯一绑定键，不再新增第二套 execution id。

@@ -46,7 +46,7 @@ CodeStable 当前的 issue 主线是：
 
 ### 2. 进入 analyze 阶段
 
-当 `report.md` 已 confirmed 后，进入：
+当用户确认 report 并将 `report.md` 写为 `status: confirmed` 后，同一确认直接进入：
 
 - `cs-issue-analyze`
 
@@ -58,7 +58,7 @@ CodeStable 当前的 issue 主线是：
 
 如果用户在这条主线中只输入 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复，仓库内 skills 默认先按 **continuation-first** 恢复已有 issue 目录状态，再决定是否重新路由。规范性定义见 `.codestable/reference/workflow-contract-continuation.md`，lane-facing 摘要见 `.codestable/reference/workflow-continuation.md`。
 
-当 `analysis.md` 已 confirmed 且 canonical artifacts 唯一表明 fix path 已选定时，后续 handoff 自动进入 `cs-issue-fix`；不会再追加一轮仅重复既有结论的"现在开始修吗"确认。
+当用户确认修复方案并将 `analysis.md` 写为 `status: confirmed` 时，同一确认自动 handoff 到 `cs-issue-fix`；不会再追加一轮仅重复既有结论的“现在开始修吗”确认。
 
 ### 3. 进入 fix 阶段
 
@@ -85,7 +85,7 @@ issue lane 的真实状态以 `.codestable/issues/{slug}/` 下正式产物为准
 
 - `report.md`
 - `analysis.md`
-- `fix-note.md`
+- `fix-note.md`；标准或带 report 的快速通道只有在 `status: completed` 时才是终态，历史 fix-note-only 记录继续兼容
 
 `status.json` 只是 generated-state discovery spine：
 - fresh 时可用于优先发现候选 issue 与阶段
@@ -100,6 +100,7 @@ issue lane 的真实状态以 `.codestable/issues/{slug}/` 下正式产物为准
 
 以下 handoff 在 canonical artifacts 唯一且无 blocker 时自动发生：
 
+- confirmed issue report → `cs-issue-analyze`
 - confirmed issue analysis → `cs-issue-fix`
 - 快速通道中已确认根因与修复方案 → `cs-issue-fix`
 - continuation 短回复（`继续 / 确认 / 同意 / 按这个修 / 继续下一步`）→ 当且仅当唯一候选存在时，直接续到对应阶段

@@ -240,7 +240,7 @@ design 只管"编排-计算分离"里的编排那一侧：**这次 feature 在�
 - `cs-feat-design` 在本阶段只负责把 `{slug}-design.md` 定稿为 `status: approved`
 - 之后由 `cs-feat-plan` 读取这份已批准 design，生成 `{slug}-plan.md` 与 `{slug}-checklist.yaml`
 - `cs-feat-design` 不再直接落盘 plan/checklist
-- **如果用户接着回复 `同意 / 继续 / 确认` 这类短回复，应回到 `cs-feat` 顶层入口，由它按 continuation-first 检测到当前是 `design.md` 已 approved 且 `plan.md` / `checklist.yaml` 未落齐，再续到 `cs-feat-plan`。**
+- 用户在整体 review 中明确回复 `同意 / 继续 / 确认` 时，把 `design.md` 写为 `status: approved` 后立即 handoff 到 `cs-feat-plan`；这次批准已经授权确定性的下一阶段，**不得再要求用户补一次“继续”**。恢复场景仍由 `cs-feat` continuation-first 根据 canonical artifacts 定位。
 
 完整格式、提取规则、典型节奏看 `cs-feat-plan/reference.md` 与共享约定。
 
@@ -261,7 +261,7 @@ design 只管"编排-计算分离"里的编排那一侧：**这次 feature 在�
 - [ ] 第 2.4 推进策略按 paradigm 维度切片，每步有退出信号
 - [ ] 第 2.5 结构健康度评估覆盖文件级 + 目录级；评估前已查 compound convention；结论显式写出（不做 / 拆文件 / 重组目录）；选"微重构"时 checklist 第 1 步是它且有独立退出信号；选"重组目录"且属稳定模式时含"建议沉淀的 convention"段；超出"只搬不改行为"的结构性问题列在"超出范围的观察"，仅提示不阻塞
 - [ ] 第 3 节关键场景覆盖正常 + 边界 + 错误；含"明确不做"反向核对项
-- [ ] `{slug}-checklist.yaml` 已落盘并通过 `validate-yaml.py` 校验
+- [ ] 不要求 plan/checklist：它们由 `cs-feat-plan` 在 design 获批后生成并校验
 - [ ] roadmap 起头时 items.yaml 已回写（`status: in-progress` + `feature` 填上）
 
 ---

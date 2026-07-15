@@ -50,6 +50,7 @@
 ---
 doc_type: issue-fix
 issue: {issue 目录名}
+status: completed
 path: standard
 fix_date: YYYY-MM-DD
 related: [{slug-analysis.md 相对路径}]
@@ -73,6 +74,7 @@ tags: []
 ---
 doc_type: issue-fix
 issue: {issue 目录名}
+status: completed
 path: fast-track
 fix_date: YYYY-MM-DD
 tags: []

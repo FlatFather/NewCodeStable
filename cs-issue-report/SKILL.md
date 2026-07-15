@@ -146,9 +146,9 @@ tags: []
 
 ## 退出后
 
-告诉用户："问题报告已就绪。下一步阶段 2 根因分析。**如果用户接着回复 `确认 / 继续 / 同意` 这类短回复，应回到 `cs-issue` 入口，由它按 continuation-first 检测到当前是 `report.md` 已存在且无 `analysis.md`，再续到 `cs-issue-analyze`。**"
+用户明确说“report 可以了，进下一步”时，把 `report.md` 写为 `status: confirmed`，告诉用户“问题报告已确认，现在进入阶段 2 根因分析”，并立即 handoff 到 `cs-issue-analyze`。该确认已经完成阶段 checkpoint，**不得再要求一次 `确认 / 继续 / 同意`**。
 
-别自己顺手开始分析根因——阶段间的人工 checkpoint 是工作流硬约束。
+用户尚未确认 report 时不得提前分析根因；确认后直接 handoff 不属于绕过 checkpoint。
 
 ---
 

@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "generator": {
     "name": "build-status.py",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "deterministic_sort": true,
     "canonical_roots": [
       ".codestable/features",
@@ -19,7 +19,7 @@
   },
   "freshness": {
     "state": "fresh",
-    "canonical_digest": "sha256:67d1cb5f38d596e34219dba20eff2155ef8d32848e3669c46681a94694a43567",
+    "canonical_digest": "sha256:d4bc6147911e21bf71264ef73c99e2cf33561c093d87ab9731c39b47fb5d6d9f",
     "source_count": 92,
     "stale_if_digest_changes": true,
     "check_command": "python .codestable/tools/build-status.py --check",
@@ -35,7 +35,7 @@
   "lanes": {
     "features": {
       "count": 9,
-      "active_count": 1,
+      "active_count": 2,
       "items": [
         {
           "key": "2026-06-01-execution-plan-artifact",
@@ -51,6 +51,7 @@
             },
             "frontmatter": {
               "status": "approved",
+              "plan_status": "approved",
               "workflow": "hybrid",
               "roadmap": "workflow-hybridization",
               "roadmap_item": "execution-plan-artifact"
@@ -92,6 +93,7 @@
             },
             "frontmatter": {
               "status": "approved",
+              "plan_status": null,
               "workflow": null,
               "roadmap": "workflow-hybridization",
               "roadmap_item": "feature-handoff-contract"
@@ -133,6 +135,7 @@
             },
             "frontmatter": {
               "status": "approved",
+              "plan_status": null,
               "workflow": null,
               "roadmap": "workflow-hybridization",
               "roadmap_item": "spec-structure-contract"
@@ -174,6 +177,7 @@
             },
             "frontmatter": {
               "status": "approved",
+              "plan_status": "approved",
               "workflow": null,
               "roadmap": "workflow-hybridization",
               "roadmap_item": "first-hybrid-example"
@@ -217,6 +221,7 @@
             },
             "frontmatter": {
               "status": "approved",
+              "plan_status": null,
               "workflow": null,
               "roadmap": "workflow-hybridization",
               "roadmap_item": "migration-guidance"
@@ -258,6 +263,7 @@
             },
             "frontmatter": {
               "status": "approved",
+              "plan_status": null,
               "workflow": null,
               "roadmap": "workflow-hybridization",
               "roadmap_item": "plan-validation-rules"
@@ -299,6 +305,7 @@
             },
             "frontmatter": {
               "status": "approved",
+              "plan_status": null,
               "workflow": "hybrid",
               "roadmap": "workflow-hybridization",
               "roadmap_item": "plan-validation-rules"
@@ -340,6 +347,7 @@
             },
             "frontmatter": {
               "status": "approved",
+              "plan_status": "approved",
               "workflow": "hybrid",
               "roadmap": null,
               "roadmap_item": null
@@ -381,6 +389,7 @@
             },
             "frontmatter": {
               "status": "approved",
+              "plan_status": "draft",
               "workflow": "hybrid",
               "roadmap": null,
               "roadmap_item": null
@@ -392,15 +401,15 @@
           },
           "derived": {
             "stage": "accepted",
-            "active": false,
-            "ready_for_next": false,
-            "canonical_complete": true,
-            "next_skill": null,
+            "active": true,
+            "ready_for_next": true,
+            "canonical_complete": false,
+            "next_skill": "cs-feat-plan",
             "auto_continue_allowed": false,
-            "continuation_mode": "terminal",
-            "needs_user_decision": false,
+            "continuation_mode": "ask_user",
+            "needs_user_decision": true,
             "blockers": [
-              "terminal_stage"
+              "awaiting_plan_approval"
             ]
           },
           "consistency": {
@@ -1018,7 +1027,7 @@
     "issue_count": 13,
     "refactor_count": 4,
     "audit_count": 2,
-    "active_count": 5,
+    "active_count": 6,
     "compatibility_count": 5,
     "conflict_count": 0
   }

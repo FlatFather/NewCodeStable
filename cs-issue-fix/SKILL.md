@@ -104,7 +104,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 ## 写 {slug}-fix-note.md
 
-验证通过后在 issue 目录建 `{slug}-fix-note.md`（位置见 `cs-issue` 的"文件放哪儿"），记录完整闭环。标准路径模板和快速通道模板都在同目录 `reference.md`。
+验证通过后在 issue 目录建 `{slug}-fix-note.md`（位置见 `cs-issue` 的“文件放哪儿”），记录完整闭环，并将 frontmatter 写为 `status: completed`。标准路径模板和快速通道模板都在同目录 `reference.md`；验证尚未完成时不得提前写 completed。
 
 ---
 
@@ -112,7 +112,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 - [ ] 所有改动文件已提交或列清单
 - [ ] 验证清单全部勾选
-- [ ] `{slug}-fix-note.md` 已建并填写完整
+- [ ] `{slug}-fix-note.md` 已建并填写完整，frontmatter 为 `status: completed`
 - [ ] 没有未处理的"顺手发现"（都进后续 issue 列表）
 - [ ] 没有范围外改动（或已和用户确认）
 - [ ] 用户明确确认修复完成

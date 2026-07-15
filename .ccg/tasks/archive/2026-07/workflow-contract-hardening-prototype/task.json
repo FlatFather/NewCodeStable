@@ -1,0 +1,12 @@
+{
+  "id": "workflow-contract-hardening-prototype",
+  "title": "Prototype patch for workflow contract hardening tasks 4.1-4.3",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "medium",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "nextAction": "Archived after implementation, tests, and review",
+  "createdAt": "2026-06-25T00:00:00Z",
+  "branch": "main"
+}

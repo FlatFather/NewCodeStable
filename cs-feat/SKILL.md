@@ -168,7 +168,8 @@ AI：  "让我先搜索一下... {fast-context 搜索 '权限 / permission / aut
 | 用户说"快速模式 / fastforward" | `cs-feat-ff` |
 | `{slug}-brainstorm.md` 已存在，要进设计 | `cs-feat-design` |
 | `{slug}-design.md` 已 approved，`plan.md` / checklist 还没落齐 | `cs-feat-plan`（包括 design 阶段刚确认后的续作场景） |
-| `{slug}-plan.md` + `{slug}-checklist.yaml` 已齐、代码没动 | `cs-feat-impl` |
+| `plan.md` + `checklist.yaml` 已齐，但 `plan.md` 仍是 `status=draft` | `cs-feat-plan`：只汇报执行顺序并等待 plan checkpoint，不得进入实现 |
+| `plan.md` 已 `status=approved` + checklist 已齐、代码没动 | `cs-feat-impl` |
 | fastforward design 已确认 | `cs-feat-impl` |
 | 代码已写完要验收 | `cs-feat-accept` |
 | 用户说"我想要一个 X 系统"大需求 | 转 `cs-brainstorm` 分诊（大概率 case 3 → `cs-roadmap`） |
