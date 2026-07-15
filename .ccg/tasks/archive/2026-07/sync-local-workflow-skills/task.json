@@ -1,0 +1,12 @@
+{
+  "id": "sync-local-workflow-skills",
+  "title": "同步本次工作流加固涉及的本地 skills",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "devops",
+  "currentPhase": "completed",
+  "nextAction": "Archived after local sync and exact-match verification",
+  "createdAt": "2026-07-15T00:00:00+08:00",
+  "branch": "main"
+}
