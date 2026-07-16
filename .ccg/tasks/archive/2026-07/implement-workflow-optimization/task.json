@@ -1,0 +1,12 @@
+{
+  "id": "implement-workflow-optimization",
+  "title": "按优先顺序实施工作流审计优化项",
+  "status": "completed",
+  "complexity": "L",
+  "risk": "medium",
+  "domain": "workflow",
+  "currentPhase": "completed",
+  "nextAction": "已实施、验证并待归档",
+  "createdAt": "2026-07-16T11:20:00+08:00",
+  "branch": "main"
+}

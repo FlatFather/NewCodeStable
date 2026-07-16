@@ -1,0 +1,1289 @@
+diff --git a/.codestable/reference/shared-asset-manifest.yaml b/.codestable/reference/shared-asset-manifest.yaml
+index 0bd862a..693f84d 100644
+--- a/.codestable/reference/shared-asset-manifest.yaml
++++ b/.codestable/reference/shared-asset-manifest.yaml
+@@ -6,6 +6,8 @@ references:
+     destination: .codestable/reference/code-dimensions.md
+   - source: cs-onboard/reference/maintainer-notes.md
+     destination: .codestable/reference/maintainer-notes.md
++  - source: cs-onboard/reference/markdown-line-limit-exemptions.json
++    destination: .codestable/reference/markdown-line-limit-exemptions.json
+   - source: cs-onboard/reference/requirement-example.md
+     destination: .codestable/reference/requirement-example.md
+   - source: cs-onboard/reference/shared-asset-manifest.yaml
+@@ -48,6 +50,8 @@ references:
+     destination: .codestable/reference/workflow-contract-shared-concepts.md
+   - source: cs-onboard/reference/workflow-contract.md
+     destination: .codestable/reference/workflow-contract.md
++  - source: cs-onboard/reference/workflow-contract-warning-baseline.json
++    destination: .codestable/reference/workflow-contract-warning-baseline.json
+ 
+ tools:
+   - source: cs-onboard/tools/build-status.py
+@@ -56,5 +60,7 @@ tools:
+     destination: .codestable/tools/check-workflow-contracts.py
+   - source: cs-onboard/tools/search-yaml.py
+     destination: .codestable/tools/search-yaml.py
++  - source: cs-onboard/tools/sync-skills.sh
++    destination: .codestable/tools/sync-skills.sh
+   - source: cs-onboard/tools/validate-yaml.py
+     destination: .codestable/tools/validate-yaml.py
+diff --git a/.codestable/reference/status-schema.md b/.codestable/reference/status-schema.md
+index ace625a..ee0af57 100644
+--- a/.codestable/reference/status-schema.md
++++ b/.codestable/reference/status-schema.md
+@@ -56,6 +56,8 @@
+ - `check_command`：建议消费方如何验证当前 `status.json` 是否过期
+ - `reasons`：若生成时已发现 canonical 冲突，则列出原因
+ 
++使用 `python .codestable/tools/build-status.py --check --json` 可获得 machine-readable 结果：`fresh`（exit 0）、`stale`（exit 1）或 `conflict`（exit 2）。消费方在非 `fresh` 时必须回退到 canonical artifacts。
++
+ 说明：generated state 的过期判定不依赖 wall-clock 时间，而依赖 canonical digest 是否变化。
+ 
+ ### `bridge_hints`
+diff --git a/.codestable/reference/tools.md b/.codestable/reference/tools.md
+index 17b7b6c..86d50ad 100644
+--- a/.codestable/reference/tools.md
++++ b/.codestable/reference/tools.md
+@@ -16,6 +16,7 @@
+ python .codestable/tools/build-status.py
+ python .codestable/tools/build-status.py --repo-root /path/to/repo
+ python .codestable/tools/build-status.py --check
++python .codestable/tools/build-status.py --check --json
+ ```
+ 
+ ### 默认输入
+@@ -35,6 +36,7 @@ python .codestable/tools/build-status.py --check
+ 
+ - `status.json` 是 **derived-only** 状态脊柱，不是 authority
+ - `freshness.canonical_digest` 用于判断生成结果是否已 stale
++- `--check --json` 输出 machine-readable freshness：`fresh` 返回 0、`stale` 返回 1、canonical `conflict` 返回 2
+ - lane item 同时区分：
+   - `canonical`：直接从正式产物读取的事实
+   - `derived`：由 canonical facts 推导出的阶段视图
+@@ -51,7 +53,7 @@ python .codestable/tools/build-status.py --check
+ 
+ ## 0. check-workflow-contracts.py
+ 
+-工作流契约只读校验器。用于检查共享资产 manifest parity、repo-local 副本、活跃 workflow 口径一致性，以及 Markdown 行数上限。脚本只读、确定性、无额外依赖。
++工作流契约只读校验器。用于检查共享资产 manifest parity、repo-local 副本、活跃 workflow 口径一致性，以及所有 Git 跟踪 Markdown 的行数上限。`markdown-line-limit-exemptions.json` 中有理由的 fixture 可被显式豁免。脚本只读、确定性、无额外依赖。
+ 
+ ### 基本语法
+ 
+@@ -74,7 +76,7 @@ python .codestable/tools/check-workflow-contracts.py --json
+ ### 严格 / 兼容分层
+ 
+ - **严格失败**：活跃 workflow 文档、公共文档、manifest parity、共享资产缺失、被重开的 hybrid feature 缺少 `plan.md` 或 `checklist.yaml`
+-- **兼容警告**：历史 / 归档 artifact 的旧口径、未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`
++- **兼容警告**：历史 / 归档 artifact 的旧口径、未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`；已审查的历史警告仅可通过 `workflow-contract-warning-baseline.json` 基线化，新警告仍会报告。
+ - **样板例外**：仓库内显式标记为 sample/example 的 feature，在仓库级运行中按 compatibility warning 处理；严格失败场景由 `tests/fixtures/workflow-contracts/` 单独覆盖
+ 
+ ### Fixtures
+@@ -201,3 +203,16 @@ python .codestable/tools/validate-yaml.py \
+ - workflow-check 默认用于**新 feature**和**被重开的历史 feature**
+ - 历史 feature 如果只是留档、不继续推进，则缺 `workflow` 或 `plan.md` 不应直接被视为错误
+ - 如果用户决定重开旧 feature，再按 `legacy` 或 `hybrid` 路径补最小必要字段和产物后运行 workflow-check
++---
++
++## 4. sync-skills.sh
++
++将仓库技能同步到允许的本地安装目录；该脚本不属于 onboarding shared bundle。
++
++```bash
++.codestable/tools/sync-skills.sh --dry-run cs-feat
++.codestable/tools/sync-skills.sh cs-feat
++.codestable/tools/sync-skills.sh --verify cs-feat
++```
++
++`--verify` 只比较仓库源码与已安装副本（会解析 symlink），不创建目录、不写入文件；发现缺失或 drift 时返回非零。
+diff --git a/.codestable/reference/workflow-contract-authority.md b/.codestable/reference/workflow-contract-authority.md
+index d8d1d1b..c8a60df 100644
+--- a/.codestable/reference/workflow-contract-authority.md
++++ b/.codestable/reference/workflow-contract-authority.md
+@@ -27,7 +27,7 @@
+ 
+ 以下内容只能帮助恢复上下文，不能提升为 authority：
+ 
+-- `.ccg/tasks/*/task.json`
++- `.ccg/tasks/*/task.json`（最小字段只保留 `id`、`status`、`canonical_path`、`canonical_kind`；其中 canonical 字段仅建立关联，不能镜像或判定 canonical 阶段）
+ - `context.jsonl`
+ - 任何仅为恢复或路由生成的临时索引
+ 
+diff --git a/.codestable/reference/workflow-contract-generated-state.md b/.codestable/reference/workflow-contract-generated-state.md
+index 9c6ddf4..007ecc6 100644
+--- a/.codestable/reference/workflow-contract-generated-state.md
++++ b/.codestable/reference/workflow-contract-generated-state.md
+@@ -45,6 +45,7 @@ generated state 可以暴露以下 derived fields：
+ - 消费方可以优先读取 generated state，但必须接受回退到 canonical artifacts。
+ - `status.json` 必须显式区分 canonical facts、derived state、consistency、bridge-hint boundary metadata。
+ - 一旦 generated state 缺失、过期、矛盾或无法验证，就视为不可用。
++- freshness 的 machine-readable 判定必须通过 `build-status.py --check --json` 获得；返回 `stale` 或 `conflict` 时不得自动续作。
+ 
+ ## 全局 Auto-Switch Predicate
+ 
+diff --git a/.codestable/tools/build-status.py b/.codestable/tools/build-status.py
+index bc34617..dcdabe7 100644
+--- a/.codestable/tools/build-status.py
++++ b/.codestable/tools/build-status.py
+@@ -810,7 +810,8 @@ def main() -> int:
+     parser = argparse.ArgumentParser(description="Build deterministic .codestable/status.json")
+     parser.add_argument("--repo-root", default=".", help="Repository root")
+     parser.add_argument("--output", default=".codestable/status.json", help="Output path")
+-    parser.add_argument("--check", action="store_true", help="Exit non-zero if output differs")
++    parser.add_argument("--check", action="store_true", help="Verify output matches the current canonical snapshot")
++    parser.add_argument("--json", action="store_true", dest="json_output", help="Emit machine-readable verification output (requires --check)")
+     args = parser.parse_args()
+ 
+     repo_root = normalize_repo_root(args.repo_root)
+@@ -818,9 +819,27 @@ def main() -> int:
+     payload = build_status(repo_root)
+     rendered = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+ 
++    if args.json_output and not args.check:
++        parser.error("--json requires --check")
++
+     if args.check:
+         current = output_path.read_text(encoding="utf-8") if output_path.exists() else ""
+-        return 0 if current == rendered else 1
++        matches = current == rendered
++        expected_state = payload["freshness"]["state"]
++        state = "stale" if not matches else expected_state
++        result = {
++            "ok": state == "fresh",
++            "freshness": {
++                "state": state,
++                "expected_state": expected_state,
++                "canonical_digest": payload["freshness"]["canonical_digest"],
++            },
++            "output": str(output_path.relative_to(repo_root)),
++            "matches_canonical_snapshot": matches,
++        }
++        if args.json_output:
++            print(json.dumps(result, ensure_ascii=False, indent=2))
++        return {"fresh": 0, "stale": 1, "conflict": 2}[state]
+ 
+     output_path.write_text(rendered, encoding="utf-8")
+     return 0
+diff --git a/.codestable/tools/check-workflow-contracts.py b/.codestable/tools/check-workflow-contracts.py
+index 420a96b..91bb202 100644
+--- a/.codestable/tools/check-workflow-contracts.py
++++ b/.codestable/tools/check-workflow-contracts.py
+@@ -19,6 +19,7 @@ import argparse
+ import json
+ import re
+ import sys
++import subprocess
+ from pathlib import Path
+ 
+ _HAS_PYYAML = False
+@@ -197,6 +198,10 @@ class Report:
+     def warning_count(self) -> int:
+         return sum(1 for finding in self.findings if finding.level == "warning")
+ 
++    @property
++    def baseline_count(self) -> int:
++        return sum(1 for finding in self.findings if finding.level == "baseline")
++
+     @property
+     def ok(self) -> bool:
+         return self.error_count == 0
+@@ -208,6 +213,7 @@ class Report:
+             "lineLimit": self.line_limit,
+             "errors": self.error_count,
+             "warnings": self.warning_count,
++            "baselinedWarnings": self.baseline_count,
+             "findings": [finding.to_dict() for finding in self.findings],
+         }
+ 
+@@ -232,15 +238,38 @@ def existing_paths(root: Path, relative_paths):
+     return paths
+ 
+ 
+-def collect_line_limit_docs(root: Path):
+-    docs = set(existing_paths(root, [
+-        "README.md",
+-        "README.en.md",
+-        "cs/SKILL.md",
+-    ]))
+-    for pattern in ["docs/dev/*.md", ".codestable/reference/*.md", "cs-onboard/reference/*.md"]:
+-        docs.update(path for path in root.glob(pattern) if path.is_file())
+-    return sorted(docs)
++def load_markdown_line_limit_exemptions(root: Path, report: Report):
++    path = root / ".codestable/reference/markdown-line-limit-exemptions.json"
++    if not path.exists():
++        return set()
++    text, err = read_text(path)
++    if err:
++        report.error("read_error", rel_path(root, path), err)
++        return set()
++    try:
++        payload = json.loads(text or "{}")
++    except json.JSONDecodeError as exc:
++        report.error("markdown_exemption_parse", rel_path(root, path), str(exc))
++        return set()
++    exemptions = payload.get("exemptions", [])
++    if not isinstance(exemptions, list):
++        report.error("markdown_exemption_shape", rel_path(root, path), "exemptions must be a list")
++        return set()
++    paths = set()
++    for index, item in enumerate(exemptions, start=1):
++        if not isinstance(item, dict) or not item.get("path") or not item.get("reason"):
++            report.error("markdown_exemption_entry", rel_path(root, path), f"exemptions[{index}] requires path and reason")
++            continue
++        paths.add(str(item["path"]))
++    return paths
++
++
++def collect_line_limit_docs(root: Path, report: Report):
++    try:
++        output = subprocess.check_output(["git", "-C", str(root), "ls-files", "--", "*.md"], text=True, stderr=subprocess.DEVNULL)
++        return sorted(root / line for line in output.splitlines() if line)
++    except (OSError, subprocess.CalledProcessError):
++        return sorted(path for path in root.rglob("*.md") if ".git" not in path.parts)
+ 
+ 
+ def collect_reference_scan_files(root: Path):
+@@ -394,6 +423,34 @@ def check_referenced_assets(root: Path, report: Report, declared):
+                 )
+ 
+ 
++def apply_warning_baseline(root: Path, report: Report):
++    path = root / ".codestable/reference/workflow-contract-warning-baseline.json"
++    if not path.exists():
++        return
++    text, err = read_text(path)
++    if err:
++        report.error("read_error", rel_path(root, path), err)
++        return
++    try:
++        payload = json.loads(text or "{}")
++    except json.JSONDecodeError as exc:
++        report.error("warning_baseline_parse", rel_path(root, path), str(exc))
++        return
++    entries = payload.get("warnings", [])
++    if not isinstance(entries, list):
++        report.error("warning_baseline_shape", rel_path(root, path), "warnings must be a list")
++        return
++    known = set()
++    for index, item in enumerate(entries, start=1):
++        if not isinstance(item, dict) or not item.get("rule") or not item.get("path") or not item.get("reason"):
++            report.error("warning_baseline_entry", rel_path(root, path), f"warnings[{index}] requires rule, path, and reason")
++            continue
++        known.add((str(item["rule"]), str(item["path"])))
++    for finding in report.findings:
++        if finding.level == "warning" and (finding.rule, finding.path) in known:
++            finding.level = "baseline"
++
++
+ def check_path_contract(root: Path, report: Report):
+     pattern = re.compile(r"(?<!\.)codestable/")
+     for path in existing_paths(root, ACTIVE_PUBLIC_DOCS):
+@@ -434,7 +491,11 @@ def check_feature_flow_wording(root: Path, report: Report):
+ 
+ 
+ def check_markdown_line_limit(root: Path, report: Report):
+-    for path in collect_line_limit_docs(root):
++    exemptions = load_markdown_line_limit_exemptions(root, report)
++    for path in collect_line_limit_docs(root, report):
++        relative = rel_path(root, path)
++        if relative in exemptions:
++            continue
+         text, err = read_text(path)
+         if err:
+             report.error("read_error", rel_path(root, path), err)
+@@ -535,9 +596,9 @@ def print_text_report(report: Report, line_limit_sources):
+         print(f"Markdown line limit: {report.line_limit} ({rendered})")
+     else:
+         print(f"Markdown line limit: {report.line_limit}")
+-    print(f"Errors: {report.error_count}, warnings: {report.warning_count}\n")
++    print(f"Errors: {report.error_count}, warnings: {report.warning_count}, baselined: {report.baseline_count}\n")
+     for finding in report.findings:
+-        level = "ERROR" if finding.level == "error" else "WARN"
++        level = {"error": "ERROR", "warning": "WARN", "baseline": "BASELINE"}[finding.level]
+         print(f"[{level}] {finding.rule} :: {finding.path}")
+         print(f"  {finding.message}")
+ 
+@@ -564,6 +625,7 @@ def main() -> None:
+     check_feature_flow_wording(root, report)
+     check_markdown_line_limit(root, report)
+     check_legacy_features(root, report)
++    apply_warning_baseline(root, report)
+ 
+     if args.json_output:
+         payload = report.to_dict()
+diff --git a/.codestable/tools/sync-skills.sh b/.codestable/tools/sync-skills.sh
+index 4c454bc..85fe8ec 100755
+--- a/.codestable/tools/sync-skills.sh
++++ b/.codestable/tools/sync-skills.sh
+@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+ DEST_ROOT="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
+ DRY_RUN=0
++VERIFY_ONLY=0
+ 
+ # Safety: whitelist of allowed destination roots
+ ALLOWED_DESTS=(
+@@ -28,23 +29,26 @@ check_dest_allowed() {
+ usage() {
+   cat <<'EOF'
+ Usage:
+-  sync-skills.sh [--dry-run] [skill-name ...]
++  sync-skills.sh [--dry-run|--verify] [skill-name ...]
+ 
+ Examples:
+   sync-skills.sh --dry-run
+   sync-skills.sh --dry-run cs cs-feat cs-feat-design
++  sync-skills.sh --verify cs-feat
+   sync-skills.sh cs-feat
+   CLAUDE_SKILLS_DIR=$HOME/.claude/skills sync-skills.sh cs-feat
+ 
+ Safety:
+   - Destination root must be in the whitelist: ~/.claude/skills or ~/.agents/skills
+   - Use --dry-run first to preview changes before applying
++  - Use --verify to check installed-copy drift without writing
+ 
+ Behavior:
+   - Scans the repository root for top-level skill directories containing SKILL.md
+   - Syncs each selected skill to ~/.claude/skills/<skill-name>
+   - If the destination is a symlink, resolves the real target directory first
+   - Uses rsync --delete so destination matches source exactly
++  - --verify exits 1 when a selected installed copy is missing or differs
+ EOF
+ }
+ 
+@@ -62,6 +66,10 @@ while [[ $# -gt 0 ]]; do
+       DRY_RUN=1
+       shift
+       ;;
++    --verify)
++      VERIFY_ONLY=1
++      shift
++      ;;
+     -h|--help)
+       usage
+       exit 0
+@@ -73,6 +81,11 @@ while [[ $# -gt 0 ]]; do
+   esac
+ done
+ 
++if [[ $DRY_RUN -eq 1 && $VERIFY_ONLY -eq 1 ]]; then
++  echo "ERROR: --dry-run and --verify cannot be used together" >&2
++  exit 2
++fi
++
+ # Safety check: validate destination root is in whitelist
+ check_dest_allowed "$DEST_ROOT"
+ 
+@@ -101,6 +114,7 @@ if [[ ${#SKILL_FILES[@]} -eq 0 ]]; then
+ fi
+ 
+ SYNC_COUNT=0
++DRIFT_COUNT=0
+ for skill_file in "${SKILL_FILES[@]}"; do
+   src_dir="$(dirname "$skill_file")"
+   slug="$(basename "$src_dir")"
+@@ -116,13 +130,29 @@ for skill_file in "${SKILL_FILES[@]}"; do
+     dest_dir="$dest_link"
+   fi
+ 
+-  mkdir -p "$dest_dir"
++  if [[ $VERIFY_ONLY -eq 0 ]]; then
++    mkdir -p "$dest_dir"
++  fi
+ 
+   echo "== $slug =="
+   echo "source: $src_dir/"
+   echo "target: $dest_dir/"
+ 
+-  if [[ $DRY_RUN -eq 1 ]]; then
++  if [[ $VERIFY_ONLY -eq 1 ]]; then
++    if [[ ! -d "$dest_dir" ]]; then
++      echo "DRIFT: installed skill is missing"
++      DRIFT_COUNT=$((DRIFT_COUNT + 1))
++    else
++      diff=$(rsync -ain --delete "$src_dir/" "$dest_dir/")
++      if [[ -n "$diff" ]]; then
++        echo "DRIFT:"
++        printf '%s\n' "$diff"
++        DRIFT_COUNT=$((DRIFT_COUNT + 1))
++      else
++        echo "OK: installed copy matches source"
++      fi
++    fi
++  elif [[ $DRY_RUN -eq 1 ]]; then
+     rsync -an --delete "$src_dir/" "$dest_dir/"
+   else
+     rsync -a --delete "$src_dir/" "$dest_dir/"
+@@ -138,7 +168,13 @@ if [[ $SYNC_COUNT -eq 0 ]]; then
+   exit 2
+ fi
+ 
+-if [[ $DRY_RUN -eq 1 ]]; then
++if [[ $VERIFY_ONLY -eq 1 ]]; then
++  if [[ $DRIFT_COUNT -gt 0 ]]; then
++    echo "Verification failed: $DRIFT_COUNT of $SYNC_COUNT skill(s) drifted." >&2
++    exit 1
++  fi
++  echo "Verification complete: $SYNC_COUNT skill(s) match installed copies."
++elif [[ $DRY_RUN -eq 1 ]]; then
+   echo "Dry run complete: $SYNC_COUNT skill(s) checked."
+ else
+   echo "Sync complete: $SYNC_COUNT skill(s) updated."
+diff --git a/README.en.md b/README.en.md
+index 7ed644a..d1719bf 100644
+--- a/README.en.md
++++ b/README.en.md
+@@ -38,6 +38,18 @@ npx skills update
+ 
+ ---
+ 
++## Maintenance and verification
++
++After changing a workflow, run the unified quality gate:
++
++```bash
++./scripts/verify.sh
++```
++
++The script uses a repository-local temporary directory and checks generated state, workflow contracts, skill exit conditions, and Python regression tests. Set `PYTHON_BIN` to select an interpreter.
++
++---
++
+ ## How to start
+ 
+ ### New repo / not onboarded yet
+diff --git a/README.md b/README.md
+index db0e0c8..2721d77 100644
+--- a/README.md
++++ b/README.md
+@@ -38,6 +38,18 @@ npx skills update
+ 
+ ---
+ 
++## 维护与验证
++
++开发或更新工作流后，执行统一质量门：
++
++```bash
++./scripts/verify.sh
++```
++
++脚本会使用项目内临时目录，依次检查生成状态、工作流契约、技能退出条件和 Python 回归测试。若需要指定解释器，可设置 `PYTHON_BIN`。
++
++---
++
+ ## 先怎么开始
+ 
+ ### 新仓库 / 还没接入
+diff --git a/asset/2026-04-25-deepseek-thinking-provider/deepseek-thinking-provider-design.md b/asset/2026-04-25-deepseek-thinking-provider/deepseek-thinking-provider-design.md
+index f0df293..45a68ef 100644
+--- a/asset/2026-04-25-deepseek-thinking-provider/deepseek-thinking-provider-design.md
++++ b/asset/2026-04-25-deepseek-thinking-provider/deepseek-thinking-provider-design.md
+@@ -474,132 +474,9 @@ VendorPreset {
+ // 来源：src/lib/providerBaseUrl.ts providerBaseUrlDefaults
+ ```
+ 
+-## 3. 实现提示
+ 
+-### 目标文件状况评估
+-
+-目标文件总体能接住 feature，但应做最小必要拆分：
+-
+-- `provider/delivery.rs` 约 551 行，同时负责 HTTP、SSE、stream collector、debug response、stream capability cache。新增 reasoning 后，collector 逻辑应保持小而集中，不再把 content/reasoning/tool_calls 全散在 match 分支里。
+-- `provider/messages.rs` 约 490 行，承担上下文消息构造和 tool/server tool 辅助函数。新增 `reasoning_content` 时只改 RequestMessage 构造与 serialization 所需字段，不在这里塞 DeepSeek policy。
+-- `agent/runner.rs` 约 399 行，已有 tool loop 编排。新增 reasoning preview 和 tool-call transient 回传时，优先加小 helper（如 flush reasoning delta / build assistant tool transient），避免 loop 主干继续膨胀。
+-
+-### 改动计划
+-
+-1. **新建/调整 provider reasoning 数据结构**
+-   - 在 `ProviderResponse` / `WireResponse` 增加 `reasoning_content: Option<String>`。
+-   - 在 `WireStreamDelta` 增加 `ReasoningDelta(String)`。
+-   - 在 `ProviderProgressEvent` 增加 `ReasoningDelta(String)`。
+-   - 在 `DebugStructuredProviderResponse` 增加可选 `reasoning_content`。
+-
+-2. **扩展 RequestMessage 轮内 reasoning 回传**
+-   - 给 `RequestMessage` 增加 `reasoning_content: Option<String>`。
+-   - 所有构造函数默认 `None`。
+-   - 新增 assistant tool-call 构造 helper，允许传 `content + reasoning_content + tool_calls`。
+-   - `serialize_openai_message` 对 assistant message 序列化 `reasoning_content`。
+-
+-3. **实现 DeepSeek OpenAI ChatCompletions request policy**
+-   - 增加 helper：`is_deepseek_vendor(config)`、`is_deepseek_v4_model(options.model)`、`deepseek_thinking_policy(...)`。
+-   - DeepSeek V4 默认发送 `thinking.enabled` + `reasoning_effort = "high"`。
+-   - DeepSeek Thinking Mode 下跳过 temperature/top_p/penalty 字段；非 DeepSeek 保持现状。
+-   - 更新 preset default base URL / suggested models / probe model；同步前端 default URL。
+-
+-4. **实现 OpenAI-compatible reasoning parse**
+-   - `parse_response` 从 `message.reasoning_content` 填 `WireResponse.reasoning_content`，正文只读 `content`。
+-   - `parse_stream_event` 解析 `delta.reasoning_content` 为 `WireStreamDelta::ReasoningDelta`。
+-   - 删除 `openai_message_text` 的 reasoning fallback，或拆成 `openai_message_content` + `openai_message_reasoning_content`。
+-
+-5. **打通 Provider → Agent → UI 的 reasoning delta**
+-   - `StreamCollector` 分别累积 `reasoning_content` 与 `content`。
+-   - stream 时发送 `ProviderProgressEvent::ReasoningDelta`。
+-   - agent runner 转成 `AssistantReasoningPreview`。
+-   - messaging 层转成 `UiAssistantStreamField::Reasoning`，并更新 persisted timeline 的 `message.reasoning`。
+-   - 非流式 fallback 后补发缺失 reasoning delta。
+-
+-6. **修正 tool-call 后的 transient message**
+-   - agent runner 调用 `append_assistant_tool_call_message` 时传入 `response.reasoning_content`。
+-   - 下一轮 provider request 中 assistant tool-call message 包含 `reasoning_content`。
+-   - 确保 final message 写入 `recent_chat` 仍只用 `content`。
+-
+-7. **更新架构文档与测试**
+-   - 更新 `reasoning.md`、`provider.md`、`DESIGN.md` 中 DeepSeek 表述。
+-   - 增加单元测试：request body、stream reasoning parse、non-stream parse、tool-call transient serialization、DeepSeek preset 默认值。
+-   - 跑 `cargo test -p march-core provider`；若测试分组不存在，跑相关 crate 定向测试或 `cargo test -p march-core`。
+-
+-### 实现风险与约束
+-
+-- 不得把 `reasoning_content` 当正文 fallback；这是本 feature 最大 correctness 风险。
+-- DeepSeek tool-call assistant message 即使 `content` 为空，也要能和 `reasoning_content + tool_calls` 一起序列化。
+-- 非 DeepSeek OpenAI-compatible provider 若偶然返回 `reasoning_content`，可以展示 reasoning，但不能自动发送 DeepSeek `thinking` request 参数。
+-- `request_json` debug 必须反映真实发送 body，方便检查 thinking 字段和是否跳过采样参数。
+-- 旧 `deepseek-chat` / `deepseek-reasoner` 不移除，避免用户已有模型配置突然不可选；但 suggested models 排序把 V4 放前面。
+-- 官方文档显示 `deepseek-chat` / `deepseek-reasoner` 将于 2026-07-24 停用；测试不要把这两个 alias 当唯一 DeepSeek 模型。
+-
+-### 推进顺序
+-
+-1. **数据结构铺底**：为 `RequestMessage`、`WireResponse`、`ProviderResponse`、`WireStreamDelta`、`ProviderProgressEvent` 增加 reasoning 字段/变体。  
+-   退出信号：`cargo check -p march-core` 至少推进到所有新增字段编译错误清完，非 DeepSeek provider 构造函数默认 `None`。
+-
+-2. **OpenAI message serialization / parsing**：实现 assistant `reasoning_content` 序列化、stream parse、non-stream parse，并删除正文 fallback。  
+-   退出信号：新增单元测试证明 `reasoning_content` 不会出现在 `content`，但会出现在 response reasoning 字段。
+-
+-3. **DeepSeek request policy 与 preset 更新**：更新 DeepSeek base URL / suggested models / model capabilities / 前端 URL 默认值，插入 thinking request 字段并跳过采样参数。  
+-   退出信号：单元测试构造 DeepSeek V4 request body，断言含 `thinking.enabled`、`reasoning_effort=high`，且不含 `temperature` / `top_p` / penalties。
+-
+-4. **Provider delivery reasoning collector**：stream collector 分别累积 reasoning 和正文，并向上发 `ProviderProgressEvent::ReasoningDelta`。  
+-   退出信号：stream parse + delivery 层测试证明 reasoning delta 被累计到 `ProviderResponse.reasoning_content`，content 仍独立。
+-
+-5. **Agent/UI 事件链路**：新增 `AssistantReasoningPreview`，打通 messaging 层和 persisted timeline。  
+-   退出信号：后端事件单测或 reducer 测试证明 reasoning delta 写入 `PersistedAssistantMessage.reasoning`，UI event field 为 `reasoning`。
+-
+-6. **Tool-call 轮内回传**：agent runner 在追加 assistant tool-call transient message 时带 `response.reasoning_content`。  
+-   退出信号：构造一轮 provider response `{ reasoning_content, tool_calls }` 后，下一次 serialized messages 中的 assistant tool-call message 包含相同 reasoning。
+-
+-7. **文档和回归验证**：更新架构文档并跑测试。  
+-   退出信号：`cargo test -p march-core` 或定向测试通过；design 中列出的官方约束在 `reasoning.md` / `provider.md` 中有对应长期说明。
+-
+-### 测试设计
+-
+-| 功能点 | 验证方式 | 关键用例 |
+-|---|---|---|
+-| DeepSeek preset | 单元测试 | `lookup_preset("deepseek")` 默认 URL 为 `https://api.deepseek.com`，probe model 为 `deepseek-v4-flash`，suggested models 含 V4 两个模型。 |
+-| DeepSeek request body | 单元测试 | DeepSeek V4 + stream=true → body 含 `thinking.enabled` / `reasoning_effort=high` / `max_tokens`，不含采样参数。 |
+-| OpenAI stream reasoning parse | 单元测试 | `delta.reasoning_content` → `WireStreamDelta::ReasoningDelta`；`delta.content` → `ContentDelta`；同 chunk 两者都在时都不丢。 |
+-| Non-stream reasoning parse | 单元测试 | `message.reasoning_content + content + tool_calls` → `WireResponse` 三类字段都保留。 |
+-| 正文隔离 | 单元测试 | `content=""` 且 `reasoning_content` 非空时，`ProviderResponse.content == None`，agent 不把它当 final text。 |
+-| Tool-call 回传 | 单元/集成测试 | 第一轮 response 带 `reasoning_content + tool_calls`，执行工具后第二轮 request messages 里 assistant message 原样带回 reasoning。 |
+-| UI/persist reasoning | 单元测试 | `AssistantReasoningPreview` 同时更新 persisted `message.reasoning` 和 UI `assistant_stream_delta { field=reasoning }`。 |
+-| 非 DeepSeek兼容 | 单元测试 | OpenAI / custom OpenAI-compat request 不插入 `thinking` 字段，采样参数行为保持原样。 |
+-
+-## 4. 与项目级架构文档的关系
+-
+-### 名词
+-
+-- `reasoning_content` 从 DeepSeek 特有字段升级为 OpenAI-compatible visible reasoning 的系统级名词，应写回 `codestable/architecture/reasoning.md`。
+-- DeepSeek V4 Thinking Mode 替换旧的 “DeepSeek-R1 / InlineTag” 主表述，应同步 `DESIGN.md` 的总入口摘要。
+-
+-### 动词骨架
+-
+-- “provider stream reasoning delta → AgentProgressEvent → UiAssistantStreamField::Reasoning → AssistantMessage.reasoning” 是跨 provider 可见的事件链路，应写回 `reasoning.md` 和 `ui-events.md` 已有 reasoning 描述处。
+-- “tool-call 后轮内回传 reasoning_content，但 Turn 结束后丢弃”是上下文管理约束，应写回 `reasoning.md` 的 Thinking Block 不进入 recent_chat 章节。
+-
+-### 跨层纪律
+-
+-- Provider wire 层不得把 reasoning fallback 成正文。
+-- Vendor-specific request policy 归 `OpenAiWire` 内部，不上浮到 AgentContext。
+-- Thinking Mode 下不生效的采样参数由 wire 层按 provider policy 抑制发送，UI 后续可再做提示，但 request body 先保证正确。
+-
+-### 关联架构文档
+-
+-- [codestable/architecture/DESIGN.md](../../architecture/DESIGN.md)
+-- [codestable/architecture/provider.md](../../architecture/provider.md)
+-- [codestable/architecture/reasoning.md](../../architecture/reasoning.md)
+-- [codestable/architecture/ui-events.md](../../architecture/ui-events.md)
+-
+-架构总入口需要更新一句 DeepSeek reasoning 表述；不是新增设计入口，只是把旧“DeepSeek-R1 inline tag”刷新为当前官方 Thinking Mode。
++---
+ 
+-### 官方资料
++## 后续章节
+ 
+-- DeepSeek Thinking Mode: https://api-docs.deepseek.com/zh-cn/guides/thinking_mode
+-- DeepSeek Models & Pricing: https://api-docs.deepseek.com/quick_start/pricing
+-- DeepSeek Change Log 2026-04-24: https://api-docs.deepseek.com/updates
++- [实现提示与项目级架构关系](./deepseek-thinking-provider-implementation.md)
+diff --git a/asset/programming-paradigm.md b/asset/programming-paradigm.md
+index be9fe09..9844646 100644
+--- a/asset/programming-paradigm.md
++++ b/asset/programming-paradigm.md
+@@ -419,256 +419,9 @@ fn charge(amount: Money)
+ 
+ ## 第四部分：编写规则
+ 
+-### 规则 1：值对象先行，实体随后
+-
+-从需求中先识别值对象，再识别实体。值对象定义了系统的"度量衡"，实体定义了系统的"角色"。
+-
+-### 规则 2：最简 Workflow 先行
+-
+-写一个最简编排把核心流程跑通，节点先用空实现。先达成结构共识，再填细节。
+-
+-### 规则 3：逐个节点填充，每填一个跑一次测试
+-
+-### 规则 4：同层同级，控制认知负荷
+-
+-编排函数每一行保持同一抽象层级（见第 4 节）。所有长度和密度约束见基础约束（第 0 节），核心数字速查：
+-
+-- **单函数**：编排 10-30 行（上限 50），计算不超过 50 行（上限 100）
+-- **单文件**：一个文件一个角色。编排文件 50-150 行，计算文件 100-300 行，超 400 行必拆
+-- **逻辑量**：单函数操作的独立概念不超过 7 个，分支不超过 5 个
+-- **密度平衡**：理解一段逻辑不应需要同时打开超过 3 个文件
+-- **终极判断**：新人打开这个文件，30 秒内能否理解意图？
+-
+-### 规则 5：复制还是复用
+-
+-#### 判断：给它起个名字
+-
+-把"相同的部分"假装抽出来，试着给它起个名字：
+-
+-```
+-第一步：能起具体名字吗？
+-  ├─ 需要 Generic / Common / Base / Shared 前缀 → 不是真概念 → 复制
+-  └─ 有具体名字（CopyableTip、useAsync、Money）→ 进入第二步
+-
+-第二步：不看调用点能理解它吗？
+-  ├─ 不能，要看谁在用才知道它干什么 → 意义依赖场景 → 复制
+-  └─ 能，它自己就说清了自己是什么 → 是独立概念 → 复用
+-```
+-
+-两步都过了才复用。任何一步没过就复制。
+-
+-这条原则在不同层级上的表现：
+-
+-| 层级 | 复制（各自演化） | 复用（同生共死） |
+-|------|-----------------|-----------------|
+-| 编排/workflow | 两个业务流程看起来像 → 复制，各走各的 | — |
+-| 固定结构组合 | — | CopyableTip = HoverTip + CopyButton，没有 if，改一个就该改全部 → 复用 |
+-| 领域计算 | — | "税怎么算"不因流程不同而不同 → 必须复用，单一真相源 |
+-
+-#### 判断错了怎么办：识别信号，内联回去
+-
+-预测不可能总对。关键不是判断准，而是**错了能快速纠正**。错误的复用会发出四个明确的代码信号：
+-
+-**信号一：参数里出现了 boolean / enum 开关。** 某个调用点说"我要不一样的行为"，你加了 `useIcon=true`、`feedbackMode="color"`。开关越多，说明调用点分化越严重——当初的"同一个概念"假设已经不成立。
+-
+-**信号二：内部出现"只为某个调用点服务"的 if。** 打开共享模块，发现某个分支只有一个地方在走。它不再是通用模式，而是特殊需求的拼盘。
+-
+-**信号三：改代码时脑子里在想"别影响别的调用点"。** 这是最直觉的信号——你已经在为错误的复用买单了。
+-
+-**信号四：新人看不懂这个抽象。** 需要看调用点才能理解它是干什么的，说明它不是独立概念。
+-
+-出现任何一个信号，执行**内联**：
+-
+-```
+-1. 把共享模块的代码复制回每个调用点（出现重复代码是正确的中间状态）
+-2. 删掉共享模块
+-3. 让每个调用点独立演化
+-4. 观察是否有新的真实共性浮现——演化后的共性才是真共性
+-```
+-
+-#### 默认策略：先复制，等待复用浮现
+-
+-```
+-复制 → 发现是真共性 → 提取复用    容易，两份代码都是完整的
+-复用 → 发现不该复用 → 内联拆开    痛苦，N 个调用点已经依赖它
+-```
+-
+-**错误的复用比错误的复制代价大得多。** 所以默认倾向复制——等到命名测试两步都通过、重复出现 3 次以上、而且没有出现上述四个信号时，再提取复用。
+-
+-### 规则 6：新功能叠加，骨架不动
+-
+-新功能以子流程、装饰器、Null Object 替换的方式叠加到现有 workflow 上。主 workflow 骨架尽量保持不变。功能上下 = 子流程的挂载或卸载。
+-
+-在组件/模块层面同样适用：**新功能是组合出新组件，不是往老组件里加 prop/开关**。
+-
+-#### 判断方法：细化还是组合？
+-
+-遇到"要改老模块还是建新模块"时，问一个问题：
+-
+-> **新功能和老模块是"同一个概念的细化"，还是"两个概念的组合"？**
+-
+-- **细化** → 改老模块。比如 tooltip 支持不同方向（top/bottom/left/right），方向是 tooltip 本身的属性。
+-- **组合** → 建编排层，把多个独立能力组装在一起。比如 tooltip + 复制、tooltip + 确认按钮。
+-
+-#### 实例：HoverTip + 点击复制
+-
+-需求：已有 HoverTip 组件（鼠标悬停显示提示），现在某个页面需要 tip 内容可以点击复制。
+-
+-分析：
+-
+-- **HoverTip**：鼠标悬停 → 显示文字 → 离开消失。核心是"被动信息展示"。
+-- **点击复制**：用户主动点击 → 写入剪贴板 → 反馈"已复制"。核心是"主动用户动作"。
+-
+-一个是被动展示，一个是主动交互——**不是同一个概念，是两个独立的能力**。
+-
+-```
+-❌ 在原组件里加 prop（瑞士军刀式膨胀）
+-
+-  <HoverTip content="xxx" :copyable="true" />
+-
+-  今天加 copyable，明天加 closable，后天加 hasAction，
+-  半年后 15 个 prop、8 个 slot、300 行模板。
+-  本质错误：把编排逻辑（哪个页面需要什么组合）塞进了计算层（组件本身）。
+-```
+-
+-正确方向：**HoverTip 提供 slot，CopyButton 作为独立能力，组合发生在调用点**。
+-
+-```
+-// CopyButton：纯"复制"能力，不知道自己会被用在哪里
+-component CopyButton(text):
+-    copied = false
+-    fn copy():
+-        clipboard.write(text)
+-        copied = true
+-        after 1.5s: copied = false
+-    render: button(onClick=copy, label=copied ? "已复制" : "复制")
+-```
+-
+-最简方案——**调用点直接用 slot 组合**，不建新组件：
+-
+-```
+-// 调用点就是编排层，决定 tip 里放什么
+-HoverTip:
+-    slot content:
+-        text("可复制内容")
+-        CopyButton(text="可复制内容")
+-    <span>悬停我</span>
+-```
+-
+-HoverTip 和 CopyButton 各自不知道对方的存在，组合关系只在调用点体现。
+-
+-#### 判断链：何时提取组合组件？
+-
+-```
+-1. 老模块有 slot / 扩展点吗？
+-   ├─ 没有 → 先加 slot（这是"细化"，支持自定义内容是它本身的能力）
+-   └─ 有   → 在调用点直接用 slot 组合新能力
+-
+-2. 这个组合模式重复出现了几次？
+-   ├─ 1-2 次 → 保持调用点组合，不建新模块
+-   └─ 3+ 次  → 提取组合组件固化模式，消除重复
+-```
+-
+-只有当"tip + copy"的组合出现 3 次以上，才值得提取 CopyableTip：
+-
+-```
+-// CopyableTip：固化重复的组合模式
+-component CopyableTip(content):
+-    render:
+-        HoverTip:
+-            slot content:
+-                text(content)
+-                CopyButton(text=content)
+-            slot default:
+-                <children/>
+-```
+-
+-**先用最简单的方式（slot 组合），等重复逼你封装的时候再封装。** 这是规则 2（最简方案先行）在组件层面的体现。
+-
+-通用原则：**出现 1 次是用法，出现 3 次是模式，模式才值得封装。**
+ 
+ ---
+ 
+-## 第五部分：重构规则
+-
+-### 规则 7：安全手法蚕食，不重写
+-
+-操作顺序：**重命名 → 抽取函数 → 移到新模块 → 清理新模块内部**。
+-
+-核心纪律：
+-- 抽取函数和移到新模块是**一个完整动作**，只做抽取不做搬移 = 做了一半
+-- **搬和改永远不在同一次提交**——搬的 commit 只移动代码不改逻辑，改的 commit 只优化不移动
+-- 每步之间运行测试，确保行为不变
+-
+-安全手法按风险从低到高：
+-
+-1. **重命名**：零风险，工具一键完成
+-2. **抽取函数**：极低风险，工具一键完成
+-3. **引入参数对象**：低风险
+-4. **移到新模块**：中低风险
+-5. **内联后重新抽取**：中风险，用于修正之前抽错的结构
+-
+-### 规则 8：让结构浮现，再让结构裸露
+-
+-从大函数中抽取小函数 → **结构浮现**（编排逻辑从细节中露出来）。
+-
+-把小函数搬到独立模块 → **结构裸露**（编排模块只剩编排，打开就是流程图）。
+-
+-最终目标：编排模块 20-30 行，一眼可读，每一行是一个动作名。所有实现细节在各自的独立模块里。
+-
+-**浮现了但没裸露，等于没做完。**
+-
+----
+-
+-## 第六部分：重构实操节奏
+-
+-### 绞杀者模式
+-
+-新结构从老代码外围长出来，逐步替换。整个过程老代码始终能跑、老功能始终不坏。
+-
+-### 渐进阶段
+-
+-| 阶段 | 动作 | 产出 |
+-|------|------|------|
+-| 0 | 画现状流程图（不动代码） | 节点清单 + 每个节点的读写依赖 |
+-| 1 | 抽取函数 | 主函数变成 workflow 雏形 |
+-| 2 | 识别隐式状态（全局变量、线程本地、闭包捕获） | 需要显式化的状态清单 |
+-| 3 | 引入 Context 结构体 | 所有状态传递显式化 |
+-| 4 | 分离加载/计算/持久化 | 纯计算函数可独立测试 |
+-| 5 | 搬到独立模块 | 老模块只剩编排 |
+-| 6 | 拆出 Loader / Workflow / Persister | 完整分层结构 |
+-
+-每个阶段都可停下来，代码始终可运行。
+-
+-### 关键技巧
+-
+-- **特征测试做安全网**：录制真实输入输出，每次改完对比行为一致性
+-- **开关切流**：新老流程并存，小比例流量先走新流程，逐步放量
+-- **提交粒度越细越好**：每搬一个函数就提交一次
+-- **先别追求完美 Context**：重构中期先用最简单的结构，稳定后再优化封装
+-- **不值得重构的代码别动**：又烂又稳定、无人修改的代码没有重构 ROI
+-
+----
++## 后续章节
+ 
+-## 附录：范式速查
+-
+-| 原则 | 一句话 |
+-|------|--------|
+-| 基础约束 | 函数一屏读完，文件一眼知主题，逻辑不用记就能跟上；理解一段逻辑不超过 3 个文件 |
+-| 三段式 | 加载、计算、持久化不混在一个函数里 |
+-| 显式容器 | 状态放在显式容器里，不藏在全局/闭包/魔法中；框架的响应式容器是合法 Context |
+-| 编排-计算分离 | 编排说"做什么"，计算说"怎么做"，分处不同模块 |
+-| 编排是职责不是架构层 | 调用点组合→提取组合模块→独立编排类，按复杂度和重复度选择重量级 |
+-| 计算层不碰容器 | 计算层接收值、返回值；编排层负责从容器取值和写回；只读派生不算"碰" |
+-| Context at the Edge | Context 只出现在编排层，计算层只接收真实依赖 |
+-| 同层同级 | 一个函数体内每一行同一抽象层级 |
+-| 注册发现 | 功能增减靠注册表，不靠 if/else |
+-| 缺省行为 | 契约提供有意义的缺省，缺席用空实现顶替 |
+-| 契约稳定性 | 新方法给缺省、新字段走扩展区、大版本用适配器 |
+-| 复制还是复用 | 能起具体名字且脱离调用点能理解→复用；否则复制。默认先复制 |
+-| 错误复用的纠正 | 出现 boolean 开关 / 专属 if / 怕影响别人 / 新人看不懂 → 内联回去 |
+-| 细化改原模块，组合建新模块 | 同一概念的细化→改；两个概念的组合→slot 组合；重复 3 次→提取组合模块 |
+-| 领域计算必须复用 | 业务规则单一真相源，复制了就是定时炸弹 |
+-| 值对象先行 | 先识别度量衡，再识别角色 |
+-| 浮现再裸露 | 抽取函数 + 搬到新模块是一个完整动作 |
+-| 搬和改分离 | 移动代码和修改逻辑永远不在同一次提交 |
++- [第四至第六部分与速查](./programming-paradigm-rules.md)
+diff --git a/cs-onboard/reference/shared-asset-manifest.yaml b/cs-onboard/reference/shared-asset-manifest.yaml
+index 0bd862a..693f84d 100644
+--- a/cs-onboard/reference/shared-asset-manifest.yaml
++++ b/cs-onboard/reference/shared-asset-manifest.yaml
+@@ -6,6 +6,8 @@ references:
+     destination: .codestable/reference/code-dimensions.md
+   - source: cs-onboard/reference/maintainer-notes.md
+     destination: .codestable/reference/maintainer-notes.md
++  - source: cs-onboard/reference/markdown-line-limit-exemptions.json
++    destination: .codestable/reference/markdown-line-limit-exemptions.json
+   - source: cs-onboard/reference/requirement-example.md
+     destination: .codestable/reference/requirement-example.md
+   - source: cs-onboard/reference/shared-asset-manifest.yaml
+@@ -48,6 +50,8 @@ references:
+     destination: .codestable/reference/workflow-contract-shared-concepts.md
+   - source: cs-onboard/reference/workflow-contract.md
+     destination: .codestable/reference/workflow-contract.md
++  - source: cs-onboard/reference/workflow-contract-warning-baseline.json
++    destination: .codestable/reference/workflow-contract-warning-baseline.json
+ 
+ tools:
+   - source: cs-onboard/tools/build-status.py
+@@ -56,5 +60,7 @@ tools:
+     destination: .codestable/tools/check-workflow-contracts.py
+   - source: cs-onboard/tools/search-yaml.py
+     destination: .codestable/tools/search-yaml.py
++  - source: cs-onboard/tools/sync-skills.sh
++    destination: .codestable/tools/sync-skills.sh
+   - source: cs-onboard/tools/validate-yaml.py
+     destination: .codestable/tools/validate-yaml.py
+diff --git a/cs-onboard/reference/status-schema.md b/cs-onboard/reference/status-schema.md
+index ace625a..ee0af57 100644
+--- a/cs-onboard/reference/status-schema.md
++++ b/cs-onboard/reference/status-schema.md
+@@ -56,6 +56,8 @@
+ - `check_command`：建议消费方如何验证当前 `status.json` 是否过期
+ - `reasons`：若生成时已发现 canonical 冲突，则列出原因
+ 
++使用 `python .codestable/tools/build-status.py --check --json` 可获得 machine-readable 结果：`fresh`（exit 0）、`stale`（exit 1）或 `conflict`（exit 2）。消费方在非 `fresh` 时必须回退到 canonical artifacts。
++
+ 说明：generated state 的过期判定不依赖 wall-clock 时间，而依赖 canonical digest 是否变化。
+ 
+ ### `bridge_hints`
+diff --git a/cs-onboard/reference/tools.md b/cs-onboard/reference/tools.md
+index 17b7b6c..86d50ad 100644
+--- a/cs-onboard/reference/tools.md
++++ b/cs-onboard/reference/tools.md
+@@ -16,6 +16,7 @@
+ python .codestable/tools/build-status.py
+ python .codestable/tools/build-status.py --repo-root /path/to/repo
+ python .codestable/tools/build-status.py --check
++python .codestable/tools/build-status.py --check --json
+ ```
+ 
+ ### 默认输入
+@@ -35,6 +36,7 @@ python .codestable/tools/build-status.py --check
+ 
+ - `status.json` 是 **derived-only** 状态脊柱，不是 authority
+ - `freshness.canonical_digest` 用于判断生成结果是否已 stale
++- `--check --json` 输出 machine-readable freshness：`fresh` 返回 0、`stale` 返回 1、canonical `conflict` 返回 2
+ - lane item 同时区分：
+   - `canonical`：直接从正式产物读取的事实
+   - `derived`：由 canonical facts 推导出的阶段视图
+@@ -51,7 +53,7 @@ python .codestable/tools/build-status.py --check
+ 
+ ## 0. check-workflow-contracts.py
+ 
+-工作流契约只读校验器。用于检查共享资产 manifest parity、repo-local 副本、活跃 workflow 口径一致性，以及 Markdown 行数上限。脚本只读、确定性、无额外依赖。
++工作流契约只读校验器。用于检查共享资产 manifest parity、repo-local 副本、活跃 workflow 口径一致性，以及所有 Git 跟踪 Markdown 的行数上限。`markdown-line-limit-exemptions.json` 中有理由的 fixture 可被显式豁免。脚本只读、确定性、无额外依赖。
+ 
+ ### 基本语法
+ 
+@@ -74,7 +76,7 @@ python .codestable/tools/check-workflow-contracts.py --json
+ ### 严格 / 兼容分层
+ 
+ - **严格失败**：活跃 workflow 文档、公共文档、manifest parity、共享资产缺失、被重开的 hybrid feature 缺少 `plan.md` 或 `checklist.yaml`
+-- **兼容警告**：历史 / 归档 artifact 的旧口径、未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`
++- **兼容警告**：历史 / 归档 artifact 的旧口径、未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`；已审查的历史警告仅可通过 `workflow-contract-warning-baseline.json` 基线化，新警告仍会报告。
+ - **样板例外**：仓库内显式标记为 sample/example 的 feature，在仓库级运行中按 compatibility warning 处理；严格失败场景由 `tests/fixtures/workflow-contracts/` 单独覆盖
+ 
+ ### Fixtures
+@@ -201,3 +203,16 @@ python .codestable/tools/validate-yaml.py \
+ - workflow-check 默认用于**新 feature**和**被重开的历史 feature**
+ - 历史 feature 如果只是留档、不继续推进，则缺 `workflow` 或 `plan.md` 不应直接被视为错误
+ - 如果用户决定重开旧 feature，再按 `legacy` 或 `hybrid` 路径补最小必要字段和产物后运行 workflow-check
++---
++
++## 4. sync-skills.sh
++
++将仓库技能同步到允许的本地安装目录；该脚本不属于 onboarding shared bundle。
++
++```bash
++.codestable/tools/sync-skills.sh --dry-run cs-feat
++.codestable/tools/sync-skills.sh cs-feat
++.codestable/tools/sync-skills.sh --verify cs-feat
++```
++
++`--verify` 只比较仓库源码与已安装副本（会解析 symlink），不创建目录、不写入文件；发现缺失或 drift 时返回非零。
+diff --git a/cs-onboard/reference/workflow-contract-authority.md b/cs-onboard/reference/workflow-contract-authority.md
+index d8d1d1b..c8a60df 100644
+--- a/cs-onboard/reference/workflow-contract-authority.md
++++ b/cs-onboard/reference/workflow-contract-authority.md
+@@ -27,7 +27,7 @@
+ 
+ 以下内容只能帮助恢复上下文，不能提升为 authority：
+ 
+-- `.ccg/tasks/*/task.json`
++- `.ccg/tasks/*/task.json`（最小字段只保留 `id`、`status`、`canonical_path`、`canonical_kind`；其中 canonical 字段仅建立关联，不能镜像或判定 canonical 阶段）
+ - `context.jsonl`
+ - 任何仅为恢复或路由生成的临时索引
+ 
+diff --git a/cs-onboard/reference/workflow-contract-generated-state.md b/cs-onboard/reference/workflow-contract-generated-state.md
+index 9c6ddf4..007ecc6 100644
+--- a/cs-onboard/reference/workflow-contract-generated-state.md
++++ b/cs-onboard/reference/workflow-contract-generated-state.md
+@@ -45,6 +45,7 @@ generated state 可以暴露以下 derived fields：
+ - 消费方可以优先读取 generated state，但必须接受回退到 canonical artifacts。
+ - `status.json` 必须显式区分 canonical facts、derived state、consistency、bridge-hint boundary metadata。
+ - 一旦 generated state 缺失、过期、矛盾或无法验证，就视为不可用。
++- freshness 的 machine-readable 判定必须通过 `build-status.py --check --json` 获得；返回 `stale` 或 `conflict` 时不得自动续作。
+ 
+ ## 全局 Auto-Switch Predicate
+ 
+diff --git a/cs-onboard/tools/build-status.py b/cs-onboard/tools/build-status.py
+index bc34617..dcdabe7 100644
+--- a/cs-onboard/tools/build-status.py
++++ b/cs-onboard/tools/build-status.py
+@@ -810,7 +810,8 @@ def main() -> int:
+     parser = argparse.ArgumentParser(description="Build deterministic .codestable/status.json")
+     parser.add_argument("--repo-root", default=".", help="Repository root")
+     parser.add_argument("--output", default=".codestable/status.json", help="Output path")
+-    parser.add_argument("--check", action="store_true", help="Exit non-zero if output differs")
++    parser.add_argument("--check", action="store_true", help="Verify output matches the current canonical snapshot")
++    parser.add_argument("--json", action="store_true", dest="json_output", help="Emit machine-readable verification output (requires --check)")
+     args = parser.parse_args()
+ 
+     repo_root = normalize_repo_root(args.repo_root)
+@@ -818,9 +819,27 @@ def main() -> int:
+     payload = build_status(repo_root)
+     rendered = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+ 
++    if args.json_output and not args.check:
++        parser.error("--json requires --check")
++
+     if args.check:
+         current = output_path.read_text(encoding="utf-8") if output_path.exists() else ""
+-        return 0 if current == rendered else 1
++        matches = current == rendered
++        expected_state = payload["freshness"]["state"]
++        state = "stale" if not matches else expected_state
++        result = {
++            "ok": state == "fresh",
++            "freshness": {
++                "state": state,
++                "expected_state": expected_state,
++                "canonical_digest": payload["freshness"]["canonical_digest"],
++            },
++            "output": str(output_path.relative_to(repo_root)),
++            "matches_canonical_snapshot": matches,
++        }
++        if args.json_output:
++            print(json.dumps(result, ensure_ascii=False, indent=2))
++        return {"fresh": 0, "stale": 1, "conflict": 2}[state]
+ 
+     output_path.write_text(rendered, encoding="utf-8")
+     return 0
+diff --git a/cs-onboard/tools/check-workflow-contracts.py b/cs-onboard/tools/check-workflow-contracts.py
+index 420a96b..91bb202 100644
+--- a/cs-onboard/tools/check-workflow-contracts.py
++++ b/cs-onboard/tools/check-workflow-contracts.py
+@@ -19,6 +19,7 @@ import argparse
+ import json
+ import re
+ import sys
++import subprocess
+ from pathlib import Path
+ 
+ _HAS_PYYAML = False
+@@ -197,6 +198,10 @@ class Report:
+     def warning_count(self) -> int:
+         return sum(1 for finding in self.findings if finding.level == "warning")
+ 
++    @property
++    def baseline_count(self) -> int:
++        return sum(1 for finding in self.findings if finding.level == "baseline")
++
+     @property
+     def ok(self) -> bool:
+         return self.error_count == 0
+@@ -208,6 +213,7 @@ class Report:
+             "lineLimit": self.line_limit,
+             "errors": self.error_count,
+             "warnings": self.warning_count,
++            "baselinedWarnings": self.baseline_count,
+             "findings": [finding.to_dict() for finding in self.findings],
+         }
+ 
+@@ -232,15 +238,38 @@ def existing_paths(root: Path, relative_paths):
+     return paths
+ 
+ 
+-def collect_line_limit_docs(root: Path):
+-    docs = set(existing_paths(root, [
+-        "README.md",
+-        "README.en.md",
+-        "cs/SKILL.md",
+-    ]))
+-    for pattern in ["docs/dev/*.md", ".codestable/reference/*.md", "cs-onboard/reference/*.md"]:
+-        docs.update(path for path in root.glob(pattern) if path.is_file())
+-    return sorted(docs)
++def load_markdown_line_limit_exemptions(root: Path, report: Report):
++    path = root / ".codestable/reference/markdown-line-limit-exemptions.json"
++    if not path.exists():
++        return set()
++    text, err = read_text(path)
++    if err:
++        report.error("read_error", rel_path(root, path), err)
++        return set()
++    try:
++        payload = json.loads(text or "{}")
++    except json.JSONDecodeError as exc:
++        report.error("markdown_exemption_parse", rel_path(root, path), str(exc))
++        return set()
++    exemptions = payload.get("exemptions", [])
++    if not isinstance(exemptions, list):
++        report.error("markdown_exemption_shape", rel_path(root, path), "exemptions must be a list")
++        return set()
++    paths = set()
++    for index, item in enumerate(exemptions, start=1):
++        if not isinstance(item, dict) or not item.get("path") or not item.get("reason"):
++            report.error("markdown_exemption_entry", rel_path(root, path), f"exemptions[{index}] requires path and reason")
++            continue
++        paths.add(str(item["path"]))
++    return paths
++
++
++def collect_line_limit_docs(root: Path, report: Report):
++    try:
++        output = subprocess.check_output(["git", "-C", str(root), "ls-files", "--", "*.md"], text=True, stderr=subprocess.DEVNULL)
++        return sorted(root / line for line in output.splitlines() if line)
++    except (OSError, subprocess.CalledProcessError):
++        return sorted(path for path in root.rglob("*.md") if ".git" not in path.parts)
+ 
+ 
+ def collect_reference_scan_files(root: Path):
+@@ -394,6 +423,34 @@ def check_referenced_assets(root: Path, report: Report, declared):
+                 )
+ 
+ 
++def apply_warning_baseline(root: Path, report: Report):
++    path = root / ".codestable/reference/workflow-contract-warning-baseline.json"
++    if not path.exists():
++        return
++    text, err = read_text(path)
++    if err:
++        report.error("read_error", rel_path(root, path), err)
++        return
++    try:
++        payload = json.loads(text or "{}")
++    except json.JSONDecodeError as exc:
++        report.error("warning_baseline_parse", rel_path(root, path), str(exc))
++        return
++    entries = payload.get("warnings", [])
++    if not isinstance(entries, list):
++        report.error("warning_baseline_shape", rel_path(root, path), "warnings must be a list")
++        return
++    known = set()
++    for index, item in enumerate(entries, start=1):
++        if not isinstance(item, dict) or not item.get("rule") or not item.get("path") or not item.get("reason"):
++            report.error("warning_baseline_entry", rel_path(root, path), f"warnings[{index}] requires rule, path, and reason")
++            continue
++        known.add((str(item["rule"]), str(item["path"])))
++    for finding in report.findings:
++        if finding.level == "warning" and (finding.rule, finding.path) in known:
++            finding.level = "baseline"
++
++
+ def check_path_contract(root: Path, report: Report):
+     pattern = re.compile(r"(?<!\.)codestable/")
+     for path in existing_paths(root, ACTIVE_PUBLIC_DOCS):
+@@ -434,7 +491,11 @@ def check_feature_flow_wording(root: Path, report: Report):
+ 
+ 
+ def check_markdown_line_limit(root: Path, report: Report):
+-    for path in collect_line_limit_docs(root):
++    exemptions = load_markdown_line_limit_exemptions(root, report)
++    for path in collect_line_limit_docs(root, report):
++        relative = rel_path(root, path)
++        if relative in exemptions:
++            continue
+         text, err = read_text(path)
+         if err:
+             report.error("read_error", rel_path(root, path), err)
+@@ -535,9 +596,9 @@ def print_text_report(report: Report, line_limit_sources):
+         print(f"Markdown line limit: {report.line_limit} ({rendered})")
+     else:
+         print(f"Markdown line limit: {report.line_limit}")
+-    print(f"Errors: {report.error_count}, warnings: {report.warning_count}\n")
++    print(f"Errors: {report.error_count}, warnings: {report.warning_count}, baselined: {report.baseline_count}\n")
+     for finding in report.findings:
+-        level = "ERROR" if finding.level == "error" else "WARN"
++        level = {"error": "ERROR", "warning": "WARN", "baseline": "BASELINE"}[finding.level]
+         print(f"[{level}] {finding.rule} :: {finding.path}")
+         print(f"  {finding.message}")
+ 
+@@ -564,6 +625,7 @@ def main() -> None:
+     check_feature_flow_wording(root, report)
+     check_markdown_line_limit(root, report)
+     check_legacy_features(root, report)
++    apply_warning_baseline(root, report)
+ 
+     if args.json_output:
+         payload = report.to_dict()
+diff --git a/tests/test_skill_routing_contracts.py b/tests/test_skill_routing_contracts.py
+index c311359..67dbbb5 100644
+--- a/tests/test_skill_routing_contracts.py
++++ b/tests/test_skill_routing_contracts.py
+@@ -54,6 +54,11 @@ class SkillRoutingContractTests(unittest.TestCase):
+         self.assertIn("`status: completed`", text("cs-issue-fix/SKILL.md"))
+         self.assertIn("status: completed", text("cs-issue-fix/reference.md"))
+ 
++    def test_bridge_task_contract_stays_minimal_and_non_authoritative(self):
++        content = text(".codestable/reference/workflow-contract-authority.md")
++        self.assertIn("最小字段只保留 `id`、`status`、`canonical_path`、`canonical_kind`", content)
++        self.assertIn("不能镜像或判定 canonical 阶段", content)
++
+     def test_feature_design_does_not_require_plan_stage_checklist(self):
+         content = text("cs-feat-design/SKILL.md")
+         self.assertNotIn("`{slug}-checklist.yaml` 已落盘并通过", content)
+diff --git a/tests/test_workflow_status_transitions.py b/tests/test_workflow_status_transitions.py
+index d45fb9b..518fab2 100644
+--- a/tests/test_workflow_status_transitions.py
++++ b/tests/test_workflow_status_transitions.py
+@@ -4,6 +4,9 @@ from __future__ import annotations
+ 
+ import importlib.util
+ import json
++import os
++import subprocess
++import sys
+ import tempfile
+ import unittest
+ from pathlib import Path
+@@ -11,6 +14,7 @@ from pathlib import Path
+ 
+ REPO_ROOT = Path(__file__).resolve().parents[1]
+ BUILD_STATUS_PATH = REPO_ROOT / ".codestable/tools/build-status.py"
++CONTRACT_CHECK_PATH = REPO_ROOT / ".codestable/tools/check-workflow-contracts.py"
+ 
+ 
+ def load_build_status_module():
+@@ -268,6 +272,57 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
+ 
+         self.assertEqual(before, after)
+ 
++    def test_check_json_reports_stale_when_snapshot_is_missing(self):
++        with tempfile.TemporaryDirectory() as temp_dir:
++            root = Path(temp_dir)
++            result = subprocess.run(
++                [sys.executable, str(BUILD_STATUS_PATH), "--repo-root", str(root), "--check", "--json"],
++                capture_output=True,
++                text=True,
++                check=False,
++            )
++
++        payload = json.loads(result.stdout)
++        self.assertEqual(1, result.returncode)
++        self.assertEqual("stale", payload["freshness"]["state"])
++        self.assertFalse(payload["matches_canonical_snapshot"])
++
++    def test_check_json_requires_check_flag(self):
++        result = subprocess.run(
++            [sys.executable, str(BUILD_STATUS_PATH), "--json"],
++            capture_output=True,
++            text=True,
++            check=False,
++        )
++
++        self.assertEqual(2, result.returncode)
++        self.assertIn("--json requires --check", result.stderr)
++
++    def test_contract_checker_enforces_tracked_markdown_and_honors_explicit_fixture_exemption(self):
++        with tempfile.TemporaryDirectory() as temp_dir:
++            root = Path(temp_dir)
++            write(root / "AGENTS.md", "单md文档不能超过5行\n")
++            write(root / ".gitignore", "")
++            write(root / "README.md", "one\ntwo\nthree\nfour\nfive\nsix\n")
++            write(
++                root / ".codestable/reference/markdown-line-limit-exemptions.json",
++                '{"version": 1, "exemptions": [{"path": "fixture.md", "reason": "test fixture"}]}\n',
++            )
++            write(root / "fixture.md", "one\ntwo\nthree\nfour\nfive\nsix\n")
++            subprocess.run(["git", "init", "-q", str(root)], check=True)
++            subprocess.run(["git", "-C", str(root), "add", "AGENTS.md", "README.md", "fixture.md"], check=True)
++            result = subprocess.run(
++                [sys.executable, str(CONTRACT_CHECK_PATH), "--repo-root", str(root), "--json"],
++                capture_output=True,
++                text=True,
++                check=False,
++            )
++
++        payload = json.loads(result.stdout)
++        failures = [item for item in payload["findings"] if item["rule"] == "markdown_line_limit"]
++        self.assertEqual(1, result.returncode)
++        self.assertEqual(["README.md"], [item["path"] for item in failures])
++
+     def test_onboard_builder_copy_matches_canonical_tool(self):
+         source = (REPO_ROOT / "cs-onboard/tools/build-status.py").read_bytes()
+         canonical = BUILD_STATUS_PATH.read_bytes()
