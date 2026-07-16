@@ -1,0 +1,12 @@
+{
+  "id": "audit-workflow-optimization",
+  "title": "审计项目工作流并提出优化建议",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "low",
+  "domain": "workflow",
+  "currentPhase": "completed",
+  "nextAction": "已完成工作流审计，待归档",
+  "createdAt": "2026-07-16T10:45:00+08:00",
+  "branch": "main"
+}
