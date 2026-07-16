@@ -38,6 +38,18 @@ npx skills update
 
 ---
 
+## Maintenance and verification
+
+After changing a workflow, run the unified quality gate:
+
+```bash
+./scripts/verify.sh
+```
+
+The script uses a repository-local temporary directory and checks generated state, workflow contracts, skill exit conditions, and Python regression tests. Set `PYTHON_BIN` to select an interpreter.
+
+---
+
 ## How to start
 
 ### New repo / not onboarded yet

@@ -54,6 +54,11 @@ class SkillRoutingContractTests(unittest.TestCase):
         self.assertIn("`status: completed`", text("cs-issue-fix/SKILL.md"))
         self.assertIn("status: completed", text("cs-issue-fix/reference.md"))
 
+    def test_bridge_task_contract_stays_minimal_and_non_authoritative(self):
+        content = text(".codestable/reference/workflow-contract-authority.md")
+        self.assertIn("最小字段只保留 `id`、`status`、`canonical_path`、`canonical_kind`", content)
+        self.assertIn("不能镜像或判定 canonical 阶段", content)
+
     def test_feature_design_does_not_require_plan_stage_checklist(self):
         content = text("cs-feat-design/SKILL.md")
         self.assertNotIn("`{slug}-checklist.yaml` 已落盘并通过", content)

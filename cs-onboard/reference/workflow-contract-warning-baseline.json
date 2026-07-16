@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "warnings": [
+    {
+      "rule": "legacy_feature_compat",
+      "path": ".codestable/features/2026-06-01-feature-handoff-contract/feature-handoff-contract-design.md",
+      "reason": "Historical pre-hybrid artifact."
+    },
+    {
+      "rule": "legacy_feature_compat",
+      "path": ".codestable/features/2026-06-01-spec-structure-contract/spec-structure-contract-design.md",
+      "reason": "Historical pre-hybrid artifact."
+    },
+    {
+      "rule": "sample_feature_compat",
+      "path": ".codestable/features/2026-06-02-first-hybrid-example/first-hybrid-example-design.md",
+      "reason": "Intentional example fixture."
+    },
+    {
+      "rule": "legacy_feature_compat",
+      "path": ".codestable/features/2026-06-02-migration-guidance/migration-guidance-design.md",
+      "reason": "Historical migration guidance."
+    },
+    {
+      "rule": "legacy_feature_compat",
+      "path": ".codestable/features/2026-06-02-plan-validation-rules/plan-validation-rules-design.md",
+      "reason": "Historical validation guidance."
+    },
+    {
+      "rule": "sample_feature_compat",
+      "path": ".codestable/features/2026-06-02-validation-failure-sample/validation-failure-sample-design.md",
+      "reason": "Intentional validation sample."
+    }
+  ]
+}

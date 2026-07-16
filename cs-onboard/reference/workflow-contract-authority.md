@@ -27,7 +27,7 @@
 
 以下内容只能帮助恢复上下文，不能提升为 authority：
 
-- `.ccg/tasks/*/task.json`
+- `.ccg/tasks/*/task.json`（最小字段只保留 `id`、`status`、`canonical_path`、`canonical_kind`；其中 canonical 字段仅建立关联，不能镜像或判定 canonical 阶段）
 - `context.jsonl`
 - 任何仅为恢复或路由生成的临时索引
 

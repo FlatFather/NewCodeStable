@@ -16,6 +16,7 @@
 python .codestable/tools/build-status.py
 python .codestable/tools/build-status.py --repo-root /path/to/repo
 python .codestable/tools/build-status.py --check
+python .codestable/tools/build-status.py --check --json
 ```
 
 ### 默认输入
@@ -35,6 +36,7 @@ python .codestable/tools/build-status.py --check
 
 - `status.json` 是 **derived-only** 状态脊柱，不是 authority
 - `freshness.canonical_digest` 用于判断生成结果是否已 stale
+- `--check --json` 输出 machine-readable freshness：`fresh` 返回 0、`stale` 返回 1、canonical `conflict` 返回 2
 - lane item 同时区分：
   - `canonical`：直接从正式产物读取的事实
   - `derived`：由 canonical facts 推导出的阶段视图
@@ -51,7 +53,7 @@ python .codestable/tools/build-status.py --check
 
 ## 0. check-workflow-contracts.py
 
-工作流契约只读校验器。用于检查共享资产 manifest parity、repo-local 副本、活跃 workflow 口径一致性，以及 Markdown 行数上限。脚本只读、确定性、无额外依赖。
+工作流契约只读校验器。用于检查共享资产 manifest parity、repo-local 副本、活跃 workflow 口径一致性，以及所有 Git 跟踪 Markdown 的行数上限。`markdown-line-limit-exemptions.json` 中有理由的 fixture 可被显式豁免。脚本只读、确定性、无额外依赖。
 
 ### 基本语法
 
@@ -74,7 +76,7 @@ python .codestable/tools/check-workflow-contracts.py --json
 ### 严格 / 兼容分层
 
 - **严格失败**：活跃 workflow 文档、公共文档、manifest parity、共享资产缺失、被重开的 hybrid feature 缺少 `plan.md` 或 `checklist.yaml`
-- **兼容警告**：历史 / 归档 artifact 的旧口径、未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`
+- **兼容警告**：历史 / 归档 artifact 的旧口径、未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`；已审查的历史警告仅可通过 `workflow-contract-warning-baseline.json` 基线化，新警告仍会报告。
 - **样板例外**：仓库内显式标记为 sample/example 的 feature，在仓库级运行中按 compatibility warning 处理；严格失败场景由 `tests/fixtures/workflow-contracts/` 单独覆盖
 
 ### Fixtures
@@ -201,3 +203,16 @@ python .codestable/tools/validate-yaml.py \
 - workflow-check 默认用于**新 feature**和**被重开的历史 feature**
 - 历史 feature 如果只是留档、不继续推进，则缺 `workflow` 或 `plan.md` 不应直接被视为错误
 - 如果用户决定重开旧 feature，再按 `legacy` 或 `hybrid` 路径补最小必要字段和产物后运行 workflow-check
+---
+
+## 4. sync-skills.sh
+
+将仓库技能同步到允许的本地安装目录；该脚本不属于 onboarding shared bundle。
+
+```bash
+.codestable/tools/sync-skills.sh --dry-run cs-feat
+.codestable/tools/sync-skills.sh cs-feat
+.codestable/tools/sync-skills.sh --verify cs-feat
+```
+
+`--verify` 只比较仓库源码与已安装副本（会解析 symlink），不创建目录、不写入文件；发现缺失或 drift 时返回非零。

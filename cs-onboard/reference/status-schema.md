@@ -56,6 +56,8 @@
 - `check_command`：建议消费方如何验证当前 `status.json` 是否过期
 - `reasons`：若生成时已发现 canonical 冲突，则列出原因
 
+使用 `python .codestable/tools/build-status.py --check --json` 可获得 machine-readable 结果：`fresh`（exit 0）、`stale`（exit 1）或 `conflict`（exit 2）。消费方在非 `fresh` 时必须回退到 canonical artifacts。
+
 说明：generated state 的过期判定不依赖 wall-clock 时间，而依赖 canonical digest 是否变化。
 
 ### `bridge_hints`

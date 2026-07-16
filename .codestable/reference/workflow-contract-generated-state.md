@@ -45,6 +45,7 @@ generated state 可以暴露以下 derived fields：
 - 消费方可以优先读取 generated state，但必须接受回退到 canonical artifacts。
 - `status.json` 必须显式区分 canonical facts、derived state、consistency、bridge-hint boundary metadata。
 - 一旦 generated state 缺失、过期、矛盾或无法验证，就视为不可用。
+- freshness 的 machine-readable 判定必须通过 `build-status.py --check --json` 获得；返回 `stale` 或 `conflict` 时不得自动续作。
 
 ## 全局 Auto-Switch Predicate
 

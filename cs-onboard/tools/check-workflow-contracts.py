@@ -19,6 +19,7 @@ import argparse
 import json
 import re
 import sys
+import subprocess
 from pathlib import Path
 
 _HAS_PYYAML = False
@@ -198,6 +199,10 @@ class Report:
         return sum(1 for finding in self.findings if finding.level == "warning")
 
     @property
+    def baseline_count(self) -> int:
+        return sum(1 for finding in self.findings if finding.level == "baseline")
+
+    @property
     def ok(self) -> bool:
         return self.error_count == 0
 
@@ -208,6 +213,7 @@ class Report:
             "lineLimit": self.line_limit,
             "errors": self.error_count,
             "warnings": self.warning_count,
+            "baselinedWarnings": self.baseline_count,
             "findings": [finding.to_dict() for finding in self.findings],
         }
 
@@ -232,15 +238,38 @@ def existing_paths(root: Path, relative_paths):
     return paths
 
 
-def collect_line_limit_docs(root: Path):
-    docs = set(existing_paths(root, [
-        "README.md",
-        "README.en.md",
-        "cs/SKILL.md",
-    ]))
-    for pattern in ["docs/dev/*.md", ".codestable/reference/*.md", "cs-onboard/reference/*.md"]:
-        docs.update(path for path in root.glob(pattern) if path.is_file())
-    return sorted(docs)
+def load_markdown_line_limit_exemptions(root: Path, report: Report):
+    path = root / ".codestable/reference/markdown-line-limit-exemptions.json"
+    if not path.exists():
+        return set()
+    text, err = read_text(path)
+    if err:
+        report.error("read_error", rel_path(root, path), err)
+        return set()
+    try:
+        payload = json.loads(text or "{}")
+    except json.JSONDecodeError as exc:
+        report.error("markdown_exemption_parse", rel_path(root, path), str(exc))
+        return set()
+    exemptions = payload.get("exemptions", [])
+    if not isinstance(exemptions, list):
+        report.error("markdown_exemption_shape", rel_path(root, path), "exemptions must be a list")
+        return set()
+    paths = set()
+    for index, item in enumerate(exemptions, start=1):
+        if not isinstance(item, dict) or not item.get("path") or not item.get("reason"):
+            report.error("markdown_exemption_entry", rel_path(root, path), f"exemptions[{index}] requires path and reason")
+            continue
+        paths.add(str(item["path"]))
+    return paths
+
+
+def collect_line_limit_docs(root: Path, report: Report):
+    try:
+        output = subprocess.check_output(["git", "-C", str(root), "ls-files", "--", "*.md"], text=True, stderr=subprocess.DEVNULL)
+        return sorted(root / line for line in output.splitlines() if line)
+    except (OSError, subprocess.CalledProcessError):
+        return sorted(path for path in root.rglob("*.md") if ".git" not in path.parts)
 
 
 def collect_reference_scan_files(root: Path):
@@ -394,6 +423,34 @@ def check_referenced_assets(root: Path, report: Report, declared):
                 )
 
 
+def apply_warning_baseline(root: Path, report: Report):
+    path = root / ".codestable/reference/workflow-contract-warning-baseline.json"
+    if not path.exists():
+        return
+    text, err = read_text(path)
+    if err:
+        report.error("read_error", rel_path(root, path), err)
+        return
+    try:
+        payload = json.loads(text or "{}")
+    except json.JSONDecodeError as exc:
+        report.error("warning_baseline_parse", rel_path(root, path), str(exc))
+        return
+    entries = payload.get("warnings", [])
+    if not isinstance(entries, list):
+        report.error("warning_baseline_shape", rel_path(root, path), "warnings must be a list")
+        return
+    known = set()
+    for index, item in enumerate(entries, start=1):
+        if not isinstance(item, dict) or not item.get("rule") or not item.get("path") or not item.get("reason"):
+            report.error("warning_baseline_entry", rel_path(root, path), f"warnings[{index}] requires rule, path, and reason")
+            continue
+        known.add((str(item["rule"]), str(item["path"])))
+    for finding in report.findings:
+        if finding.level == "warning" and (finding.rule, finding.path) in known:
+            finding.level = "baseline"
+
+
 def check_path_contract(root: Path, report: Report):
     pattern = re.compile(r"(?<!\.)codestable/")
     for path in existing_paths(root, ACTIVE_PUBLIC_DOCS):
@@ -434,7 +491,11 @@ def check_feature_flow_wording(root: Path, report: Report):
 
 
 def check_markdown_line_limit(root: Path, report: Report):
-    for path in collect_line_limit_docs(root):
+    exemptions = load_markdown_line_limit_exemptions(root, report)
+    for path in collect_line_limit_docs(root, report):
+        relative = rel_path(root, path)
+        if relative in exemptions:
+            continue
         text, err = read_text(path)
         if err:
             report.error("read_error", rel_path(root, path), err)
@@ -535,9 +596,9 @@ def print_text_report(report: Report, line_limit_sources):
         print(f"Markdown line limit: {report.line_limit} ({rendered})")
     else:
         print(f"Markdown line limit: {report.line_limit}")
-    print(f"Errors: {report.error_count}, warnings: {report.warning_count}\n")
+    print(f"Errors: {report.error_count}, warnings: {report.warning_count}, baselined: {report.baseline_count}\n")
     for finding in report.findings:
-        level = "ERROR" if finding.level == "error" else "WARN"
+        level = {"error": "ERROR", "warning": "WARN", "baseline": "BASELINE"}[finding.level]
         print(f"[{level}] {finding.rule} :: {finding.path}")
         print(f"  {finding.message}")
 
@@ -564,6 +625,7 @@ def main() -> None:
     check_feature_flow_wording(root, report)
     check_markdown_line_limit(root, report)
     check_legacy_features(root, report)
+    apply_warning_baseline(root, report)
 
     if args.json_output:
         payload = report.to_dict()

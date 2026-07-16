@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,6 +14,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 BUILD_STATUS_PATH = REPO_ROOT / ".codestable/tools/build-status.py"
+CONTRACT_CHECK_PATH = REPO_ROOT / ".codestable/tools/check-workflow-contracts.py"
 
 
 def load_build_status_module():
@@ -267,6 +271,57 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
             after = json.dumps(build_status.build_status(root), sort_keys=True)
 
         self.assertEqual(before, after)
+
+    def test_check_json_reports_stale_when_snapshot_is_missing(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            result = subprocess.run(
+                [sys.executable, str(BUILD_STATUS_PATH), "--repo-root", str(root), "--check", "--json"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        payload = json.loads(result.stdout)
+        self.assertEqual(1, result.returncode)
+        self.assertEqual("stale", payload["freshness"]["state"])
+        self.assertFalse(payload["matches_canonical_snapshot"])
+
+    def test_check_json_requires_check_flag(self):
+        result = subprocess.run(
+            [sys.executable, str(BUILD_STATUS_PATH), "--json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(2, result.returncode)
+        self.assertIn("--json requires --check", result.stderr)
+
+    def test_contract_checker_enforces_tracked_markdown_and_honors_explicit_fixture_exemption(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            write(root / "AGENTS.md", "单md文档不能超过5行\n")
+            write(root / ".gitignore", "")
+            write(root / "README.md", "one\ntwo\nthree\nfour\nfive\nsix\n")
+            write(
+                root / ".codestable/reference/markdown-line-limit-exemptions.json",
+                '{"version": 1, "exemptions": [{"path": "fixture.md", "reason": "test fixture"}]}\n',
+            )
+            write(root / "fixture.md", "one\ntwo\nthree\nfour\nfive\nsix\n")
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            subprocess.run(["git", "-C", str(root), "add", "AGENTS.md", "README.md", "fixture.md"], check=True)
+            result = subprocess.run(
+                [sys.executable, str(CONTRACT_CHECK_PATH), "--repo-root", str(root), "--json"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        payload = json.loads(result.stdout)
+        failures = [item for item in payload["findings"] if item["rule"] == "markdown_line_limit"]
+        self.assertEqual(1, result.returncode)
+        self.assertEqual(["README.md"], [item["path"] for item in failures])
 
     def test_onboard_builder_copy_matches_canonical_tool(self):
         source = (REPO_ROOT / "cs-onboard/tools/build-status.py").read_bytes()

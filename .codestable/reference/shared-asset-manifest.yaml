@@ -6,6 +6,8 @@ references:
     destination: .codestable/reference/code-dimensions.md
   - source: cs-onboard/reference/maintainer-notes.md
     destination: .codestable/reference/maintainer-notes.md
+  - source: cs-onboard/reference/markdown-line-limit-exemptions.json
+    destination: .codestable/reference/markdown-line-limit-exemptions.json
   - source: cs-onboard/reference/requirement-example.md
     destination: .codestable/reference/requirement-example.md
   - source: cs-onboard/reference/shared-asset-manifest.yaml
@@ -48,6 +50,8 @@ references:
     destination: .codestable/reference/workflow-contract-shared-concepts.md
   - source: cs-onboard/reference/workflow-contract.md
     destination: .codestable/reference/workflow-contract.md
+  - source: cs-onboard/reference/workflow-contract-warning-baseline.json
+    destination: .codestable/reference/workflow-contract-warning-baseline.json
 
 tools:
   - source: cs-onboard/tools/build-status.py
@@ -56,5 +60,7 @@ tools:
     destination: .codestable/tools/check-workflow-contracts.py
   - source: cs-onboard/tools/search-yaml.py
     destination: .codestable/tools/search-yaml.py
+  - source: cs-onboard/tools/sync-skills.sh
+    destination: .codestable/tools/sync-skills.sh
   - source: cs-onboard/tools/validate-yaml.py
     destination: .codestable/tools/validate-yaml.py

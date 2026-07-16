@@ -810,7 +810,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Build deterministic .codestable/status.json")
     parser.add_argument("--repo-root", default=".", help="Repository root")
     parser.add_argument("--output", default=".codestable/status.json", help="Output path")
-    parser.add_argument("--check", action="store_true", help="Exit non-zero if output differs")
+    parser.add_argument("--check", action="store_true", help="Verify output matches the current canonical snapshot")
+    parser.add_argument("--json", action="store_true", dest="json_output", help="Emit machine-readable verification output (requires --check)")
     args = parser.parse_args()
 
     repo_root = normalize_repo_root(args.repo_root)
@@ -818,9 +819,27 @@ def main() -> int:
     payload = build_status(repo_root)
     rendered = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
 
+    if args.json_output and not args.check:
+        parser.error("--json requires --check")
+
     if args.check:
         current = output_path.read_text(encoding="utf-8") if output_path.exists() else ""
-        return 0 if current == rendered else 1
+        matches = current == rendered
+        expected_state = payload["freshness"]["state"]
+        state = "conflict" if expected_state == "conflict" else ("fresh" if matches else "stale")
+        result = {
+            "ok": state == "fresh",
+            "freshness": {
+                "state": state,
+                "expected_state": expected_state,
+                "canonical_digest": payload["freshness"]["canonical_digest"],
+            },
+            "output": str(output_path.relative_to(repo_root)),
+            "matches_canonical_snapshot": matches,
+        }
+        if args.json_output:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        return {"fresh": 0, "stale": 1, "conflict": 2}[state]
 
     output_path.write_text(rendered, encoding="utf-8")
     return 0

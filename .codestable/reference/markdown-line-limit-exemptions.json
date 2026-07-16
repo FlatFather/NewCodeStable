@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "exemptions": [
+    {
+      "path": "tests/fixtures/workflow-contracts/oversized-doc/README.md",
+      "reason": "Fixture that proves the line-limit violation is detected."
+    }
+  ]
+}
