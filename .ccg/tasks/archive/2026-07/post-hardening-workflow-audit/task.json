@@ -1,0 +1,12 @@
+{
+  "id": "post-hardening-workflow-audit",
+  "title": "复审工作流加固后的剩余不完美点",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "low",
+  "domain": "workflow",
+  "currentPhase": "completed",
+  "nextAction": "审计完成，待归档",
+  "createdAt": "2026-07-17T16:00:00+08:00",
+  "branch": "main"
+}
