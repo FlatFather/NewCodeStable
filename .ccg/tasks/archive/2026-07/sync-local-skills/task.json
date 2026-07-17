@@ -1,0 +1,12 @@
+{
+  "id": "sync-local-skills",
+  "title": "同步仓库技能到本地安装目录",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "medium",
+  "domain": "workflow",
+  "currentPhase": "completed",
+  "nextAction": "本地技能已同步并通过漂移校验，待归档",
+  "createdAt": "2026-07-17T00:00:00+08:00",
+  "branch": "main"
+}
