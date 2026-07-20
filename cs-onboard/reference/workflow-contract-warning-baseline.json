@@ -31,5 +31,7 @@
       "path": ".codestable/features/2026-06-02-validation-failure-sample/validation-failure-sample-design.md",
       "reason": "Intentional validation sample."
     }
-  ]
+  ],
+  "reviewed_at": "2026-07-17",
+  "review_after": "2026-10-17"
 }

@@ -20,6 +20,7 @@ import json
 import re
 import sys
 import subprocess
+from datetime import date
 from pathlib import Path
 
 _HAS_PYYAML = False
@@ -440,12 +441,29 @@ def apply_warning_baseline(root: Path, report: Report):
     if not isinstance(entries, list):
         report.error("warning_baseline_shape", rel_path(root, path), "warnings must be a list")
         return
+    review_after = payload.get("review_after")
+    if review_after:
+        try:
+            if date.fromisoformat(str(review_after)) < date.today():
+                report.warn("warning_baseline_review_due", rel_path(root, path), f"baseline review was due on {review_after}")
+        except ValueError:
+            report.error("warning_baseline_review_date", rel_path(root, path), "review_after must be YYYY-MM-DD")
+    actual_warnings = {(finding.rule, finding.path) for finding in report.findings if finding.level == "warning"}
     known = set()
     for index, item in enumerate(entries, start=1):
         if not isinstance(item, dict) or not item.get("rule") or not item.get("path") or not item.get("reason"):
             report.error("warning_baseline_entry", rel_path(root, path), f"warnings[{index}] requires rule, path, and reason")
             continue
-        known.add((str(item["rule"]), str(item["path"])))
+        key = (str(item["rule"]), str(item["path"]))
+        if key in known:
+            report.error("duplicate_warning_baseline", rel_path(root, path), f"duplicate baseline entry: {key[0]} :: {key[1]}")
+            continue
+        known.add(key)
+        target = root / key[1]
+        if not target.exists():
+            report.error("warning_baseline_target_missing", rel_path(root, path), f"baseline target is missing: {key[1]}")
+        if key not in actual_warnings:
+            report.warn("stale_warning_baseline", rel_path(root, path), f"baseline no longer matches a warning: {key[0]} :: {key[1]}")
     for finding in report.findings:
         if finding.level == "warning" and (finding.rule, finding.path) in known:
             finding.level = "baseline"

@@ -3,7 +3,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-DEST_ROOT="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
+DEST_ROOT="${CLAUDE_SKILLS_DIR:-}"
+TARGET="${SKILLS_TARGET:-claude}"
 DRY_RUN=0
 VERIFY_ONLY=0
 
@@ -17,7 +18,7 @@ check_dest_allowed() {
   local dest="$1"
   local allowed
   for allowed in "${ALLOWED_DESTS[@]}"; do
-    if [[ "$dest" == "$allowed"* ]]; then
+    if [[ "$dest" == "$allowed" || "$dest" == "$allowed/"* ]]; then
       return 0
     fi
   done
@@ -29,17 +30,19 @@ check_dest_allowed() {
 usage() {
   cat <<'EOF'
 Usage:
-  sync-skills.sh [--dry-run|--verify] [skill-name ...]
+  sync-skills.sh [--target claude|agents|all] [--dry-run|--verify] [skill-name ...]
 
 Examples:
   sync-skills.sh --dry-run
   sync-skills.sh --dry-run cs cs-feat cs-feat-design
-  sync-skills.sh --verify cs-feat
+  sync-skills.sh --target agents --verify cs-feat
+  sync-skills.sh --target all --verify
   sync-skills.sh cs-feat
   CLAUDE_SKILLS_DIR=$HOME/.claude/skills sync-skills.sh cs-feat
 
 Safety:
-  - Destination root must be in the whitelist: ~/.claude/skills or ~/.agents/skills
+  - Logical target must be claude, agents, or all
+  - Physical destination root must be exactly ~/.claude/skills or ~/.agents/skills (or a child skill path)
   - Use --dry-run first to preview changes before applying
   - Use --verify to check installed-copy drift without writing
 
@@ -70,6 +73,11 @@ while [[ $# -gt 0 ]]; do
       VERIFY_ONLY=1
       shift
       ;;
+    --target)
+      [[ $# -ge 2 ]] || { echo "ERROR: --target requires a value" >&2; exit 2; }
+      TARGET="$2"
+      shift 2
+      ;;
     -h|--help)
       usage
       exit 0
@@ -86,8 +94,25 @@ if [[ $DRY_RUN -eq 1 && $VERIFY_ONLY -eq 1 ]]; then
   exit 2
 fi
 
-# Safety check: validate destination root is in whitelist
-check_dest_allowed "$DEST_ROOT"
+case "$TARGET" in
+  claude) TARGET_ROOTS=("${DEST_ROOT:-$HOME/.claude/skills}") ;;
+  agents) TARGET_ROOTS=("${DEST_ROOT:-$HOME/.agents/skills}") ;;
+  all)
+    [[ -z "$DEST_ROOT" ]] || { echo "ERROR: CLAUDE_SKILLS_DIR cannot be combined with --target all" >&2; exit 2; }
+    TARGET_ROOTS=("$HOME/.claude/skills" "$HOME/.agents/skills")
+    ;;
+  *) echo "ERROR: --target must be claude, agents, or all" >&2; exit 2 ;;
+esac
+
+for root in "${TARGET_ROOTS[@]}"; do
+  check_dest_allowed "$root"
+done
+
+case "$(uname -s)" in
+  Darwin|Linux) ;;
+  *) echo "ERROR: sync-skills.sh supports macOS/Linux/WSL; use WSL on Windows" >&2; exit 4 ;;
+esac
+command -v rsync >/dev/null 2>&1 || { echo "ERROR: rsync is required" >&2; exit 4; }
 
 matches_selected() {
   local slug="$1"
@@ -123,43 +148,46 @@ for skill_file in "${SKILL_FILES[@]}"; do
     continue
   fi
 
-  dest_link="$DEST_ROOT/$slug"
-  if [[ -e "$dest_link" || -L "$dest_link" ]]; then
-    dest_dir="$(resolve_dest "$dest_link")"
-  else
-    dest_dir="$dest_link"
-  fi
-
-  if [[ $VERIFY_ONLY -eq 0 ]]; then
-    mkdir -p "$dest_dir"
-  fi
-
-  echo "== $slug =="
-  echo "source: $src_dir/"
-  echo "target: $dest_dir/"
-
-  if [[ $VERIFY_ONLY -eq 1 ]]; then
-    if [[ ! -d "$dest_dir" ]]; then
-      echo "DRIFT: installed skill is missing"
-      DRIFT_COUNT=$((DRIFT_COUNT + 1))
+  for logical_root in "${TARGET_ROOTS[@]}"; do
+    dest_link="$logical_root/$slug"
+    if [[ -e "$dest_link" || -L "$dest_link" ]]; then
+      dest_dir="$(resolve_dest "$dest_link")"
     else
-      diff=$(rsync -rnic --delete "$src_dir/" "$dest_dir/")
-      if [[ -n "$diff" ]]; then
-        echo "DRIFT:"
-        printf '%s\n' "$diff"
+      dest_dir="$dest_link"
+    fi
+
+    if [[ $VERIFY_ONLY -eq 0 ]]; then
+      mkdir -p "$dest_dir"
+    fi
+
+    echo "== $slug =="
+    echo "source: $src_dir/"
+    echo "logical target: $dest_link/"
+    echo "physical target: $dest_dir/"
+
+    if [[ $VERIFY_ONLY -eq 1 ]]; then
+      if [[ ! -d "$dest_dir" ]]; then
+        echo "DRIFT: installed skill is missing"
         DRIFT_COUNT=$((DRIFT_COUNT + 1))
       else
-        echo "OK: installed copy matches source"
+        diff=$(rsync -rnic --delete "$src_dir/" "$dest_dir/")
+        if [[ -n "$diff" ]]; then
+          echo "DRIFT:"
+          printf '%s\n' "$diff"
+          DRIFT_COUNT=$((DRIFT_COUNT + 1))
+        else
+          echo "OK: installed copy matches source"
+        fi
       fi
+    elif [[ $DRY_RUN -eq 1 ]]; then
+      rsync -an --delete "$src_dir/" "$dest_dir/"
+    else
+      rsync -a --delete "$src_dir/" "$dest_dir/"
     fi
-  elif [[ $DRY_RUN -eq 1 ]]; then
-    rsync -an --delete "$src_dir/" "$dest_dir/"
-  else
-    rsync -a --delete "$src_dir/" "$dest_dir/"
-  fi
 
-  SYNC_COUNT=$((SYNC_COUNT + 1))
-  echo
+    SYNC_COUNT=$((SYNC_COUNT + 1))
+    echo
+  done
 
 done
 

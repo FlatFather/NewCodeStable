@@ -126,8 +126,8 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 
 如果用户输入是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复，先别按新诉求路由。默认顺序是：
 
-1. 先按 `.codestable/reference/workflow-contract-continuation.md` 检查是否满足 continuation-first
-2. 命中唯一候选且没有 blocker → 优先使用 fresh `status.json` 辅助定位对象与阶段；若 `status.json` 缺失、stale、或与实际 `.codestable/` 产物冲突，则回退到直接读取 canonical artifacts；定位完成后直接告诉用户"检测到你在继续 {对象}，接下来进入 {对应入口/阶段}"，不要再重复讲体系总览、重新做开放式分诊，或补问一轮"是不是继续这个"
+1. 先按 `.codestable/reference/workflow-contract-continuation.md` 检查是否满足 continuation-first；若 fresh `.codestable/status.json` 存在，可执行 `python .codestable/tools/workflow-routing.py .codestable/status.json` 获取确定性的 continuation predicate 结果
+2. helper 返回 `continue` 时按唯一候选进入对应阶段；返回 `ask_user` 时列出候选；返回 `inspect_canonical` 时直接读取 canonical artifacts；helper 缺失时按契约文档执行同一规则。定位完成后直接告诉用户"检测到你在继续 {对象}，接下来进入 {对应入口/阶段}"，不要再重复讲体系总览、重新做开放式分诊，或补问一轮"是不是继续这个"
 3. 多个候选 → 列出来让用户选，**不要猜最近一个**
 4. 命中 canonical 冲突 / scope 扩张 / 阶段前提不满足 → 停下来解释为什么不能自动续作，并要求用户明确选择
 5. 没有候选 → 回到本技能原本的路由逻辑

@@ -26,5 +26,10 @@ export TMPDIR="$TMPDIR_ROOT"
 cd "$REPO_ROOT"
 "$PYTHON_BIN" .codestable/tools/build-status.py --check --json
 "$PYTHON_BIN" .codestable/tools/check-workflow-contracts.py
-.codestable/tools/lint-exit-conditions.sh
+"$PYTHON_BIN" .codestable/tools/check-ccg-tasks.py
+CLAUDE_SKILLS_DIR="$REPO_ROOT" .codestable/tools/lint-exit-conditions.sh
 "$PYTHON_BIN" -m unittest discover -s tests -v
+
+if [[ "${VERIFY_INSTALLED_SKILLS:-0}" == "1" ]]; then
+  .codestable/tools/sync-skills.sh --target "${VERIFY_SKILLS_TARGET:-claude}" --verify
+fi

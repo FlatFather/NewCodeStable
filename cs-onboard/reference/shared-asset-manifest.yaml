@@ -2,6 +2,8 @@ version: 1
 parity_scope: manifest-declared-assets-only
 
 references:
+  - source: cs-onboard/reference/ccg-task-legacy-baseline.json
+    destination: .codestable/reference/ccg-task-legacy-baseline.json
   - source: cs-onboard/reference/code-dimensions.md
     destination: .codestable/reference/code-dimensions.md
   - source: cs-onboard/reference/maintainer-notes.md
@@ -54,6 +56,8 @@ references:
     destination: .codestable/reference/workflow-contract-warning-baseline.json
 
 tools:
+  - source: cs-onboard/tools/check-ccg-tasks.py
+    destination: .codestable/tools/check-ccg-tasks.py
   - source: cs-onboard/tools/build-status.py
     destination: .codestable/tools/build-status.py
   - source: cs-onboard/tools/check-workflow-contracts.py
@@ -64,3 +68,5 @@ tools:
     destination: .codestable/tools/sync-skills.sh
   - source: cs-onboard/tools/validate-yaml.py
     destination: .codestable/tools/validate-yaml.py
+  - source: cs-onboard/tools/workflow-routing.py
+    destination: .codestable/tools/workflow-routing.py

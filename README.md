@@ -46,7 +46,7 @@ npx skills update
 ./scripts/verify.sh
 ```
 
-脚本会使用项目内临时目录，依次检查生成状态、工作流契约、技能退出条件和 Python 回归测试。若需要指定解释器，可设置 `PYTHON_BIN`。
+脚本会使用项目内临时目录，依次检查生成状态、工作流契约、CCG task 生命周期、仓库 Skill 退出条件和 Python 回归测试。若需要指定解释器，可设置 `PYTHON_BIN`；本地还可用 `VERIFY_INSTALLED_SKILLS=1` 增加安装副本漂移校验。CI 会自动执行同一入口。
 
 ---
 

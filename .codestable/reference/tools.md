@@ -216,3 +216,15 @@ python .codestable/tools/validate-yaml.py \
 ```
 
 `--verify` 只比较仓库源码与已安装副本（会解析 symlink），不创建目录、不写入文件；发现缺失或 drift 时返回非零。
+---
+
+## 5. CCG task 与路由辅助工具
+
+```bash
+python .codestable/tools/check-ccg-tasks.py
+python .codestable/tools/workflow-routing.py .codestable/status.json
+```
+
+`check-ccg-tasks.py` 只校验 bridge task 的生命周期、字段和 canonical 关联路径，不提升 task authority。`workflow-routing.py` 只执行 continuation predicate：非 fresh 回退 canonical inspection，多个候选询问用户，只有唯一且无安全 blocker 的候选才继续。
+
+外部模型协作前可运行 `scripts/check-model-backends.sh`：exit 0 表示双 backend 可用，10 表示 degraded，20 表示 local-only。调用方应记录降级而不是重复长时间等待。

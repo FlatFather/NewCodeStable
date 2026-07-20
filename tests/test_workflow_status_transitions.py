@@ -7,6 +7,7 @@ import json
 import os
 import subprocess
 import sys
+import runpy
 import tempfile
 import unittest
 from pathlib import Path
@@ -15,6 +16,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 BUILD_STATUS_PATH = REPO_ROOT / ".codestable/tools/build-status.py"
 CONTRACT_CHECK_PATH = REPO_ROOT / ".codestable/tools/check-workflow-contracts.py"
+TASK_CHECK_PATH = REPO_ROOT / ".codestable/tools/check-ccg-tasks.py"
+ROUTING_PATH = REPO_ROOT / ".codestable/tools/workflow-routing.py"
 
 
 def load_build_status_module():
@@ -323,10 +326,54 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
         self.assertEqual(1, result.returncode)
         self.assertEqual(["README.md"], [item["path"] for item in failures])
 
+    def test_contract_checker_reports_stale_and_duplicate_warning_baselines(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            write(root / "AGENTS.md", "单md文档不能超过500行\n")
+            write(root / ".codestable/features/2026-01-01-legacy/legacy-design.md", "---\nstatus: approved\n---\n# Legacy\n")
+            baseline = {"version": 1, "warnings": [
+                {"rule": "legacy_feature_compat", "path": ".codestable/features/2026-01-01-legacy/legacy-design.md", "reason": "reviewed"},
+                {"rule": "legacy_feature_compat", "path": ".codestable/features/2026-01-01-legacy/legacy-design.md", "reason": "duplicate"},
+            ]}
+            write(root / ".codestable/reference/workflow-contract-warning-baseline.json", json.dumps(baseline))
+            result = subprocess.run([sys.executable, str(CONTRACT_CHECK_PATH), "--repo-root", str(root), "--json"], capture_output=True, text=True, check=False)
+        rules = {item["rule"] for item in json.loads(result.stdout)["findings"]}
+        self.assertIn("duplicate_warning_baseline", rules)
+        self.assertIn("stale_warning_baseline", rules)
+
+    def test_ccg_task_validator_rejects_unarchived_completed_task(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            write(root / ".ccg/tasks/done/task.json", '{"id":"done","title":"Done","status":"completed"}\n')
+            result = subprocess.run([sys.executable, str(TASK_CHECK_PATH), "--repo-root", str(root), "--json"], capture_output=True, text=True, check=False)
+        payload = json.loads(result.stdout)
+        self.assertEqual(1, result.returncode)
+        self.assertEqual("completed_task_not_archived", payload["findings"][0]["rule"])
+
+    def test_routing_helper_requires_fresh_unique_candidate(self):
+        decide = runpy.run_path(str(ROUTING_PATH), run_name="workflow_routing_test")["decide"]
+        candidate = {"key": "x", "path": "p", "consistency": {"state": "clean"}, "derived": {"auto_continue_allowed": True, "needs_user_decision": False, "next_skill": "cs-feat-impl", "blockers": []}}
+        status = {"freshness": {"state": "fresh"}, "lanes": {"features": {"items": [candidate]}}}
+        self.assertEqual("continue", decide(status)["action"])
+        status["lanes"]["features"]["items"].append(dict(candidate, key="y"))
+        self.assertEqual("ask_user", decide(status)["action"])
+        status["freshness"]["state"] = "stale"
+        self.assertEqual("inspect_canonical", decide(status)["action"])
+
+    def test_routing_helper_rejects_conflicts_and_safety_blockers(self):
+        decide = runpy.run_path(str(ROUTING_PATH), run_name="workflow_routing_blocker_test")["decide"]
+        item = {"key": "x", "consistency": {"state": "conflict"}, "derived": {"auto_continue_allowed": True, "needs_user_decision": False, "blockers": []}}
+        status = {"freshness": {"state": "fresh"}, "lanes": {"features": {"items": [item]}}}
+        self.assertEqual("route_normally", decide(status)["action"])
+        item["consistency"]["state"] = "clean"
+        item["derived"]["blockers"] = ["awaiting_plan_approval"]
+        self.assertEqual("route_normally", decide(status)["action"])
+
     def test_onboard_builder_copy_matches_canonical_tool(self):
-        source = (REPO_ROOT / "cs-onboard/tools/build-status.py").read_bytes()
-        canonical = BUILD_STATUS_PATH.read_bytes()
-        self.assertEqual(canonical, source)
+        for name in ["build-status.py", "check-ccg-tasks.py", "check-workflow-contracts.py", "sync-skills.sh", "workflow-routing.py"]:
+            source = (REPO_ROOT / "cs-onboard/tools" / name).read_bytes()
+            canonical = (REPO_ROOT / ".codestable/tools" / name).read_bytes()
+            self.assertEqual(canonical, source)
 
 
 if __name__ == "__main__":
