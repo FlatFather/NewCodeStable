@@ -1,0 +1,12 @@
+{
+  "id": "sync-second-round-skills",
+  "title": "同步第二轮工作流技能到本地 agents 目录",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "medium",
+  "domain": "workflow",
+  "currentPhase": "completed",
+  "nextAction": "27 个本地 Skill 已同步并通过漂移验证，待归档",
+  "createdAt": "2026-07-20T10:45:00+08:00",
+  "branch": "main"
+}
