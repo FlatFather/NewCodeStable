@@ -1,0 +1,12 @@
+{
+  "id": "second-round-workflow-hardening",
+  "title": "实施第二轮工作流加固",
+  "status": "completed",
+  "complexity": "L",
+  "risk": "medium",
+  "domain": "workflow",
+  "currentPhase": "completed",
+  "nextAction": "第二轮加固完成并验证，待归档",
+  "createdAt": "2026-07-17T16:20:00+08:00",
+  "branch": "main"
+}

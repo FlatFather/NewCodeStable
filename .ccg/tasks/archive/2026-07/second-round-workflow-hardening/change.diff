@@ -1,0 +1,653 @@
+diff --git a/.codestable/reference/shared-asset-manifest.yaml b/.codestable/reference/shared-asset-manifest.yaml
+index 693f84d..9935e6b 100644
+--- a/.codestable/reference/shared-asset-manifest.yaml
++++ b/.codestable/reference/shared-asset-manifest.yaml
+@@ -2,6 +2,8 @@ version: 1
+ parity_scope: manifest-declared-assets-only
+ 
+ references:
++  - source: cs-onboard/reference/ccg-task-legacy-baseline.json
++    destination: .codestable/reference/ccg-task-legacy-baseline.json
+   - source: cs-onboard/reference/code-dimensions.md
+     destination: .codestable/reference/code-dimensions.md
+   - source: cs-onboard/reference/maintainer-notes.md
+@@ -54,6 +56,8 @@ references:
+     destination: .codestable/reference/workflow-contract-warning-baseline.json
+ 
+ tools:
++  - source: cs-onboard/tools/check-ccg-tasks.py
++    destination: .codestable/tools/check-ccg-tasks.py
+   - source: cs-onboard/tools/build-status.py
+     destination: .codestable/tools/build-status.py
+   - source: cs-onboard/tools/check-workflow-contracts.py
+@@ -64,3 +68,5 @@ tools:
+     destination: .codestable/tools/sync-skills.sh
+   - source: cs-onboard/tools/validate-yaml.py
+     destination: .codestable/tools/validate-yaml.py
++  - source: cs-onboard/tools/workflow-routing.py
++    destination: .codestable/tools/workflow-routing.py
+diff --git a/.codestable/reference/tools.md b/.codestable/reference/tools.md
+index 86d50ad..5446490 100644
+--- a/.codestable/reference/tools.md
++++ b/.codestable/reference/tools.md
+@@ -216,3 +216,15 @@ python .codestable/tools/validate-yaml.py \
+ ```
+ 
+ `--verify` 只比较仓库源码与已安装副本（会解析 symlink），不创建目录、不写入文件；发现缺失或 drift 时返回非零。
++---
++
++## 5. CCG task 与路由辅助工具
++
++```bash
++python .codestable/tools/check-ccg-tasks.py
++python .codestable/tools/workflow-routing.py .codestable/status.json
++```
++
++`check-ccg-tasks.py` 只校验 bridge task 的生命周期、字段和 canonical 关联路径，不提升 task authority。`workflow-routing.py` 只执行 continuation predicate：非 fresh 回退 canonical inspection，多个候选询问用户，只有唯一且无安全 blocker 的候选才继续。
++
++外部模型协作前可运行 `scripts/check-model-backends.sh`：exit 0 表示双 backend 可用，10 表示 degraded，20 表示 local-only。调用方应记录降级而不是重复长时间等待。
+diff --git a/.codestable/reference/workflow-contract-warning-baseline.json b/.codestable/reference/workflow-contract-warning-baseline.json
+index ab3bbbb..fd176b8 100644
+--- a/.codestable/reference/workflow-contract-warning-baseline.json
++++ b/.codestable/reference/workflow-contract-warning-baseline.json
+@@ -31,5 +31,7 @@
+       "path": ".codestable/features/2026-06-02-validation-failure-sample/validation-failure-sample-design.md",
+       "reason": "Intentional validation sample."
+     }
+-  ]
++  ],
++  "reviewed_at": "2026-07-17",
++  "review_after": "2026-10-17"
+ }
+diff --git a/.codestable/tools/check-workflow-contracts.py b/.codestable/tools/check-workflow-contracts.py
+index 91bb202..0316a6b 100644
+--- a/.codestable/tools/check-workflow-contracts.py
++++ b/.codestable/tools/check-workflow-contracts.py
+@@ -20,6 +20,7 @@ import json
+ import re
+ import sys
+ import subprocess
++from datetime import date
+ from pathlib import Path
+ 
+ _HAS_PYYAML = False
+@@ -440,12 +441,29 @@ def apply_warning_baseline(root: Path, report: Report):
+     if not isinstance(entries, list):
+         report.error("warning_baseline_shape", rel_path(root, path), "warnings must be a list")
+         return
++    review_after = payload.get("review_after")
++    if review_after:
++        try:
++            if date.fromisoformat(str(review_after)) < date.today():
++                report.warn("warning_baseline_review_due", rel_path(root, path), f"baseline review was due on {review_after}")
++        except ValueError:
++            report.error("warning_baseline_review_date", rel_path(root, path), "review_after must be YYYY-MM-DD")
++    actual_warnings = {(finding.rule, finding.path) for finding in report.findings if finding.level == "warning"}
+     known = set()
+     for index, item in enumerate(entries, start=1):
+         if not isinstance(item, dict) or not item.get("rule") or not item.get("path") or not item.get("reason"):
+             report.error("warning_baseline_entry", rel_path(root, path), f"warnings[{index}] requires rule, path, and reason")
+             continue
+-        known.add((str(item["rule"]), str(item["path"])))
++        key = (str(item["rule"]), str(item["path"]))
++        if key in known:
++            report.error("duplicate_warning_baseline", rel_path(root, path), f"duplicate baseline entry: {key[0]} :: {key[1]}")
++            continue
++        known.add(key)
++        target = root / key[1]
++        if not target.exists():
++            report.error("warning_baseline_target_missing", rel_path(root, path), f"baseline target is missing: {key[1]}")
++        if key not in actual_warnings:
++            report.warn("stale_warning_baseline", rel_path(root, path), f"baseline no longer matches a warning: {key[0]} :: {key[1]}")
+     for finding in report.findings:
+         if finding.level == "warning" and (finding.rule, finding.path) in known:
+             finding.level = "baseline"
+diff --git a/.codestable/tools/sync-skills.sh b/.codestable/tools/sync-skills.sh
+index 97e5109..5b8d228 100755
+--- a/.codestable/tools/sync-skills.sh
++++ b/.codestable/tools/sync-skills.sh
+@@ -3,7 +3,8 @@ set -euo pipefail
+ 
+ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+-DEST_ROOT="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
++DEST_ROOT="${CLAUDE_SKILLS_DIR:-}"
++TARGET="${SKILLS_TARGET:-claude}"
+ DRY_RUN=0
+ VERIFY_ONLY=0
+ 
+@@ -17,7 +18,7 @@ check_dest_allowed() {
+   local dest="$1"
+   local allowed
+   for allowed in "${ALLOWED_DESTS[@]}"; do
+-    if [[ "$dest" == "$allowed"* ]]; then
++    if [[ "$dest" == "$allowed" || "$dest" == "$allowed/"* ]]; then
+       return 0
+     fi
+   done
+@@ -29,17 +30,19 @@ check_dest_allowed() {
+ usage() {
+   cat <<'EOF'
+ Usage:
+-  sync-skills.sh [--dry-run|--verify] [skill-name ...]
++  sync-skills.sh [--target claude|agents|all] [--dry-run|--verify] [skill-name ...]
+ 
+ Examples:
+   sync-skills.sh --dry-run
+   sync-skills.sh --dry-run cs cs-feat cs-feat-design
+-  sync-skills.sh --verify cs-feat
++  sync-skills.sh --target agents --verify cs-feat
++  sync-skills.sh --target all --verify
+   sync-skills.sh cs-feat
+   CLAUDE_SKILLS_DIR=$HOME/.claude/skills sync-skills.sh cs-feat
+ 
+ Safety:
+-  - Destination root must be in the whitelist: ~/.claude/skills or ~/.agents/skills
++  - Logical target must be claude, agents, or all
++  - Physical destination root must be exactly ~/.claude/skills or ~/.agents/skills (or a child skill path)
+   - Use --dry-run first to preview changes before applying
+   - Use --verify to check installed-copy drift without writing
+ 
+@@ -70,6 +73,11 @@ while [[ $# -gt 0 ]]; do
+       VERIFY_ONLY=1
+       shift
+       ;;
++    --target)
++      [[ $# -ge 2 ]] || { echo "ERROR: --target requires a value" >&2; exit 2; }
++      TARGET="$2"
++      shift 2
++      ;;
+     -h|--help)
+       usage
+       exit 0
+@@ -86,8 +94,25 @@ if [[ $DRY_RUN -eq 1 && $VERIFY_ONLY -eq 1 ]]; then
+   exit 2
+ fi
+ 
+-# Safety check: validate destination root is in whitelist
+-check_dest_allowed "$DEST_ROOT"
++case "$TARGET" in
++  claude) TARGET_ROOTS=("${DEST_ROOT:-$HOME/.claude/skills}") ;;
++  agents) TARGET_ROOTS=("${DEST_ROOT:-$HOME/.agents/skills}") ;;
++  all)
++    [[ -z "$DEST_ROOT" ]] || { echo "ERROR: CLAUDE_SKILLS_DIR cannot be combined with --target all" >&2; exit 2; }
++    TARGET_ROOTS=("$HOME/.claude/skills" "$HOME/.agents/skills")
++    ;;
++  *) echo "ERROR: --target must be claude, agents, or all" >&2; exit 2 ;;
++esac
++
++for root in "${TARGET_ROOTS[@]}"; do
++  check_dest_allowed "$root"
++done
++
++case "$(uname -s)" in
++  Darwin|Linux) ;;
++  *) echo "ERROR: sync-skills.sh supports macOS/Linux/WSL; use WSL on Windows" >&2; exit 4 ;;
++esac
++command -v rsync >/dev/null 2>&1 || { echo "ERROR: rsync is required" >&2; exit 4; }
+ 
+ matches_selected() {
+   local slug="$1"
+@@ -123,43 +148,46 @@ for skill_file in "${SKILL_FILES[@]}"; do
+     continue
+   fi
+ 
+-  dest_link="$DEST_ROOT/$slug"
+-  if [[ -e "$dest_link" || -L "$dest_link" ]]; then
+-    dest_dir="$(resolve_dest "$dest_link")"
+-  else
+-    dest_dir="$dest_link"
+-  fi
++  for logical_root in "${TARGET_ROOTS[@]}"; do
++    dest_link="$logical_root/$slug"
++    if [[ -e "$dest_link" || -L "$dest_link" ]]; then
++      dest_dir="$(resolve_dest "$dest_link")"
++    else
++      dest_dir="$dest_link"
++    fi
+ 
+-  if [[ $VERIFY_ONLY -eq 0 ]]; then
+-    mkdir -p "$dest_dir"
+-  fi
++    if [[ $VERIFY_ONLY -eq 0 ]]; then
++      mkdir -p "$dest_dir"
++    fi
+ 
+-  echo "== $slug =="
+-  echo "source: $src_dir/"
+-  echo "target: $dest_dir/"
++    echo "== $slug =="
++    echo "source: $src_dir/"
++    echo "logical target: $dest_link/"
++    echo "physical target: $dest_dir/"
+ 
+-  if [[ $VERIFY_ONLY -eq 1 ]]; then
+-    if [[ ! -d "$dest_dir" ]]; then
+-      echo "DRIFT: installed skill is missing"
+-      DRIFT_COUNT=$((DRIFT_COUNT + 1))
+-    else
+-      diff=$(rsync -rnic --delete "$src_dir/" "$dest_dir/")
+-      if [[ -n "$diff" ]]; then
+-        echo "DRIFT:"
+-        printf '%s\n' "$diff"
++    if [[ $VERIFY_ONLY -eq 1 ]]; then
++      if [[ ! -d "$dest_dir" ]]; then
++        echo "DRIFT: installed skill is missing"
+         DRIFT_COUNT=$((DRIFT_COUNT + 1))
+       else
+-        echo "OK: installed copy matches source"
++        diff=$(rsync -rnic --delete "$src_dir/" "$dest_dir/")
++        if [[ -n "$diff" ]]; then
++          echo "DRIFT:"
++          printf '%s\n' "$diff"
++          DRIFT_COUNT=$((DRIFT_COUNT + 1))
++        else
++          echo "OK: installed copy matches source"
++        fi
+       fi
++    elif [[ $DRY_RUN -eq 1 ]]; then
++      rsync -an --delete "$src_dir/" "$dest_dir/"
++    else
++      rsync -a --delete "$src_dir/" "$dest_dir/"
+     fi
+-  elif [[ $DRY_RUN -eq 1 ]]; then
+-    rsync -an --delete "$src_dir/" "$dest_dir/"
+-  else
+-    rsync -a --delete "$src_dir/" "$dest_dir/"
+-  fi
+ 
+-  SYNC_COUNT=$((SYNC_COUNT + 1))
+-  echo
++    SYNC_COUNT=$((SYNC_COUNT + 1))
++    echo
++  done
+ 
+ done
+ 
+diff --git a/README.en.md b/README.en.md
+index d1719bf..dd09101 100644
+--- a/README.en.md
++++ b/README.en.md
+@@ -46,7 +46,7 @@ After changing a workflow, run the unified quality gate:
+ ./scripts/verify.sh
+ ```
+ 
+-The script uses a repository-local temporary directory and checks generated state, workflow contracts, skill exit conditions, and Python regression tests. Set `PYTHON_BIN` to select an interpreter.
++The script uses a repository-local temporary directory and checks generated state, workflow contracts, CCG task lifecycle, repository skill exit conditions, and Python regression tests. Set `PYTHON_BIN` to select an interpreter; locally, set `VERIFY_INSTALLED_SKILLS=1` to also check installed-copy drift. CI runs the same entry point.
+ 
+ ---
+ 
+diff --git a/README.md b/README.md
+index 2721d77..cb65e1d 100644
+--- a/README.md
++++ b/README.md
+@@ -46,7 +46,7 @@ npx skills update
+ ./scripts/verify.sh
+ ```
+ 
+-脚本会使用项目内临时目录，依次检查生成状态、工作流契约、技能退出条件和 Python 回归测试。若需要指定解释器，可设置 `PYTHON_BIN`。
++脚本会使用项目内临时目录，依次检查生成状态、工作流契约、CCG task 生命周期、仓库 Skill 退出条件和 Python 回归测试。若需要指定解释器，可设置 `PYTHON_BIN`；本地还可用 `VERIFY_INSTALLED_SKILLS=1` 增加安装副本漂移校验。CI 会自动执行同一入口。
+ 
+ ---
+ 
+diff --git a/cs-onboard/reference/shared-asset-manifest.yaml b/cs-onboard/reference/shared-asset-manifest.yaml
+index 693f84d..9935e6b 100644
+--- a/cs-onboard/reference/shared-asset-manifest.yaml
++++ b/cs-onboard/reference/shared-asset-manifest.yaml
+@@ -2,6 +2,8 @@ version: 1
+ parity_scope: manifest-declared-assets-only
+ 
+ references:
++  - source: cs-onboard/reference/ccg-task-legacy-baseline.json
++    destination: .codestable/reference/ccg-task-legacy-baseline.json
+   - source: cs-onboard/reference/code-dimensions.md
+     destination: .codestable/reference/code-dimensions.md
+   - source: cs-onboard/reference/maintainer-notes.md
+@@ -54,6 +56,8 @@ references:
+     destination: .codestable/reference/workflow-contract-warning-baseline.json
+ 
+ tools:
++  - source: cs-onboard/tools/check-ccg-tasks.py
++    destination: .codestable/tools/check-ccg-tasks.py
+   - source: cs-onboard/tools/build-status.py
+     destination: .codestable/tools/build-status.py
+   - source: cs-onboard/tools/check-workflow-contracts.py
+@@ -64,3 +68,5 @@ tools:
+     destination: .codestable/tools/sync-skills.sh
+   - source: cs-onboard/tools/validate-yaml.py
+     destination: .codestable/tools/validate-yaml.py
++  - source: cs-onboard/tools/workflow-routing.py
++    destination: .codestable/tools/workflow-routing.py
+diff --git a/cs-onboard/reference/tools.md b/cs-onboard/reference/tools.md
+index 86d50ad..5446490 100644
+--- a/cs-onboard/reference/tools.md
++++ b/cs-onboard/reference/tools.md
+@@ -216,3 +216,15 @@ python .codestable/tools/validate-yaml.py \
+ ```
+ 
+ `--verify` 只比较仓库源码与已安装副本（会解析 symlink），不创建目录、不写入文件；发现缺失或 drift 时返回非零。
++---
++
++## 5. CCG task 与路由辅助工具
++
++```bash
++python .codestable/tools/check-ccg-tasks.py
++python .codestable/tools/workflow-routing.py .codestable/status.json
++```
++
++`check-ccg-tasks.py` 只校验 bridge task 的生命周期、字段和 canonical 关联路径，不提升 task authority。`workflow-routing.py` 只执行 continuation predicate：非 fresh 回退 canonical inspection，多个候选询问用户，只有唯一且无安全 blocker 的候选才继续。
++
++外部模型协作前可运行 `scripts/check-model-backends.sh`：exit 0 表示双 backend 可用，10 表示 degraded，20 表示 local-only。调用方应记录降级而不是重复长时间等待。
+diff --git a/cs-onboard/reference/workflow-contract-warning-baseline.json b/cs-onboard/reference/workflow-contract-warning-baseline.json
+index ab3bbbb..fd176b8 100644
+--- a/cs-onboard/reference/workflow-contract-warning-baseline.json
++++ b/cs-onboard/reference/workflow-contract-warning-baseline.json
+@@ -31,5 +31,7 @@
+       "path": ".codestable/features/2026-06-02-validation-failure-sample/validation-failure-sample-design.md",
+       "reason": "Intentional validation sample."
+     }
+-  ]
++  ],
++  "reviewed_at": "2026-07-17",
++  "review_after": "2026-10-17"
+ }
+diff --git a/cs-onboard/tools/check-workflow-contracts.py b/cs-onboard/tools/check-workflow-contracts.py
+index 91bb202..0316a6b 100644
+--- a/cs-onboard/tools/check-workflow-contracts.py
++++ b/cs-onboard/tools/check-workflow-contracts.py
+@@ -20,6 +20,7 @@ import json
+ import re
+ import sys
+ import subprocess
++from datetime import date
+ from pathlib import Path
+ 
+ _HAS_PYYAML = False
+@@ -440,12 +441,29 @@ def apply_warning_baseline(root: Path, report: Report):
+     if not isinstance(entries, list):
+         report.error("warning_baseline_shape", rel_path(root, path), "warnings must be a list")
+         return
++    review_after = payload.get("review_after")
++    if review_after:
++        try:
++            if date.fromisoformat(str(review_after)) < date.today():
++                report.warn("warning_baseline_review_due", rel_path(root, path), f"baseline review was due on {review_after}")
++        except ValueError:
++            report.error("warning_baseline_review_date", rel_path(root, path), "review_after must be YYYY-MM-DD")
++    actual_warnings = {(finding.rule, finding.path) for finding in report.findings if finding.level == "warning"}
+     known = set()
+     for index, item in enumerate(entries, start=1):
+         if not isinstance(item, dict) or not item.get("rule") or not item.get("path") or not item.get("reason"):
+             report.error("warning_baseline_entry", rel_path(root, path), f"warnings[{index}] requires rule, path, and reason")
+             continue
+-        known.add((str(item["rule"]), str(item["path"])))
++        key = (str(item["rule"]), str(item["path"]))
++        if key in known:
++            report.error("duplicate_warning_baseline", rel_path(root, path), f"duplicate baseline entry: {key[0]} :: {key[1]}")
++            continue
++        known.add(key)
++        target = root / key[1]
++        if not target.exists():
++            report.error("warning_baseline_target_missing", rel_path(root, path), f"baseline target is missing: {key[1]}")
++        if key not in actual_warnings:
++            report.warn("stale_warning_baseline", rel_path(root, path), f"baseline no longer matches a warning: {key[0]} :: {key[1]}")
+     for finding in report.findings:
+         if finding.level == "warning" and (finding.rule, finding.path) in known:
+             finding.level = "baseline"
+diff --git a/cs-onboard/tools/sync-skills.sh b/cs-onboard/tools/sync-skills.sh
+index 97e5109..5b8d228 100755
+--- a/cs-onboard/tools/sync-skills.sh
++++ b/cs-onboard/tools/sync-skills.sh
+@@ -3,7 +3,8 @@ set -euo pipefail
+ 
+ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+-DEST_ROOT="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
++DEST_ROOT="${CLAUDE_SKILLS_DIR:-}"
++TARGET="${SKILLS_TARGET:-claude}"
+ DRY_RUN=0
+ VERIFY_ONLY=0
+ 
+@@ -17,7 +18,7 @@ check_dest_allowed() {
+   local dest="$1"
+   local allowed
+   for allowed in "${ALLOWED_DESTS[@]}"; do
+-    if [[ "$dest" == "$allowed"* ]]; then
++    if [[ "$dest" == "$allowed" || "$dest" == "$allowed/"* ]]; then
+       return 0
+     fi
+   done
+@@ -29,17 +30,19 @@ check_dest_allowed() {
+ usage() {
+   cat <<'EOF'
+ Usage:
+-  sync-skills.sh [--dry-run|--verify] [skill-name ...]
++  sync-skills.sh [--target claude|agents|all] [--dry-run|--verify] [skill-name ...]
+ 
+ Examples:
+   sync-skills.sh --dry-run
+   sync-skills.sh --dry-run cs cs-feat cs-feat-design
+-  sync-skills.sh --verify cs-feat
++  sync-skills.sh --target agents --verify cs-feat
++  sync-skills.sh --target all --verify
+   sync-skills.sh cs-feat
+   CLAUDE_SKILLS_DIR=$HOME/.claude/skills sync-skills.sh cs-feat
+ 
+ Safety:
+-  - Destination root must be in the whitelist: ~/.claude/skills or ~/.agents/skills
++  - Logical target must be claude, agents, or all
++  - Physical destination root must be exactly ~/.claude/skills or ~/.agents/skills (or a child skill path)
+   - Use --dry-run first to preview changes before applying
+   - Use --verify to check installed-copy drift without writing
+ 
+@@ -70,6 +73,11 @@ while [[ $# -gt 0 ]]; do
+       VERIFY_ONLY=1
+       shift
+       ;;
++    --target)
++      [[ $# -ge 2 ]] || { echo "ERROR: --target requires a value" >&2; exit 2; }
++      TARGET="$2"
++      shift 2
++      ;;
+     -h|--help)
+       usage
+       exit 0
+@@ -86,8 +94,25 @@ if [[ $DRY_RUN -eq 1 && $VERIFY_ONLY -eq 1 ]]; then
+   exit 2
+ fi
+ 
+-# Safety check: validate destination root is in whitelist
+-check_dest_allowed "$DEST_ROOT"
++case "$TARGET" in
++  claude) TARGET_ROOTS=("${DEST_ROOT:-$HOME/.claude/skills}") ;;
++  agents) TARGET_ROOTS=("${DEST_ROOT:-$HOME/.agents/skills}") ;;
++  all)
++    [[ -z "$DEST_ROOT" ]] || { echo "ERROR: CLAUDE_SKILLS_DIR cannot be combined with --target all" >&2; exit 2; }
++    TARGET_ROOTS=("$HOME/.claude/skills" "$HOME/.agents/skills")
++    ;;
++  *) echo "ERROR: --target must be claude, agents, or all" >&2; exit 2 ;;
++esac
++
++for root in "${TARGET_ROOTS[@]}"; do
++  check_dest_allowed "$root"
++done
++
++case "$(uname -s)" in
++  Darwin|Linux) ;;
++  *) echo "ERROR: sync-skills.sh supports macOS/Linux/WSL; use WSL on Windows" >&2; exit 4 ;;
++esac
++command -v rsync >/dev/null 2>&1 || { echo "ERROR: rsync is required" >&2; exit 4; }
+ 
+ matches_selected() {
+   local slug="$1"
+@@ -123,43 +148,46 @@ for skill_file in "${SKILL_FILES[@]}"; do
+     continue
+   fi
+ 
+-  dest_link="$DEST_ROOT/$slug"
+-  if [[ -e "$dest_link" || -L "$dest_link" ]]; then
+-    dest_dir="$(resolve_dest "$dest_link")"
+-  else
+-    dest_dir="$dest_link"
+-  fi
++  for logical_root in "${TARGET_ROOTS[@]}"; do
++    dest_link="$logical_root/$slug"
++    if [[ -e "$dest_link" || -L "$dest_link" ]]; then
++      dest_dir="$(resolve_dest "$dest_link")"
++    else
++      dest_dir="$dest_link"
++    fi
+ 
+-  if [[ $VERIFY_ONLY -eq 0 ]]; then
+-    mkdir -p "$dest_dir"
+-  fi
++    if [[ $VERIFY_ONLY -eq 0 ]]; then
++      mkdir -p "$dest_dir"
++    fi
+ 
+-  echo "== $slug =="
+-  echo "source: $src_dir/"
+-  echo "target: $dest_dir/"
++    echo "== $slug =="
++    echo "source: $src_dir/"
++    echo "logical target: $dest_link/"
++    echo "physical target: $dest_dir/"
+ 
+-  if [[ $VERIFY_ONLY -eq 1 ]]; then
+-    if [[ ! -d "$dest_dir" ]]; then
+-      echo "DRIFT: installed skill is missing"
+-      DRIFT_COUNT=$((DRIFT_COUNT + 1))
+-    else
+-      diff=$(rsync -rnic --delete "$src_dir/" "$dest_dir/")
+-      if [[ -n "$diff" ]]; then
+-        echo "DRIFT:"
+-        printf '%s\n' "$diff"
++    if [[ $VERIFY_ONLY -eq 1 ]]; then
++      if [[ ! -d "$dest_dir" ]]; then
++        echo "DRIFT: installed skill is missing"
+         DRIFT_COUNT=$((DRIFT_COUNT + 1))
+       else
+-        echo "OK: installed copy matches source"
++        diff=$(rsync -rnic --delete "$src_dir/" "$dest_dir/")
++        if [[ -n "$diff" ]]; then
++          echo "DRIFT:"
++          printf '%s\n' "$diff"
++          DRIFT_COUNT=$((DRIFT_COUNT + 1))
++        else
++          echo "OK: installed copy matches source"
++        fi
+       fi
++    elif [[ $DRY_RUN -eq 1 ]]; then
++      rsync -an --delete "$src_dir/" "$dest_dir/"
++    else
++      rsync -a --delete "$src_dir/" "$dest_dir/"
+     fi
+-  elif [[ $DRY_RUN -eq 1 ]]; then
+-    rsync -an --delete "$src_dir/" "$dest_dir/"
+-  else
+-    rsync -a --delete "$src_dir/" "$dest_dir/"
+-  fi
+ 
+-  SYNC_COUNT=$((SYNC_COUNT + 1))
+-  echo
++    SYNC_COUNT=$((SYNC_COUNT + 1))
++    echo
++  done
+ 
+ done
+ 
+diff --git a/cs/SKILL.md b/cs/SKILL.md
+index fcc18cb..791e1fb 100644
+--- a/cs/SKILL.md
++++ b/cs/SKILL.md
+@@ -126,8 +126,8 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
+ 
+ 如果用户输入是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复，先别按新诉求路由。默认顺序是：
+ 
+-1. 先按 `.codestable/reference/workflow-contract-continuation.md` 检查是否满足 continuation-first
+-2. 命中唯一候选且没有 blocker → 优先使用 fresh `status.json` 辅助定位对象与阶段；若 `status.json` 缺失、stale、或与实际 `.codestable/` 产物冲突，则回退到直接读取 canonical artifacts；定位完成后直接告诉用户"检测到你在继续 {对象}，接下来进入 {对应入口/阶段}"，不要再重复讲体系总览、重新做开放式分诊，或补问一轮"是不是继续这个"
++1. 先按 `.codestable/reference/workflow-contract-continuation.md` 检查是否满足 continuation-first；若 fresh `.codestable/status.json` 存在，可执行 `python .codestable/tools/workflow-routing.py .codestable/status.json` 获取确定性的 continuation predicate 结果
++2. helper 返回 `continue` 时按唯一候选进入对应阶段；返回 `ask_user` 时列出候选；返回 `inspect_canonical` 时直接读取 canonical artifacts；helper 缺失时按契约文档执行同一规则。定位完成后直接告诉用户"检测到你在继续 {对象}，接下来进入 {对应入口/阶段}"，不要再重复讲体系总览、重新做开放式分诊，或补问一轮"是不是继续这个"
+ 3. 多个候选 → 列出来让用户选，**不要猜最近一个**
+ 4. 命中 canonical 冲突 / scope 扩张 / 阶段前提不满足 → 停下来解释为什么不能自动续作，并要求用户明确选择
+ 5. 没有候选 → 回到本技能原本的路由逻辑
+diff --git a/scripts/verify.sh b/scripts/verify.sh
+index 46c5529..60b8dec 100755
+--- a/scripts/verify.sh
++++ b/scripts/verify.sh
+@@ -26,5 +26,10 @@ export TMPDIR="$TMPDIR_ROOT"
+ cd "$REPO_ROOT"
+ "$PYTHON_BIN" .codestable/tools/build-status.py --check --json
+ "$PYTHON_BIN" .codestable/tools/check-workflow-contracts.py
+-.codestable/tools/lint-exit-conditions.sh
++"$PYTHON_BIN" .codestable/tools/check-ccg-tasks.py
++CLAUDE_SKILLS_DIR="$REPO_ROOT" .codestable/tools/lint-exit-conditions.sh
+ "$PYTHON_BIN" -m unittest discover -s tests -v
++
++if [[ "${VERIFY_INSTALLED_SKILLS:-0}" == "1" ]]; then
++  .codestable/tools/sync-skills.sh --target "${VERIFY_SKILLS_TARGET:-claude}" --verify
++fi
+diff --git a/tests/test_workflow_status_transitions.py b/tests/test_workflow_status_transitions.py
+index 518fab2..7049b57 100644
+--- a/tests/test_workflow_status_transitions.py
++++ b/tests/test_workflow_status_transitions.py
+@@ -7,6 +7,7 @@ import json
+ import os
+ import subprocess
+ import sys
++import runpy
+ import tempfile
+ import unittest
+ from pathlib import Path
+@@ -15,6 +16,8 @@ from pathlib import Path
+ REPO_ROOT = Path(__file__).resolve().parents[1]
+ BUILD_STATUS_PATH = REPO_ROOT / ".codestable/tools/build-status.py"
+ CONTRACT_CHECK_PATH = REPO_ROOT / ".codestable/tools/check-workflow-contracts.py"
++TASK_CHECK_PATH = REPO_ROOT / ".codestable/tools/check-ccg-tasks.py"
++ROUTING_PATH = REPO_ROOT / ".codestable/tools/workflow-routing.py"
+ 
+ 
+ def load_build_status_module():
+@@ -323,10 +326,39 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
+         self.assertEqual(1, result.returncode)
+         self.assertEqual(["README.md"], [item["path"] for item in failures])
+ 
++    def test_ccg_task_validator_rejects_unarchived_completed_task(self):
++        with tempfile.TemporaryDirectory() as temp_dir:
++            root = Path(temp_dir)
++            write(root / ".ccg/tasks/done/task.json", '{"id":"done","title":"Done","status":"completed"}\n')
++            result = subprocess.run([sys.executable, str(TASK_CHECK_PATH), "--repo-root", str(root), "--json"], capture_output=True, text=True, check=False)
++        payload = json.loads(result.stdout)
++        self.assertEqual(1, result.returncode)
++        self.assertEqual("completed_task_not_archived", payload["findings"][0]["rule"])
++
++    def test_routing_helper_requires_fresh_unique_candidate(self):
++        decide = runpy.run_path(str(ROUTING_PATH), run_name="workflow_routing_test")["decide"]
++        candidate = {"key": "x", "path": "p", "consistency": {"state": "clean"}, "derived": {"auto_continue_allowed": True, "needs_user_decision": False, "next_skill": "cs-feat-impl", "blockers": []}}
++        status = {"freshness": {"state": "fresh"}, "lanes": {"features": {"items": [candidate]}}}
++        self.assertEqual("continue", decide(status)["action"])
++        status["lanes"]["features"]["items"].append(dict(candidate, key="y"))
++        self.assertEqual("ask_user", decide(status)["action"])
++        status["freshness"]["state"] = "stale"
++        self.assertEqual("inspect_canonical", decide(status)["action"])
++
++    def test_routing_helper_rejects_conflicts_and_safety_blockers(self):
++        decide = runpy.run_path(str(ROUTING_PATH), run_name="workflow_routing_blocker_test")["decide"]
++        item = {"key": "x", "consistency": {"state": "conflict"}, "derived": {"auto_continue_allowed": True, "needs_user_decision": False, "blockers": []}}
++        status = {"freshness": {"state": "fresh"}, "lanes": {"features": {"items": [item]}}}
++        self.assertEqual("route_normally", decide(status)["action"])
++        item["consistency"]["state"] = "clean"
++        item["derived"]["blockers"] = ["awaiting_plan_approval"]
++        self.assertEqual("route_normally", decide(status)["action"])
++
+     def test_onboard_builder_copy_matches_canonical_tool(self):
+-        source = (REPO_ROOT / "cs-onboard/tools/build-status.py").read_bytes()
+-        canonical = BUILD_STATUS_PATH.read_bytes()
+-        self.assertEqual(canonical, source)
++        for name in ["build-status.py", "check-ccg-tasks.py", "check-workflow-contracts.py", "sync-skills.sh", "workflow-routing.py"]:
++            source = (REPO_ROOT / "cs-onboard/tools" / name).read_bytes()
++            canonical = (REPO_ROOT / ".codestable/tools" / name).read_bytes()
++            self.assertEqual(canonical, source)
+ 
+ 
+ if __name__ == "__main__":
