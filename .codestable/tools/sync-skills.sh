@@ -4,13 +4,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 DEST_ROOT="${CLAUDE_SKILLS_DIR:-}"
-TARGET="${SKILLS_TARGET:-claude}"
+TARGET="${SKILLS_TARGET:-agents}"
 DRY_RUN=0
 VERIFY_ONLY=0
 
-# Safety: whitelist of allowed destination roots
+# Safety: whitelist of allowed destination roots — ONLY agents now
 ALLOWED_DESTS=(
-  "$HOME/.claude/skills"
   "$HOME/.agents/skills"
 )
 
@@ -30,25 +29,23 @@ check_dest_allowed() {
 usage() {
   cat <<'EOF'
 Usage:
-  sync-skills.sh [--target claude|agents|all] [--dry-run|--verify] [skill-name ...]
+  sync-skills.sh [--target agents] [--dry-run|--verify] [skill-name ...]
 
 Examples:
   sync-skills.sh --dry-run
   sync-skills.sh --dry-run cs cs-feat cs-feat-design
-  sync-skills.sh --target agents --verify cs-feat
-  sync-skills.sh --target all --verify
   sync-skills.sh cs-feat
   CLAUDE_SKILLS_DIR=$HOME/.claude/skills sync-skills.sh cs-feat
 
 Safety:
-  - Logical target must be claude, agents, or all
-  - Physical destination root must be exactly ~/.claude/skills or ~/.agents/skills (or a child skill path)
+  - Logical target must be agents (fixed)
+  - Physical destination root must be exactly ~/.agents/skills (or a child skill path)
   - Use --dry-run first to preview changes before applying
   - Use --verify to check installed-copy drift without writing
 
 Behavior:
   - Scans the repository root for top-level skill directories containing SKILL.md
-  - Syncs each selected skill to ~/.claude/skills/<skill-name>
+  - Syncs each selected skill to ~/.agents/skills/<skill-name>
   - If the destination is a symlink, resolves the real target directory first
   - Uses rsync --delete so destination matches source exactly
   - --verify exits 1 when a selected installed copy is missing or differs
@@ -95,13 +92,8 @@ if [[ $DRY_RUN -eq 1 && $VERIFY_ONLY -eq 1 ]]; then
 fi
 
 case "$TARGET" in
-  claude) TARGET_ROOTS=("${DEST_ROOT:-$HOME/.claude/skills}") ;;
   agents) TARGET_ROOTS=("${DEST_ROOT:-$HOME/.agents/skills}") ;;
-  all)
-    [[ -z "$DEST_ROOT" ]] || { echo "ERROR: CLAUDE_SKILLS_DIR cannot be combined with --target all" >&2; exit 2; }
-    TARGET_ROOTS=("$HOME/.claude/skills" "$HOME/.agents/skills")
-    ;;
-  *) echo "ERROR: --target must be claude, agents, or all" >&2; exit 2 ;;
+  *) echo "ERROR: --target must be agents (fixed)" >&2; exit 2 ;;
 esac
 
 for root in "${TARGET_ROOTS[@]}"; do

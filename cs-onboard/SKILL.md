@@ -144,7 +144,7 @@ Copy-Item -Recurse -Force <技能包路径>\cs-onboard\reference\*  .codestable\
 
 不要：Read+Write 手工搬（截断 / 改缩进）、一个个 cp（多步骤多出错）、先比 diff（规则就是无条件覆盖）。
 
-技能包路径一般是 skill 安装目录（`~/.claude/skills/cs-onboard/` 或插件目录）。不确定先 `ls` 定位。拷完 `ls .codestable/tools/ .codestable/reference/` 验证。
+技能包路径一般是 skill 安装目录（`~/.agents/skills/cs-onboard/` 或插件目录）。不确定先 `ls` 定位。拷完 `ls .codestable/tools/ .codestable/reference/` 验证。
 
 **步骤 5：处理不迁移的文件**
 

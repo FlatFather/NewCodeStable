@@ -207,7 +207,7 @@ python .codestable/tools/validate-yaml.py \
 
 ## 4. sync-skills.sh
 
-将仓库技能同步到允许的本地安装目录；该脚本不属于 onboarding shared bundle。
+将仓库技能同步到 `~/.agents/skills/`（已固定，无需 --target 参数）。该脚本不属于 onboarding shared bundle。
 
 ```bash
 .codestable/tools/sync-skills.sh --dry-run cs-feat
@@ -216,6 +216,71 @@ python .codestable/tools/validate-yaml.py \
 ```
 
 `--verify` 只比较仓库源码与已安装副本（会解析 symlink），不创建目录、不写入文件；发现缺失或 drift 时返回非零。
+
+**注意**：仓库里仍保留旧的 `cs-onboard/tools/sync-skills.sh`，保持与 `.codestable/tools/sync-skills.sh` 的一致性。项目内任何 `cs-onboard/tools/sync-skills.sh` 的引用都应更新为 `.codestable/tools/sync-skills.sh`。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ---
 
 ## 5. CCG task 与路由辅助工具
