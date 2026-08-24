@@ -253,7 +253,7 @@ refactor: {YYYY-MM-DD}-{slug}
 
 ## 相关文档
 
-- `cs-refactor-ff/SKILL.md` — 小重构超轻量通道
+- 小重构超轻量通道见 `cs-refactor-ff` 技能（单函数/单组件局部、有测试可自证时走那边）
 - `reference/scan-checklist-format.md` — scan 清单条目字段 / 顺序 / 硬约束
 - `reference/refusal-routing.md` — scan 前置检查 7 条 + 路由表
 - `reference/methods.md` — 方法库索引（L1-L4 四层分类）

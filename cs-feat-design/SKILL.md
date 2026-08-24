@@ -242,7 +242,7 @@ design 只管"编排-计算分离"里的编排那一侧：**这次 feature 在�
 - `cs-feat-design` 不再直接落盘 plan/checklist
 - 用户在整体 review 中明确回复 `同意 / 继续 / 确认` 时，把 `design.md` 写为 `status: approved` 后立即 handoff 到 `cs-feat-plan`；这次批准已经授权确定性的下一阶段，**不得再要求用户补一次“继续”**。恢复场景仍由 `cs-feat` continuation-first 根据 canonical artifacts 定位。
 
-完整格式、提取规则、典型节奏看 `cs-feat-plan/reference.md` 与共享约定。
+完整格式、提取规则、典型节奏由 `cs-feat-plan` 自身文档承接，本技能不重复展开。
 
 ### 7. 退出
 

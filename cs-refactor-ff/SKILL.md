@@ -137,6 +137,5 @@ fastforward 不读完整方法库，但要守住"**每一处改动都能对应�
 
 ## 相关
 
-- `cs-refactor/SKILL.md` — 完整 refactor 流程
-- `cs-refactor/reference/methods.md` — 方法库索引；详情见同目录 `methods-L1-L2.md` / `methods-L3.md` / `methods-L4.md`
+- 完整 refactor 流程见 `cs-refactor` 技能（跨文件/跨模块场景走那边，本技能只服务单函数/单组件局部）
 - `.codestable/reference/system-overview.md` — CodeStable 体系总览
