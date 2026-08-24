@@ -341,6 +341,55 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
         self.assertIn("duplicate_warning_baseline", rules)
         self.assertIn("stale_warning_baseline", rules)
 
+    def test_contract_checker_flags_manifest_asset_content_drift(self):
+        manifest = (
+            "references:\n"
+            "  - source: cs-onboard/reference/sample.md\n"
+            "    destination: .codestable/reference/sample.md\n"
+            "tools: []\n"
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            write(root / "AGENTS.md", "单md文档不能超过500行\n")
+            write(root / "cs-onboard/reference/shared-asset-manifest.yaml", manifest)
+            write(root / ".codestable/reference/shared-asset-manifest.yaml", manifest)
+            write(root / "cs-onboard/reference/sample.md", "source content\n")
+            write(root / ".codestable/reference/sample.md", "drifted content\n")
+            result = subprocess.run(
+                [sys.executable, str(CONTRACT_CHECK_PATH), "--repo-root", str(root), "--json"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        payload = json.loads(result.stdout)
+        drift = [item for item in payload["findings"] if item["rule"] == "manifest_asset_content_drift"]
+        self.assertEqual(1, result.returncode)
+        self.assertEqual([".codestable/reference/sample.md"], [item["path"] for item in drift])
+
+    def test_contract_checker_passes_when_manifest_asset_content_matches(self):
+        manifest = (
+            "references:\n"
+            "  - source: cs-onboard/reference/sample.md\n"
+            "    destination: .codestable/reference/sample.md\n"
+            "tools: []\n"
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            write(root / "AGENTS.md", "单md文档不能超过500行\n")
+            write(root / "cs-onboard/reference/shared-asset-manifest.yaml", manifest)
+            write(root / ".codestable/reference/shared-asset-manifest.yaml", manifest)
+            write(root / "cs-onboard/reference/sample.md", "same content\n")
+            write(root / ".codestable/reference/sample.md", "same content\n")
+            result = subprocess.run(
+                [sys.executable, str(CONTRACT_CHECK_PATH), "--repo-root", str(root), "--json"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        payload = json.loads(result.stdout)
+        drift = [item for item in payload["findings"] if item["rule"] == "manifest_asset_content_drift"]
+        self.assertEqual([], drift)
+
     def test_ccg_task_validator_rejects_unarchived_completed_task(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

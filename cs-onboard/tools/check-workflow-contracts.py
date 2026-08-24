@@ -16,6 +16,7 @@ external dependencies.
 """
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -385,6 +386,15 @@ def check_manifest_parity(root: Path, report: Report):
                 report.error("manifest_declared_source_missing", rel_path(root, source_path), "Manifest-declared source asset is missing")
             if not dest_path.exists():
                 report.error("manifest_declared_destination_missing", rel_path(root, dest_path), "Manifest-declared destination asset is missing")
+            if source_path.exists() and dest_path.exists():
+                source_hash = hashlib.sha256(source_path.read_bytes()).hexdigest()
+                dest_hash = hashlib.sha256(dest_path.read_bytes()).hexdigest()
+                if source_hash != dest_hash:
+                    report.error(
+                        "manifest_asset_content_drift",
+                        rel_path(root, dest_path),
+                        f"Content differs from manifest-declared source {source}",
+                    )
     return declared
 
 
