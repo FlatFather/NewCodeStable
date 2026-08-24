@@ -4,6 +4,7 @@ issue: 2026-06-02-workflow-step-alignment
 path: fast-track
 fix_date: 2026-06-02
 tags: [workflow, validation, checklist, plan]
+status: completed
 ---
 
 # workflow-check step alignment 修复记录

@@ -35,7 +35,6 @@ Examples:
   sync-skills.sh --dry-run
   sync-skills.sh --dry-run cs cs-feat cs-feat-design
   sync-skills.sh cs-feat
-  CLAUDE_SKILLS_DIR=$HOME/.claude/skills sync-skills.sh cs-feat
 
 Safety:
   - Logical target must be agents (fixed)

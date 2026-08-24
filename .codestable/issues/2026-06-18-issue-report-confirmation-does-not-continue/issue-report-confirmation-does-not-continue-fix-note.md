@@ -4,6 +4,7 @@ issue: 2026-06-18-issue-report-confirmation-does-not-continue
 path: fast-track
 fix_date: 2026-06-18
 tags: [workflow, continuation, cs-issue, cs-issue-report]
+status: completed
 ---
 
 # issue report 确认后未续到 analyze 修复记录

@@ -36,21 +36,43 @@
 
 ---
 
-## 3. fastforward vs 标准 feature
+## 3. fastforward 边界合同
 
-**fastforward**（快速通道）：
-- 需求小到"不值得走完整 design / plan 阶段"
-- 范围清晰，无决策空间
-- 改动量预估 < 50 行
-- AI 可以一次对话内完成 + 自证（有测试或可快速验证）
+**shared fastforward contract**（跨 feature / refactor 共用）：
+- fastforward 只在**低仪式成本路径**的前提持续成立时可用：范围小、决策空间小、AI 可一次对话内完成并自证
+- fastforward 只加速执行，**不改变 authority ordering**：canonical artifacts 仍高于 generated state 与 bridge hints
+- 一旦任一阈值被突破，或出现标准主线级别的决策复杂度，workflow **自动 normalizes** 到对应标准 lane
+- auto-normalize 是**单向**的：触发后不再继续沿用 fastforward 语义硬推到底
+- 不确定是否还算 fastforward 时，默认回标准 lane，不低估范围
 
-**标准 feature**（标准主线）：
-- 需求涉及多个模块或接口设计
-- 存在方案选择空间，需要文档化决策依据
-- 改动量 ≥ 50 行或跨 3+ 文件
-- 需要分阶段推进：design → plan → implement → acceptance
+### feature fastforward
 
-**判定**：不确定时默认走标准主线，不要低估范围。
+**可继续留在 `cs-feat-ff` 的条件**：
+- 需求小到不值得走完整 design / plan 阶段
+- 范围清晰，无新的术语冲突或架构决策
+- 改动量预估 < 50 行，且不跨 3+ 文件
+- 不需要 `plan` 级的多步编排与阶段 gate
+
+**自动 normalize 到标准 feature lane**（从 `cs-feat-design` 续上）的触发条件：
+- 改动涉及多个子系统或新增架构边界判断
+- 需要引入新术语、统一旧术语，或与现有命名冲突
+- 需求追加后让范围明显扩张，或推进步骤已经需要 `plan` 才能稳定执行
+- 局部快写已不足以表达 scope / risk / acceptance 契约
+
+### refactor fastforward
+
+**可继续留在 `cs-refactor-ff` 的条件**：
+- 行为等价是确定前提
+- 改动集中在单函数 / 单组件 / 单文件
+- 优化点 ≤ 3 处，且都能对应到经典重构方法
+- 有测试 / 类型检查 / 既有验证手段可自证
+- 不需要 HUMAN 目视验证，不碰公开接口
+
+**自动 normalize 到标准 refactor lane**（回 `cs-refactor` 从 scan 续上）的触发条件：
+- 改动跨 > 1 文件或优化点持续膨胀
+- 需要 Parallel Change / Strangler Fig / 分层纠偏等标准 refactor 方法库能力
+- 没有测试能覆盖，或需要 HUMAN 目视 / 跨模块确认
+- 出现行为变更风险、公开接口变化、或已不再是"小重构"
 
 ---
 

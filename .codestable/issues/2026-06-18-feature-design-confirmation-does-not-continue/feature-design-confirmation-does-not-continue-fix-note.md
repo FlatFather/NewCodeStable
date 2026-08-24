@@ -4,6 +4,7 @@ issue: 2026-06-18-feature-design-confirmation-does-not-continue
 path: fast-track
 fix_date: 2026-06-18
 tags: [workflow, continuation, cs-feat, cs-feat-design]
+status: completed
 ---
 
 # feature design 确认后未续到 plan 修复记录

@@ -4,6 +4,7 @@ issue: 2026-06-02-hybrid-plan-generation-visibility
 path: fast-track
 fix_date: 2026-06-02
 tags: [workflow, hybrid, plan, cs-feat, cs-feat-design]
+status: completed
 ---
 
 # hybrid plan generation visibility 修复记录
