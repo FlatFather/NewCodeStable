@@ -50,9 +50,10 @@ onboard 完成后骨架（`cs-onboard` 负责搭建）：
 ├── compound/              沉淀类文档统一目录
 │   └── YYYY-MM-DD-{doc_type}-{slug}.md
 │                          doc_type ∈ {learning, trick, decision, explore}
-├── brainstorm/            brainstorm 阶段 spike 实验代码区（cs-brainstorm 临时产出）
-│   └── {slug}/            一次 spike 一个子目录，文件名随意
-│                          验完不强制清理，结论回写到对应 brainstorm note
+├── brainstorms/           case 4 创意空间（cs-brainstorm 产出）
+│   └── {slug}/
+│       ├── brainstorm.md   创意记录
+│       └── ...             可选 spike 实验代码，验完不强制清理，结论回写 brainstorm note
 ├── tools/                 跨工作流共享脚本（onboard 从技能包释放）
 └── reference/             共享参考文档（onboard 从技能包释放）
 ```

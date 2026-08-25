@@ -51,11 +51,11 @@ description: 把新仓库或有零散文档的仓库接入 CodeStable 体系，�
 **先检查一次现状**：
 
 1. **检查 `.codestable/`**：不存在 → 空仓库候选；存在但不完整 → 迁移（部分补齐）
-2. **旧 CodeStable兼容** CodeStable 经过多次改名，从 easysdd 到 codestable 再到 .codestable，如果遇到旧版的codestable目录，提示用户：
+2. **旧 CodeStable兼容** CodeStable 经过多次改名，从 easysdd 到 codestable 再到 .codestable，如果遇到旧版目录，提示用户：
 
-   > 检测到旧版codestable。建议直接 `git mv easysdd .codestable`，结构 / frontmatter 完全兼容，rename 后即用。要我执行吗？
+   > 检测到旧版 CodeStable 目录 `{检测到的目录名}`。建议直接 `git mv {检测到的目录名} .codestable`，结构 / frontmatter 完全兼容，rename 后即用。要我执行吗？
 
-   同意 → `git mv easysdd .codestable`，按迁移路径走（这时只需补齐可能缺失的 `attention.md`、`tools/` 和 `reference/`）。想保留旧目录 → 告诉他子技能只读 `.codestable/`，旧目录不会被读；按空仓库路径走新骨架
+   同意 → 对检测到的实际目录名执行 `git mv {检测到的目录名} .codestable`（旧版目录名可能是 `easysdd` 或 `codestable`，以实际检测结果为准），按迁移路径走（这时只需补齐可能缺失的 `attention.md`、`tools/` 和 `reference/`）。想保留旧目录 → 告诉他子技能只读 `.codestable/`，旧目录不会被读；按空仓库路径走新骨架
 
 3. **Glob 全仓库 `.md`**（排除 `node_modules/` `.git/`）：根目录 `DESIGN.md` / `ARCHITECTURE.md` / `SPEC.md` / `README.md`；`docs/` `doc/` `design/` `spec/` `wiki/`；现有 `.codestable/` 下文件
 4. **检查 `.codestable/attention.md`**：缺失则列为骨架待补齐项

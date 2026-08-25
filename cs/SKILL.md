@@ -50,7 +50,7 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 ├── roadmap/         规划层（"接下来怎么做这块大需求 + 模块切 + 接口定"）
 ├── features/        新增能力 spec 聚合根（design / impl / accept）
 ├── issues/          修 bug spec 聚合根（report / analyze / fix）
-├── refactors/       重构 spec 聚合根（beta）
+├── refactors/       重构 spec 聚合根
 ├── audits/          审计实体（主动扫描发现清单，不定修）
 └── compound/        知识沉淀（learning / trick / decision / explore）
 ```
@@ -59,7 +59,7 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 
 - **新增能力**：`cs-feat-design` → `cs-feat-plan` → `cs-feat-impl` → `cs-feat-accept`（想法模糊先 `cs-brainstorm` 分诊）
 - **修 bug**：`cs-issue-report` → `cs-issue-analyze` → `cs-issue-fix`
-- **重构**（beta）：`cs-refactor` / `cs-refactor-ff`
+- **重构**：`cs-refactor` / `cs-refactor-ff`
 
 **横切**：流程跑完发现"值得记下来" → `cs-learn` / `cs-trick` / `cs-decide` / `cs-explore` 沉淀到 `compound/`。
 

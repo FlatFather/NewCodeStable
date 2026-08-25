@@ -50,4 +50,4 @@ extends: workflow-continuation-base.md
 
 ### cs-issue-fix
 
-先看 fix-note 是否缺失、代码是否已改、验证是否完成。
+先看 fix-note 是否缺失、代码是否已改、验证是否完成。快速通道下，`status: draft` 的 fix-note 是已确认根因与方案的恢复锚点，续作时先读它，不再重新征询"现在开始修吗"。

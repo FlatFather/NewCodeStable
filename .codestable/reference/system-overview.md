@@ -17,7 +17,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 - `cs-feat` — 新功能，design → plan → 分步实现 → 验收闭环；`cs-feat-design` 只负责范围与约束，`cs-feat-plan` 负责生成 `plan.md` + `checklist.yaml` 并形成进入实现前的独立确认关口。想法模糊时先走讨论层 `cs-brainstorm` 做分诊（阶段 0，可选且是 feature 流程的外部入口）；fastforward 保持为独立快路径。
 - `cs-issue` — 修 bug,report → analyze → fix
-- `cs-refactor` — 代码优化(行为不变、结构/性能/可读性变),scan → design → apply
+- `cs-refactor` — 代码优化(行为不变、结构/性能/可读性变),scan → design → apply；`cs-refactor-ff` 是同流程的超轻量快路径（1-3 条低风险优化、单次确认）
 
 两类都不直接让 AI 写代码,而是先产出 spec(功能方案 / 问题分析),用户 review 后再动手,代码和 doc 一起交付。针对的是术语冲突、范围失控、改完不留存档这三种 AI 默认会出的问题。
 
@@ -31,7 +31,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 **讨论层**——想法还模糊时的统一入口,不直接产出设计或代码:
 
-- `cs-brainstorm` — 和用户对话做分诊:case 1(已经够清楚,直接 feature-design)、case 2(小需求,在 feature 里继续讨论并落 `{slug}-brainstorm.md`)、case 3(大需求,移交给 roadmap)
+- `cs-brainstorm` — 和用户对话做分诊:case 1(已经够清楚,直接 feature-design)、case 2(小需求,在 feature 里继续讨论并落 `{slug}-brainstorm.md`)、case 3(大需求,移交给 roadmap)、case 4(大需求仍需发散,落 `.codestable/brainstorms/{slug}/brainstorm.md` 供 roadmap 读取)
 
 **辅助**——围着前几类转的周边工具:
 
@@ -52,7 +52,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 | 想法还模糊 / "有个想法没想清楚" / "先聊聊" | `cs-brainstorm`(分诊后路由到 design / feature-brainstorm 落盘 / roadmap) |
 | 新功能 / 新能力 | `cs-feat` |
 | BUG / 异常 / 文档错误 | `cs-issue` |
-| 代码优化 / 重构 / 重写(行为不变) | `cs-refactor` |
+| 代码优化 / 重构 / 重写(行为不变) | `cs-refactor` / `cs-refactor-ff` |
 | 摸代码、提问调研 | `cs-explore` |
 | 补 / 更新需求文档 | `cs-req` |
 | 补 / 更新 / 检查架构文档 | `cs-arch` |

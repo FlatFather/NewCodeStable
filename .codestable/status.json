@@ -19,7 +19,7 @@
   },
   "freshness": {
     "state": "fresh",
-    "canonical_digest": "sha256:d4bc6147911e21bf71264ef73c99e2cf33561c093d87ab9731c39b47fb5d6d9f",
+    "canonical_digest": "sha256:3869c8970cf2e2a20782be196dc78e34bf90d89b09ddd2cb6f8ae235c90bbb17",
     "source_count": 92,
     "stale_if_digest_changes": true,
     "check_command": "python .codestable/tools/build-status.py --check",
@@ -58,7 +58,9 @@
             },
             "checklist_progress": {
               "total": 5,
-              "done": 5
+              "done": 5,
+              "checks_total": 8,
+              "checks_done": 8
             }
           },
           "derived": {
@@ -100,7 +102,9 @@
             },
             "checklist_progress": {
               "total": 5,
-              "done": 5
+              "done": 5,
+              "checks_total": 9,
+              "checks_done": 9
             }
           },
           "derived": {
@@ -142,7 +146,9 @@
             },
             "checklist_progress": {
               "total": 5,
-              "done": 5
+              "done": 5,
+              "checks_total": 10,
+              "checks_done": 10
             }
           },
           "derived": {
@@ -184,7 +190,9 @@
             },
             "checklist_progress": {
               "total": 4,
-              "done": 4
+              "done": 4,
+              "checks_total": 9,
+              "checks_done": 9
             }
           },
           "derived": {
@@ -228,7 +236,9 @@
             },
             "checklist_progress": {
               "total": 4,
-              "done": 4
+              "done": 4,
+              "checks_total": 8,
+              "checks_done": 8
             }
           },
           "derived": {
@@ -270,7 +280,9 @@
             },
             "checklist_progress": {
               "total": 5,
-              "done": 5
+              "done": 5,
+              "checks_total": 9,
+              "checks_done": 9
             }
           },
           "derived": {
@@ -312,7 +324,9 @@
             },
             "checklist_progress": {
               "total": 1,
-              "done": 0
+              "done": 0,
+              "checks_total": 1,
+              "checks_done": 0
             }
           },
           "derived": {
@@ -354,7 +368,9 @@
             },
             "checklist_progress": {
               "total": 5,
-              "done": 5
+              "done": 5,
+              "checks_total": 7,
+              "checks_done": 7
             }
           },
           "derived": {
@@ -396,7 +412,9 @@
             },
             "checklist_progress": {
               "total": 5,
-              "done": 5
+              "done": 5,
+              "checks_total": 12,
+              "checks_done": 12
             }
           },
           "derived": {
@@ -825,6 +843,10 @@
               "checklist": "hybrid-plan-presence-wording-checklist.yaml",
               "apply_notes": "hybrid-plan-presence-wording-apply-notes.md",
               "completion_report": null
+            },
+            "frontmatter": {
+              "scan_status": "user-reviewed",
+              "design_status": "draft"
             }
           },
           "derived": {
@@ -856,6 +878,10 @@
               "checklist": "intent-artifact-boundary-checklist.yaml",
               "apply_notes": "intent-artifact-boundary-apply-notes.md",
               "completion_report": null
+            },
+            "frontmatter": {
+              "scan_status": "user-reviewed",
+              "design_status": "approved"
             }
           },
           "derived": {
@@ -887,6 +913,10 @@
               "checklist": "reuse-first-workflow-checklist.yaml",
               "apply_notes": null,
               "completion_report": "reuse-first-workflow-completion-report.md"
+            },
+            "frontmatter": {
+              "scan_status": null,
+              "design_status": "draft"
             }
           },
           "derived": {
@@ -918,6 +948,10 @@
               "checklist": "skill-startup-cache-checklist.yaml",
               "apply_notes": null,
               "completion_report": "skill-startup-cache-completion-report.md"
+            },
+            "frontmatter": {
+              "scan_status": "pending_review",
+              "design_status": "draft"
             }
           },
           "derived": {
@@ -957,6 +991,9 @@
                 "finding-03.md",
                 "finding-04.md"
               ]
+            },
+            "frontmatter": {
+              "index_status": "active"
             }
           },
           "derived": {
@@ -999,6 +1036,9 @@
                 "finding-12.md",
                 "finding-13.md"
               ]
+            },
+            "frontmatter": {
+              "index_status": "current"
             }
           },
           "derived": {

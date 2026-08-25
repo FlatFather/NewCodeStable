@@ -18,7 +18,7 @@ description: feature 流程阶段 4——验收闭环：对照 design / plan 核
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
-代码已经写完，但流程没结束。本阶段做四件事，缺一不可：
+代码已经写完，但流程没结束。本阶段只适用于标准 `design + plan + checklist` feature，做四件事，缺一不可：
 
 1. **核对实现有没有偏离方案**——逐层对照 `{slug}-design.md` 与 `{slug}-plan.md`；发现偏差当场修，**不是在报告里"记一下"**就过去
 2. **把 feature 归并到整体架构**——对照方案第 4 节，实际去更新架构中心目录下的相关 doc
@@ -45,7 +45,7 @@ description: feature 流程阶段 4——验收闭环：对照 design / plan 核
 - 第 3 节：验收契约（关键场景清单 + 反向核对项）
 - 第 4 节：与项目级架构文档的关系
 
-**Fastforward design**：第 0 需求摘要 / 第 1 设计方案 / 第 2 验收标准 / 第 3 推进步骤
+**Fastforward**：`cs-feat-ff` 不产出 design / plan / checklist / acceptance，写完并经用户确认后由该技能自身回写 `ff-note.md` 闭环；不得把它当成标准验收流程的输入。
 
 ---
 
@@ -57,16 +57,6 @@ description: feature 流程阶段 4——验收闭环：对照 design / plan 核
 4. **plan 已批准且上下文读全**——标准 feature 的 `{slug}-plan.md` 必须存在且 `status=approved`；缺失或仍为 draft 就退回 `cs-feat-plan` 完成 execution-order checkpoint。随后读方案 doc 全文（重点：第 1 节明确不做、2.1 接口示例、2.2 流程级约束、2.3 挂载点、第 3 节场景）+ checklist + plan 全文 + 第 4 节提到的所有架构 doc + 本次代码改动（git log / diff）；若有 roadmap 起头，验收前还必须核对 `design.feature = items.yaml.feature` 与 `plan.feature = design.feature`
 5. **断点恢复**——`{slug}-acceptance.md` 已存在且部分填好 → 从下一个未完成节继续，跳过 checks 中已 `passed` 的项；汇报"上次做到第 X 节，从第 Y 节继续"
 6. **短回复 continuation-first**——如果用户这轮输入只是 `继续 / 确认 / 同意 / 跳过 / 继续下一步`，先按已有 acceptance / checklist / plan 状态恢复；必要时再参考 `.ccg/tasks/*/task.json` 作为恢复桥，但不把 task 文件当成验收真相源
-
-**Fastforward design 验收报告映射表**：
-
-| 验收报告节 | 标准 design 对照 | Fastforward design 对照 |
-|---|---|---|
-| 1 接口契约核对 | 第 2.1 接口示例 | 第 1 节改动点 |
-| 2 行为与决策核对（含挂载点） | 第 1 节 + 第 2.2 + 第 2.3 | 第 0 节；挂载点现场盘点 |
-| 3 验收场景核对 | 第 3 节场景清单 + 反向核对 | 第 2 节验收标准 |
-| 4 术语一致性 | 第 0 节 + 第 2.1 命名 | 检查代码命名一致性 |
-| 5 架构归并 | 第 4 节 | 通常无；写"无架构维度变更" |
 
 ---
 

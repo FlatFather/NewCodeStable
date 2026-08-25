@@ -51,7 +51,7 @@ python .codestable/tools/build-status.py --check --json
 
 ---
 
-## 0. check-workflow-contracts.py
+## 1. check-workflow-contracts.py
 
 工作流契约只读校验器。用于检查共享资产 manifest parity、repo-local 副本、活跃 workflow 口径一致性，以及所有 Git 跟踪 Markdown 的行数上限。`markdown-line-limit-exemptions.json` 中有理由的 fixture 可被显式豁免。脚本只读、确定性、无额外依赖。
 
@@ -91,7 +91,7 @@ python .codestable/tools/check-workflow-contracts.py --json
 
 ---
 
-## 1. search-yaml.py
+## 2. search-yaml.py
 
 通用 YAML frontmatter 搜索工具。从项目根目录运行，无需安装额外依赖（PyYAML 可选，有则用，无则内建 fallback parser）。
 
@@ -169,7 +169,7 @@ python .codestable/tools/search-yaml.py --dir .codestable/guides --filter status
 
 ---
 
-## 2. validate-yaml.py
+## 3. validate-yaml.py
 
 YAML 语法校验工具。用于验证 frontmatter 语法和必填字段，也支持 feature workflow contract 校验。
 

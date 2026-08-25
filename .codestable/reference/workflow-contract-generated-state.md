@@ -70,6 +70,7 @@ automatic continuation 仅当以下条件同时成立时允许：
 - `awaiting_plan_approval`
 - `awaiting_report_confirmation`
 - `awaiting_fix_option_selection`
+- `awaiting_acceptance_checks`
 - `scope_expansion_required`
 - `multiple_candidates`
 - `ambiguous_next_step`
@@ -91,6 +92,7 @@ automatic continuation 仅当以下条件同时成立时允许：
 ## 兼容口径
 
 - issue 目录中只有 fix-note 的历史 fast-path 记录，属于有效 compatibility terminal record。
+- `report.md status=confirmed` 且存在未 `completed` 的 fix-note（无 analysis）是进行中的 fast-path，自动续作到 `cs-issue-fix`。
 - 这类记录可以使 `consistency.state = compatibility`，但不得被标记为 `canonical_conflict`。
 
 ## 优先级

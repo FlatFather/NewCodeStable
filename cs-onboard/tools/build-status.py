@@ -26,6 +26,7 @@ CANONICAL_CONFLICT = "canonical_conflict"
 MISSING_REQUIRED_ARTIFACT = "missing_required_artifact"
 AWAITING_DESIGN_APPROVAL = "awaiting_design_approval"
 AWAITING_PLAN_APPROVAL = "awaiting_plan_approval"
+AWAITING_ACCEPTANCE_CHECKS = "awaiting_acceptance_checks"
 AWAITING_REPORT_CONFIRMATION = "awaiting_report_confirmation"
 AWAITING_FIX_OPTION_SELECTION = "awaiting_fix_option_selection"
 SCOPE_EXPANSION_REQUIRED = "scope_expansion_required"
@@ -122,24 +123,31 @@ def file_list(directory: Path, *names: str | None) -> list[Path]:
 
 def checklist_progress(path: Path | None) -> dict:
     if path is None or not path.exists():
-        return {"total": 0, "done": 0}
+        return {"total": 0, "done": 0, "checks_total": 0, "checks_done": 0}
 
     total = 0
     done = 0
-    current_is_step = False
+    checks_total = 0
+    checks_done = 0
+    current_entry = None
     for line in read_text(path).splitlines():
         stripped = line.strip()
         if stripped.startswith("- action:"):
             total += 1
-            current_is_step = True
-        elif stripped.startswith("status:") and current_is_step:
+            current_entry = "step"
+        elif stripped.startswith("- item:"):
+            checks_total += 1
+            current_entry = "check"
+        elif stripped.startswith("status:") and current_entry:
             status = stripped.partition(":")[2].strip().strip("'\"")
-            if status in {"done", "passed"}:
+            if current_entry == "step" and status in {"done", "passed"}:
                 done += 1
-            current_is_step = False
+            elif current_entry == "check" and status == "passed":
+                checks_done += 1
+            current_entry = None
         elif stripped.startswith("- "):
-            current_is_step = False
-    return {"total": total, "done": done}
+            current_entry = None
+    return {"total": total, "done": done, "checks_total": checks_total, "checks_done": checks_done}
 
 
 def relpath(path: Path, repo_root: Path) -> str:
@@ -326,6 +334,9 @@ def feature_transition(
     has_plan_and_checklist = bool(artifacts["plan"] and artifacts["checklist"])
     has_partial_plan_state = bool(artifacts["plan"] or artifacts["checklist"])
     checklist_complete = progress["total"] > 0 and progress["done"] == progress["total"]
+    acceptance_checks_complete = (
+        progress["checks_total"] == 0 or progress["checks_done"] == progress["checks_total"]
+    )
     legacy_accepted = has_acceptance and (
         workflow == "legacy" or (workflow is None and not artifacts["plan"])
     )
@@ -361,6 +372,14 @@ def feature_transition(
             next_skill="cs-feat-impl",
             needs_user_decision=True,
             blockers=[MISSING_REQUIRED_ARTIFACT],
+        )
+    if has_acceptance and not acceptance_checks_complete:
+        return transition_result(
+            active=active,
+            canonical_complete=False,
+            next_skill="cs-feat-accept",
+            needs_user_decision=True,
+            blockers=[AWAITING_ACCEPTANCE_CHECKS],
         )
     if has_acceptance:
         return transition_result(active=False, canonical_complete=True)
@@ -497,9 +516,23 @@ def issue_transition(
         and not has_analysis
         and fix_note_status == "completed"
     )
+    fast_path_in_progress = (
+        has_fix_note
+        and has_report
+        and report_status == "confirmed"
+        and not has_analysis
+        and fix_note_status != "completed"
+    )
 
     if fix_note_only_terminal or confirmed_fast_path_terminal:
         return transition_result(active=False, canonical_complete=True)
+    if fast_path_in_progress:
+        return transition_result(
+            active=True,
+            canonical_complete=False,
+            next_skill="cs-issue-fix",
+            auto_continue_allowed=True,
+        )
     if has_fix_note and not has_report and not has_analysis:
         return transition_result(
             active=True,
@@ -599,9 +632,16 @@ def refactor_stage(artifacts: dict) -> str:
     return "empty"
 
 
-def refactor_transition(stage: str, artifacts: dict) -> dict:
+def refactor_transition(
+    stage: str,
+    artifacts: dict,
+    scan_status: str,
+    design_status: str,
+) -> dict:
     canonical_complete = bool(artifacts["completion_report"])
     active = stage not in {"completed", "empty"}
+    scan_reviewed = scan_status == "user-reviewed"
+    design_approved = design_status == "approved"
 
     if canonical_complete:
         return transition_result(active=active, canonical_complete=True)
@@ -612,18 +652,41 @@ def refactor_transition(stage: str, artifacts: dict) -> dict:
             needs_user_decision=True,
             blockers=[TERMINAL_STAGE],
         )
-    if artifacts["design"] and artifacts["checklist"]:
+    if artifacts["design"] and not design_approved:
         return transition_result(
             active=active,
             canonical_complete=False,
-            next_skill="cs-refactor-apply",
+            next_skill="cs-refactor",
+            needs_user_decision=True,
+            blockers=[AWAITING_DESIGN_APPROVAL],
+        )
+    if design_approved and not artifacts["checklist"]:
+        return transition_result(
+            active=active,
+            canonical_complete=False,
+            next_skill="cs-refactor",
+            needs_user_decision=True,
+            blockers=[MISSING_REQUIRED_ARTIFACT],
+        )
+    if design_approved and artifacts["checklist"]:
+        return transition_result(
+            active=active,
+            canonical_complete=False,
+            next_skill="cs-refactor",
             auto_continue_allowed=True,
         )
-    if artifacts["scan"]:
+    if artifacts["scan"] and not scan_reviewed:
         return transition_result(
             active=active,
             canonical_complete=False,
-            next_skill="cs-refactor-design",
+            next_skill="cs-refactor",
+            needs_user_decision=True,
+        )
+    if scan_reviewed:
+        return transition_result(
+            active=active,
+            canonical_complete=False,
+            next_skill="cs-refactor",
             auto_continue_allowed=True,
         )
     if stage != "empty":
@@ -642,8 +705,15 @@ def refactor_item(directory: Path, repo_root: Path) -> tuple[dict, list[Path]]:
         REFACTOR_ARTIFACT_SPECS,
         slug=lane_slug(directory.name),
     )
+    scan_path = directory / artifacts["scan"] if artifacts["scan"] else None
+    design_path = directory / artifacts["design"] if artifacts["design"] else None
     stage = refactor_stage(artifacts)
-    derived = refactor_transition(stage, artifacts)
+    derived = refactor_transition(
+        stage,
+        artifacts,
+        status_value(scan_path),
+        status_value(design_path),
+    )
     files = file_list(
         directory,
         artifacts["scan"],
@@ -652,7 +722,13 @@ def refactor_item(directory: Path, repo_root: Path) -> tuple[dict, list[Path]]:
         artifacts["apply_notes"],
         artifacts["completion_report"],
     )
-    canonical = {"artifacts": artifacts}
+    canonical = {
+        "artifacts": artifacts,
+        "frontmatter": {
+            "scan_status": extract_frontmatter(scan_path).get("status") if scan_path else None,
+            "design_status": extract_frontmatter(design_path).get("status") if design_path else None,
+        },
+    }
     item = make_item(
         directory=directory,
         repo_root=repo_root,
@@ -673,15 +749,18 @@ def audit_item(directory: Path, repo_root: Path) -> tuple[dict, list[Path]]:
         if child.is_file() and child.name.startswith("finding-") and child.name.endswith(".md")
     )
     index_name = first_name(index_names)
-    stage = "reported" if index_name or finding_files else "empty"
+    index_path = directory / index_name if index_name else None
+    index_status = status_value(index_path)
+    superseded = index_status == "superseded"
+    stage = "superseded" if superseded else "reported" if index_name or finding_files else "empty"
     state = add_multiple_candidate_consistency("clean", [], "index", index_names)
     reasons: list[str] = []
     state = add_multiple_candidate_consistency(state, reasons, "index", index_names)
     derived = transition_result(
         active=stage == "reported",
-        canonical_complete=False,
+        canonical_complete=superseded,
         needs_user_decision=stage == "reported",
-        blockers=[] if stage == "empty" else [AMBIGUOUS_NEXT_STEP],
+        blockers=[] if stage in {"empty", "superseded"} else [AMBIGUOUS_NEXT_STEP],
     )
     files = file_list(directory, index_name)
     files.extend(directory / name for name in finding_files)
@@ -689,7 +768,8 @@ def audit_item(directory: Path, repo_root: Path) -> tuple[dict, list[Path]]:
         "artifacts": {
             "index": index_name,
             "findings": finding_files,
-        }
+        },
+        "frontmatter": {"index_status": index_status or None},
     }
     item = make_item(
         directory=directory,

@@ -6,7 +6,7 @@ protocol_version: 1.0
 
 本文件定义 **continuation-first** 核心原则与通用规则。
 
-特定工作流（feature / issue / refactor / audit）的续作细则见对应的扩展文档。
+特定工作流（feature / issue）的续作细则见对应的扩展文档；`refactor` / `audit` 暂无独立扩展文档，只适用本文件的通用规则（第 2-5 节）。
 
 ---
 
@@ -60,6 +60,8 @@ protocol_version: 1.0
 
 - feature：`design.md` / `plan.md` / `checklist.yaml` / `acceptance.md`
 - issue：`report.md` / `analysis.md` / `fix-note.md`
+- refactor：`scan.md` / `refactor-design.md` / `checklist.yaml` / `apply-notes.md` / `completion-report.md`
+- audit：`index.md` / `finding-*.md`
 
 ---
 
@@ -123,6 +125,8 @@ protocol_version: 1.0
 
 - **feature 主线**：`.codestable/reference/workflow-continuation-feature.md`
 - **issue 主线**：`.codestable/reference/workflow-continuation-issue.md`
+
+`refactor` / `audit` 暂无扩展文档，续作判断按第 1-5 节通用规则 + 第 2.3 节列出的真相源执行；补扩展文档时需同步在 `shared-asset-manifest.yaml` 注册。
 
 ---
 

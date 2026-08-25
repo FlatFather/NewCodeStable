@@ -67,6 +67,36 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
             item, _ = build_status.issue_item(issue_dir, root)
             return item
 
+    def refactor_item(
+        self,
+        scan_status: str = "",
+        design_status: str = "",
+        with_checklist: bool = False,
+        with_completion_report: bool = False,
+    ) -> dict:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            refactor_dir = root / ".codestable/refactors/2026-07-15-refactor-gate"
+            if scan_status:
+                write(
+                    refactor_dir / "refactor-gate-scan.md",
+                    f"---\nstatus: {scan_status}\n---\n# Scan\n",
+                )
+            if design_status:
+                write(
+                    refactor_dir / "refactor-gate-refactor-design.md",
+                    f"---\nstatus: {design_status}\n---\n# Design\n",
+                )
+            if with_checklist:
+                write(
+                    refactor_dir / "refactor-gate-checklist.yaml",
+                    "steps:\n  - action: refactor\n    status: pending\n",
+                )
+            if with_completion_report:
+                write(refactor_dir / "refactor-gate-completion-report.md", "# Complete\n")
+            item, _ = build_status.refactor_item(refactor_dir, root)
+            return item
+
     def test_draft_plan_remains_at_explicit_plan_approval_gate(self):
         derived = self.feature_item("draft")["derived"]
 
@@ -98,6 +128,98 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
         self.assertTrue(derived["auto_continue_allowed"])
         self.assertFalse(derived["needs_user_decision"])
 
+    def test_refactor_scan_pending_does_not_auto_continue(self):
+        derived = self.refactor_item(scan_status="pending_review")["derived"]
+
+        self.assertEqual("cs-refactor", derived["next_skill"])
+        self.assertFalse(derived["auto_continue_allowed"])
+        self.assertTrue(derived["needs_user_decision"])
+        self.assertEqual([], derived["blockers"])
+
+    def test_refactor_scan_reviewed_auto_continues_to_refactor_skill(self):
+        item = self.refactor_item(scan_status="user-reviewed")
+        derived = item["derived"]
+
+        self.assertEqual("cs-refactor", derived["next_skill"])
+        self.assertTrue(derived["auto_continue_allowed"])
+        self.assertFalse(derived["needs_user_decision"])
+        self.assertEqual("user-reviewed", item["canonical"]["frontmatter"]["scan_status"])
+
+    def test_refactor_draft_design_blocks_with_awaiting_design_approval(self):
+        derived = self.refactor_item(
+            scan_status="user-reviewed", design_status="draft", with_checklist=True
+        )["derived"]
+
+        self.assertEqual("cs-refactor", derived["next_skill"])
+        self.assertFalse(derived["auto_continue_allowed"])
+        self.assertIn("awaiting_design_approval", derived["blockers"])
+
+    def test_refactor_approved_design_without_checklist_blocks_with_missing_required_artifact(self):
+        derived = self.refactor_item(scan_status="user-reviewed", design_status="approved")["derived"]
+
+        self.assertEqual("cs-refactor", derived["next_skill"])
+        self.assertFalse(derived["auto_continue_allowed"])
+        self.assertIn("missing_required_artifact", derived["blockers"])
+
+    def test_refactor_approved_design_with_checklist_auto_continues(self):
+        derived = self.refactor_item(
+            scan_status="user-reviewed", design_status="approved", with_checklist=True
+        )["derived"]
+
+        self.assertEqual("cs-refactor", derived["next_skill"])
+        self.assertTrue(derived["auto_continue_allowed"])
+        self.assertEqual([], derived["blockers"])
+
+    def test_refactor_completion_report_is_terminal_regardless_of_design_status(self):
+        derived = self.refactor_item(
+            scan_status="pending_review", design_status="draft", with_completion_report=True
+        )["derived"]
+
+        self.assertTrue(derived["canonical_complete"])
+        self.assertEqual("terminal", derived["continuation_mode"])
+
+    def test_refactor_apply_notes_blocks_with_terminal_stage_regardless_of_design_status(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            refactor_dir = root / ".codestable/refactors/2026-07-15-refactor-gate"
+            write(
+                refactor_dir / "refactor-gate-refactor-design.md",
+                "---\nstatus: draft\n---\n# Design\n",
+            )
+            write(refactor_dir / "refactor-gate-apply-notes.md", "# Apply notes\n")
+            item, _ = build_status.refactor_item(refactor_dir, root)
+
+        derived = item["derived"]
+        self.assertFalse(derived["canonical_complete"])
+        self.assertTrue(derived["needs_user_decision"])
+        self.assertIn("terminal_stage", derived["blockers"])
+
+    def audit_item(self, index_status: str = "") -> dict:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            audit_dir = root / ".codestable/audits/2026-07-15-audit-gate"
+            write(
+                audit_dir / "index.md",
+                f"---\nstatus: {index_status}\n---\n# Audit\n" if index_status else "# Audit\n",
+            )
+            item, _ = build_status.audit_item(audit_dir, root)
+            return item
+
+    def test_audit_active_index_needs_user_decision_and_is_not_complete(self):
+        derived = self.audit_item(index_status="active")["derived"]
+
+        self.assertTrue(derived["active"])
+        self.assertTrue(derived["needs_user_decision"])
+        self.assertFalse(derived["canonical_complete"])
+
+    def test_audit_superseded_index_is_canonical_complete(self):
+        item = self.audit_item(index_status="superseded")
+        derived = item["derived"]
+
+        self.assertFalse(derived["needs_user_decision"])
+        self.assertTrue(derived["canonical_complete"])
+        self.assertEqual("terminal", derived["continuation_mode"])
+        self.assertEqual("superseded", item["canonical"]["frontmatter"]["index_status"])
 
     def test_acceptance_cannot_complete_a_feature_with_a_draft_plan(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -157,6 +279,26 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
         self.assertFalse(item["derived"]["canonical_complete"])
         self.assertEqual("cs-feat-impl", item["derived"]["next_skill"])
         self.assertIn("missing_required_artifact", item["derived"]["blockers"])
+
+    def test_acceptance_with_pending_checks_cannot_complete_a_feature(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            feature_dir = root / ".codestable/features/2026-07-15-pending-acceptance-checks"
+            write(
+                feature_dir / "pending-acceptance-checks-design.md",
+                "---\nstatus: approved\nworkflow: hybrid\n---\n# Design\n",
+            )
+            write(feature_dir / "pending-acceptance-checks-plan.md", "---\nstatus: approved\n---\n# Plan\n")
+            write(
+                feature_dir / "pending-acceptance-checks-checklist.yaml",
+                "steps:\n  - action: implement\n    status: done\nchecks:\n  - item: scenario\n    status: pending\n",
+            )
+            write(feature_dir / "pending-acceptance-checks-acceptance.md", "# Partial acceptance\n")
+            item, _ = build_status.feature_item(feature_dir, root)
+
+        self.assertFalse(item["derived"]["canonical_complete"])
+        self.assertEqual("cs-feat-accept", item["derived"]["next_skill"])
+        self.assertIn("awaiting_acceptance_checks", item["derived"]["blockers"])
 
     def test_legacy_accepted_feature_remains_a_compatibility_terminal(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -220,7 +362,25 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
         self.assertEqual("terminal", completed["derived"]["continuation_mode"])
         self.assertFalse(premature["derived"]["canonical_complete"])
         self.assertTrue(premature["derived"]["active"])
-        self.assertEqual("cs-issue-analyze", premature["derived"]["next_skill"])
+        self.assertEqual("cs-issue-fix", premature["derived"]["next_skill"])
+        self.assertTrue(premature["derived"]["auto_continue_allowed"])
+
+    def test_draft_fast_path_fix_note_is_the_canonical_route_record(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            issue_dir = root / ".codestable/issues/2026-07-15-fast-path-decision"
+            write(issue_dir / "fast-path-decision-report.md", "---\nstatus: confirmed\n---\n# Report\n")
+            write(
+                issue_dir / "fast-path-decision-fix-note.md",
+                "---\nstatus: draft\npath: fast-track\n---\n# Fix note\n\n## 1. 问题描述\n## 2. 根因\n## 3. 修复方案\n",
+            )
+            item, _ = build_status.issue_item(issue_dir, root)
+
+        self.assertFalse(item["derived"]["canonical_complete"])
+        self.assertTrue(item["derived"]["active"])
+        self.assertEqual("cs-issue-fix", item["derived"]["next_skill"])
+        self.assertTrue(item["derived"]["auto_continue_allowed"])
+        self.assertEqual([], item["derived"]["blockers"])
 
 
     def test_standard_fix_note_requires_completed_status(self):
@@ -326,6 +486,25 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
         self.assertEqual(1, result.returncode)
         self.assertEqual(["README.md"], [item["path"] for item in failures])
 
+    def test_contract_checker_allows_hybrid_design_still_in_draft(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            write(root / "AGENTS.md", "单md文档不能超过500行\n")
+            write(
+                root / ".codestable/features/2026-07-15-fresh-design/fresh-design-design.md",
+                "---\nstatus: draft\nworkflow: hybrid\n---\n# Design\n",
+            )
+            result = subprocess.run(
+                [sys.executable, str(CONTRACT_CHECK_PATH), "--repo-root", str(root), "--json"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        payload = json.loads(result.stdout)
+        rules = {item["rule"] for item in payload["findings"]}
+        self.assertNotIn("feature_plan_presence", rules)
+        self.assertNotIn("feature_checklist_presence", rules)
+
     def test_contract_checker_reports_stale_and_duplicate_warning_baselines(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -417,6 +596,18 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
         item["consistency"]["state"] = "clean"
         item["derived"]["blockers"] = ["awaiting_plan_approval"]
         self.assertEqual("route_normally", decide(status)["action"])
+
+    def test_routing_cli_reverifies_freshness_against_canonical_artifacts(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            write(root / ".codestable/features/2026-07-15-drift/drift-design.md", "---\nstatus: approved\nworkflow: hybrid\n---\n# Design\n")
+            build = subprocess.run([sys.executable, str(BUILD_STATUS_PATH), "--repo-root", str(root)], capture_output=True, text=True, check=False)
+            self.assertEqual(0, build.returncode, build.stderr)
+            status_path = root / ".codestable/status.json"
+            write(root / ".codestable/features/2026-07-15-drift/drift-plan.md", "---\nstatus: approved\n---\n# Plan\n")
+            result = subprocess.run([sys.executable, str(ROUTING_PATH), str(status_path)], capture_output=True, text=True, check=False)
+        payload = json.loads(result.stdout)
+        self.assertEqual("inspect_canonical", payload["action"])
 
     def test_onboard_builder_copy_matches_canonical_tool(self):
         for name in ["build-status.py", "check-ccg-tasks.py", "check-workflow-contracts.py", "sync-skills.sh", "workflow-routing.py"]:

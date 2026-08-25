@@ -69,7 +69,7 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 2. 修复改动很小（1-2 处）
 3. 无跨模块影响风险
 
-流程压缩成：AI 读代码 → 直接告知根因 + 修复方案 → 用户确认 → AI 修复 → 用户验证通过 → AI 写 `{slug}-fix-note.md`。只产出一份 `fix-note.md`，省掉 report 和 analysis。
+流程压缩成：AI 读代码 → 直接告知根因 + 修复方案 → 用户确认并建立 `status: draft` 的 `{slug}-fix-note.md` → AI 修复 → 用户验证通过 → AI 补全并完成 `{slug}-fix-note.md`。不产出 analysis。
 
 **判定口径**：是否进快速通道由 `cs-issue-report` 的启动检查做唯一正式判定。一旦进标准路径默认不再二次改判——避免三个阶段对路径各说各话。
 
@@ -86,7 +86,8 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 | 用户只回 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复，且存在唯一候选 issue 目录 | **先按 continuation-first 续作**：直接根据该目录现有产物判断 report / analyze / fix，不重复按新 issue 路由 |
 | 刚发现问题，没有任何文件 | `cs-issue-report`（那里判断走标准还是快速） |
 | `report.md` 是 `status=draft`，没 `analysis.md` | `cs-issue-report`：完成 report checkpoint；不得提前进入 analyze |
-| `report.md` 已 `status=confirmed`，没 `analysis.md` | `cs-issue-analyze`（包括用户刚在 report 阶段明确回复“确认 / 继续”的续作场景） |
+| `report.md` 已 `status=confirmed`，有未 `completed` 的 `fix-note.md`，没 `analysis.md` | `cs-issue-fix`（快速通道，draft fix-note 是已确认方案的恢复记录） |
+| `report.md` 已 `status=confirmed`，没 `analysis.md` 和 `fix-note.md` | `cs-issue-analyze`（包括用户刚在 report 阶段明确回复“确认 / 继续”的续作场景） |
 | `analysis.md` 是 `status=draft`，代码还没改 | `cs-issue-analyze`：完成 fix-option checkpoint；不得提前进入 fix |
 | `analysis.md` 已 `status=confirmed`，代码还没改 | `cs-issue-fix` |
 | 代码已改，还没修复验证记录 | `cs-issue-fix`（走验证） |

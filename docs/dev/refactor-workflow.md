@@ -44,7 +44,7 @@ CodeStable 当前的 refactor 主线是：
 
 ### 2. 进入 design 阶段
 
-当 scan 条目已勾选后，进入：
+当 scan 条目已勾选并写为 `status: user-reviewed` 后，进入：
 
 - `design`
 
@@ -61,7 +61,7 @@ CodeStable 当前的 refactor 主线是：
 
 只有当下面两项都齐备时，才进入：
 
-- `refactor-design.md`
+- `refactor-design.md`（`status: approved`）
 - `checklist.yaml`
 
 对应阶段：

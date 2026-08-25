@@ -556,6 +556,9 @@ def check_legacy_features(root: Path, report: Report):
             meta, body = parse_frontmatter(text or "")
             sample_feature = is_sample_feature(feature_dir, meta, body)
             workflow = meta.get("workflow")
+            design_status = str(meta.get("status") or "").strip().lower()
+            if workflow == "hybrid" and design_status != "approved":
+                continue
             if workflow == "hybrid":
                 if not plan_exists:
                     if sample_feature:

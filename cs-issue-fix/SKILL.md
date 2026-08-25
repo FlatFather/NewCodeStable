@@ -40,10 +40,10 @@ fix 阶段最容易出问题的不是改代码本身，而是**改的过程中�
 
 1. **明确陈述根因**："`{文件}:{行号}` 的 {具体代码} 存在 {问题描述}"，让用户确认根因判断准确
 2. **给修复方案**——改哪里、怎么改（一两句话，不写完整分析文档）
-3. **等用户明确说"对，就这样改"才动手**——这是快速通道保留的人类拍板点，不允许"我觉得对，直接改了"
+3. **等用户明确说"对，就这样改"才动手**——这是快速通道保留的人类拍板点；确认后立刻建 `status: draft` 的 `{slug}-fix-note.md`，先写第 1-3 节作为 canonical 决策记录，绝不只留在对话里
 4. 读 `.codestable/attention.md`
 5. **补搜沉淀目录**——快速通道也要查一遍 `compound/`（trick + explore），避免误把已知边界条件当新问题
-6. **短回复 continuation-first**——如果用户这轮输入只是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步`，先恢复已有 fix-note / 代码修改 / 验证状态；必要时再参考 `.ccg/tasks/*/task.json` 作为恢复桥，但不把 task 文件当成 fix 真相源
+6. **短回复 continuation-first**——如果用户这轮输入只是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步`，先读 draft fix-note 恢复已确认的根因与方案，再检查代码修改 / 验证状态；必要时再参考 `.ccg/tasks/*/task.json` 作为恢复桥，但不把 task 文件当成 fix 真相源
 7. 用户已在 report 阶段确认根因与修复方案后，后续 continuation 不再重复补问"现在开始修吗"；除非出现新的 scope blocker、多个候选根因、或前置重构分歧
 
 ---
@@ -104,7 +104,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 ## 写 {slug}-fix-note.md
 
-验证通过后在 issue 目录建 `{slug}-fix-note.md`（位置见 `cs-issue` 的“文件放哪儿”），记录完整闭环，并将 frontmatter 写为 `status: completed`。标准路径模板和快速通道模板都在同目录 `reference.md`；验证尚未完成时不得提前写 completed。
+验证通过后补全 `{slug}-fix-note.md` 的改动、验证与遗留内容，再将 frontmatter 从 `status: draft` 改为 `status: completed`。标准路径可在此时新建；快速通道必须复用确认后已建的 draft。两种模板都在同目录 `reference.md`；验证尚未完成时不得提前写 completed。
 
 ---
 

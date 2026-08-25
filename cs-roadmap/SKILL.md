@@ -82,7 +82,7 @@ description: 把"大到塞不进单个 feature"的需求做成完整事前规划
 
 ### Phase 2：读取材料
 
-**共同必读**：`.codestable/attention.md` + 用户素材 + `roadmap/` 其他 roadmap（防重复）+ `requirements/` 相关 req + `architecture/` 相关 doc。
+**共同必读**：`.codestable/attention.md` + 用户素材 + `roadmap/` 其他 roadmap（防重复）+ `requirements/` 相关 req + `architecture/` 相关 doc + `brainstorms/` 下相关创意记录（`cs-brainstorm` case 4 产出，当输入材料读，不重复分诊）。
 
 **按情况读**：
 - 相关 compound 沉淀：`python .codestable/tools/search-yaml.py --dir .codestable/compound --query "{大需求关键词}"`

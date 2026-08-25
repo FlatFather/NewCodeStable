@@ -21,7 +21,7 @@
 - refactor：该 refactor 目录下的 scan / design / checklist / apply-notes
 - requirements / architecture / roadmap：各自目录中的正式文档
 
-说明：issue 目录中只有 fix-note 的历史 fast-path 兼容记录，属于 compatibility terminal record，不构成 canonical conflict。
+说明：issue 目录中只有 fix-note 的历史 fast-path 兼容记录，属于 compatibility terminal record，不构成 canonical conflict；report 已 confirmed 且 fix-note 未 completed（无 analysis）是进行中的 fast-path，同属 canonical，不是冲突。
 
 ## Bridge-Only Artifacts
 

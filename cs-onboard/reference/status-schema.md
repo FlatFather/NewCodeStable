@@ -139,6 +139,7 @@
 - `awaiting_plan_approval`
 - `awaiting_report_confirmation`
 - `awaiting_fix_option_selection`
+- `awaiting_acceptance_checks`
 - `scope_expansion_required`
 - `multiple_candidates`
 - `ambiguous_next_step`
@@ -151,6 +152,7 @@
 - `awaiting_plan_approval`：plan/checklist 已产出但执行顺序尚未获得进入实现的批准
 - `awaiting_report_confirmation`：issue report 尚未确认，不能进入根因分析
 - `awaiting_fix_option_selection`：issue 分析后仍待用户在候选修复方案中做选择
+- `awaiting_acceptance_checks`：acceptance.md 已产出但 checklist 的 `checks` 尚未全部 `passed`，不能终态化
 - `scope_expansion_required`：下一步会超出当前已批准范围，必须先扩 scope
 - `multiple_candidates`：存在多个合理续作候选，无法唯一恢复
 - `ambiguous_next_step`：对象虽唯一，但下一步动作不唯一或无法稳定判定
@@ -165,6 +167,10 @@
 - `conflict`：canonical 产物之间存在必须显式处理的矛盾
 
 兼容说明：issue 目录中只有 fix-note 的 fast-path 终态记录时，可以标记为 `compatibility`，不得仅因此视为 conflict。
+
+进行中说明：`report.md status=confirmed` 且存在未 `completed` 的 `fix-note.md`（无 `analysis.md`）是快速通道进行中状态，`next_skill` 解析为 `cs-issue-fix` 且 `auto_continue_allowed=true`，不是 blocker。
+
+refactor 进行中说明：`scan.md status=user-reviewed` 才可自动续作到 `cs-refactor` 的 design；`refactor-design.md status=approved` 且有 `checklist.yaml` 才可自动续作 apply；`completion-report.md` 优先表示终态。
 
 ## Consumer Obligations
 

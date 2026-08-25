@@ -63,7 +63,7 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 
 ### Fastforward 模式
 
-需求清楚 + 范围小时走完整五阶段太啰嗦。fastforward 把 design 压成 4 节（需求摘要 / 设计方案 / 验收标准 / 推进步骤），用户一次确认后直接实现。触发："快速模式"、"fastforward"、"直接开干"、"别那么多步骤"，去 `cs-feat-ff`。
+需求清楚 + 范围小时走完整五阶段太啰嗦。fastforward 不写 design / checklist / 验收清单，直接实现，写完代码后回写一份最简 `{slug}-ff-note.md`（需求摘要 / 改了哪些 / 怎么验证的）留痕。触发："快速模式"、"fastforward"、"直接开干"、"别那么多步骤"，去 `cs-feat-ff`。
 
 **别走** fastforward：跨多个子系统、有术语冲突风险、推进步骤超过 4 步——这些情况跳过 design 意味着 AI 和用户没共同确认过同一份方案，实现完容易发现彼此理解不一样。
 
@@ -165,12 +165,11 @@ AI：  "让我先搜索一下... {fast-context 搜索 '权限 / permission / aut
 | 用户说"开一个新需求 / 起草稿 / 新建 feature"想自己写半成品 | `cs-feat-design` 的"初始化模式"（建目录并起一份 intent 草稿，让用户填完再回） |
 | 用户主动说"先 brainstorm 一下"、"有个想法没想清楚" | `cs-brainstorm` |
 | `{slug}-intent.md` 已填好 | `cs-feat-design`（读 intent 作输入） |
-| 用户说"快速模式 / fastforward" | `cs-feat-ff` |
+| 用户说"快速模式 / fastforward" | `cs-feat-ff`（内部直接实现 + 回写 `ff-note.md`，不再回到本表） |
 | `{slug}-brainstorm.md` 已存在，要进设计 | `cs-feat-design` |
 | `{slug}-design.md` 已 approved，`plan.md` / checklist 还没落齐 | `cs-feat-plan`（包括 design 阶段刚确认后的续作场景） |
 | `plan.md` + `checklist.yaml` 已齐，但 `plan.md` 仍是 `status=draft` | `cs-feat-plan`：只汇报执行顺序并等待 plan checkpoint，不得进入实现 |
 | `plan.md` 已 `status=approved` + checklist 已齐、代码没动 | `cs-feat-impl` |
-| fastforward design 已确认 | `cs-feat-impl` |
 | 代码已写完要验收 | `cs-feat-accept` |
 | 用户说"我想要一个 X 系统"大需求 | 转 `cs-brainstorm` 分诊（大概率 case 3 → `cs-roadmap`） |
 | roadmap 里某条子 feature 该启动 | `cs-feat-design` 的"从 roadmap 条目起头"入口 |

@@ -58,11 +58,9 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 - 第 2.3 挂载点按"删了它 feature 是否消失"判据，没把内部代码改动误列进来
 - 第 3 节有关键场景清单 + 反向核对项（不含测试代码 / framework 选型）
 
-**Fastforward design**（节 0/1/2/3）：
-- 第 0 含"明确不做"；第 1 有改动点（文件 + 函数/类型名）
-- 第 2 验收标准每条可验证；第 3 推进步骤有退出信号
-
 任一项不达标 → 退回 `cs-feat-design` 补齐。原因：方案漏的项实现时一定要现场补，等于绕过 checkpoint。
+
+**注意**：本技能只服务标准 `design + plan + checklist` feature；`cs-feat-ff` 快速通道不写 design，代码写完由该技能自身直接回写 `ff-note.md`，不会 handoff 到本技能。
 
 **注意**：标准 design 第 3 节"验收契约"只说"做完后什么应该成立"，不说"具体怎么做"。改动文件清单 / 函数级落点 / 测试代码归 implement 自决，不要因为 design 里没写就退回去要求补。
 
@@ -77,7 +75,7 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 - 方案 doc 全文（标准 design 重点：第 1 节、2.1/2.2/2.3/2.4、3）
 - `{slug}-checklist.yaml`、需求来源（用户描述 + brainstorm note）、`.codestable/attention.md`
 - 标准 feature：把 `{slug}-plan.md` 与 design 一起读全；plan 是 detailed step source，checklist 是状态载体；当 feature 命中标准主线时，plan 不再是抽象占位词，而是必须存在的真实输入，缺失时当前实现阶段必须停下并退回 `cs-feat-plan` 生成
-- 第 2.1 节接口示例的来源位置 / fastforward 第 1 节改动点提到的代码文件——读相关函数即可
+- 第 2.1 节接口示例的来源位置——读相关函数即可
 
 ### 4. 自动恢复起点并汇报
 
@@ -126,8 +124,6 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 **标准 design**：新写的类型 / 函数 / 变量名都要去方案 doc 第 0 节对照，不允许出现 doc 里没有的新概念。要引入新概念 → 先停下来改第 0 节、grep 防冲突、用户确认。
 
-**Fastforward design**：没有正式术语表，但要新起概念名时也要 grep 一下当前代码防冲突。
-
 代价：术语冲突意味着同概念两个名字 / 同名字两个概念——后者会让搜索完全失效。
 
 ### 出现"补丁分支"的冲动时停下来
@@ -169,7 +165,7 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 {是 / 否。是的话说明原因 + 是否已同步更新方案 doc}
 
 ### 是否引入了方案 doc 里没有的新概念 / 抽象？
-{是 / 否。是的话说明已回填方案 doc（标准 design 补第 0 节 + 第 2.1 节；fastforward 补第 1 节）并做过 grep 防冲突}
+{是 / 否。是的话说明已回填方案 doc 第 0 节 + 第 2.1 节，并做过 grep 防冲突}
 
 ### 代码质量反射检查自检
 {对照 shared-conventions 第 7 节，触发哪些信号 + 怎么处理；都没触发写"无触发"}
@@ -178,8 +174,7 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 {对照 steps 逐条列 action + exit_signal + status（应全为 done）}
 
 ### 验收场景自检
-**标准 design**：对照第 3 节关键场景清单，每条靠什么证据满足（类型 / 单测 / 集成 / 手工 / assert）+ 反向核对项是否守住
-**Fastforward design**：对照第 2 节验收标准逐条核对
+对照第 3 节关键场景清单，每条靠什么证据满足（类型 / 单测 / 集成 / 手工 / assert）+ 反向核对项是否守住
 ```
 
 汇报后停等 review。
@@ -203,7 +198,7 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 - [ ] 所有 steps 的 status 都 `done`
 - [ ] 完成汇报已输出，用户 review 通过
 - [ ] 没有未处理的"需要叫停"信号
-- [ ] 第 3 节关键场景每条都有证据 / 测试覆盖（fastforward 对照第 2 节）
+- [ ] 第 3 节关键场景每条都有证据 / 测试覆盖
 - [ ] 没有"顺手发现"被偷偷修掉（都进 issue 列表）
 - [ ] 没有方案外文件改动（或已同步更新方案 doc）
 

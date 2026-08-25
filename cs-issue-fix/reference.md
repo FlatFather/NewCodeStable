@@ -70,11 +70,13 @@ tags: []
 
 ## 4. `{slug}-fix-note.md` 快速通道模板
 
+用户口头确认根因与方案后立刻建档，`status: draft`，只填第 1-3 节；验证通过后补 4-6 节并把 `status` 改为 `completed`。
+
 ```markdown
 ---
 doc_type: issue-fix
 issue: {issue 目录名}
-status: completed
+status: draft
 path: fast-track
 fix_date: YYYY-MM-DD
 tags: []
