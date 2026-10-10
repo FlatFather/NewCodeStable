@@ -15,7 +15,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 **做事**——从一段模糊想法走到上线的功能、或者从一份错误报告走到修好的 bug:
 
-- `cs-feat` — 新功能，design → plan → 分步实现 → 验收闭环；`cs-feat-design` 只负责范围与约束，`cs-feat-plan` 负责生成 `plan.md` + `checklist.yaml` 并形成进入实现前的独立确认关口。想法模糊时先走讨论层 `cs-brainstorm` 做分诊（阶段 0，可选且是 feature 流程的外部入口）；fastforward 保持为独立快路径。
+- `cs-feat` — 新功能，`[需求模糊时 brainstorm] → design → plan → 分步实现 → verify + ship`；`cs-feat` 承担语义 Stage 0 轻量分诊。`cs-feat-design` 只负责范围、约束与测试观察点，`cs-feat-plan` 负责生成 `plan.md` + `checklist.yaml` 并形成进入实现前的独立确认关口。需求模糊时深化进入讨论层 `cs-brainstorm`；大需求移交 roadmap。fastforward 保持为独立快路径。
 - `cs-issue` — 修 bug,report → analyze → fix
 - `cs-refactor` — 代码优化(行为不变、结构/性能/可读性变),scan → design → apply；`cs-refactor-ff` 是同流程的超轻量快路径（1-3 条低风险优化、单次确认）
 
@@ -31,7 +31,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 
 **讨论层**——想法还模糊时的统一入口,不直接产出设计或代码:
 
-- `cs-brainstorm` — 和用户对话做分诊:case 1(已经够清楚,直接 feature-design)、case 2(小需求,在 feature 里继续讨论并落 `{slug}-brainstorm.md`)、case 3(大需求,移交给 roadmap)、case 4(大需求仍需发散,落 `.codestable/brainstorms/{slug}/brainstorm.md` 供 roadmap 读取)
+- `cs-brainstorm` — 语义 Stage 0 的深化入口,不是所有 feature 的必经技能。case 1(已经够清楚,直接 feature-design)、case 2(小需求,在 feature 里继续讨论并落 `{slug}-brainstorm.md`)、case 3(大需求,移交给 roadmap)、case 4(大需求仍需发散,落 `.codestable/brainstorms/{slug}/brainstorm.md` 供 roadmap 读取)
 
 **辅助**——围着前几类转的周边工具:
 
@@ -87,7 +87,7 @@ learning / trick / decision / explore 都是存档文档类型，区别在记录
 
 ## feature 和 issue 的阶段不可跳
 
-feature 走 brainstorm(可选) → design → plan → implement → acceptance；`plan` 是进入实现前的独立阶段，负责生成详细步骤正文与 checklist，issue 走 report → analyze → fix。每个阶段有退出条件,上一个没满足,下一个不开始。
+feature 走 `brainstorm（语义阶段，条件触发） → design → plan → implement → verify → ship`；其中 Verify 与 Ship 由 `cs-feat-accept` 承载。`plan` 是进入实现前的独立阶段，负责生成详细步骤正文与 checklist；`implement` 的每个 step 必须有新鲜验证证据。每个阶段有退出条件,上一个没满足,下一个不开始。issue 走 report → analyze → fix。
 
 AI 最常见的问题是一口气铺几百行代码才让人看——等发现问题已经很难中止。阶段间的人工 checkpoint 就是为了早一步中止。每个 checkpoint 具体检查什么,对应子技能里讲。
 

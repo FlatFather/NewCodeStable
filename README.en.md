@@ -93,7 +93,7 @@ Normative definition:
 
 | Scenario | Lane |
 |---|---|
-| New feature | `cs-feat-design → cs-feat-plan → cs-feat-impl → cs-feat-accept` |
+| New feature | `cs-feat → [cs-brainstorm only when the requirement is still fuzzy] → cs-feat-design → cs-feat-plan → cs-feat-impl → cs-feat-accept` |
 | Bug fix | `cs-issue-report → cs-issue-analyze → cs-issue-fix` |
 | Refactor | `cs-refactor` (standard 3-stage flow: scan → design → apply) |
 | Proactive problem scan | `cs-audit` |
@@ -105,7 +105,7 @@ Normative definition:
 
 ### Discussion / planning entry
 
-- `cs-brainstorm`: triage when the idea is still fuzzy
+- `cs-brainstorm`: the semantic Stage 0 requirement-clarification entry, used conditionally; clear requirements go directly from `cs-feat` to design
 - `cs-roadmap`: break down large work before splitting into sub-features
 
 > Fastforward only holds inside low-complexity boundaries. Once thresholds are exceeded, it auto-normalizes back to the standard lane. See the workflow guides and terminology doc for details.

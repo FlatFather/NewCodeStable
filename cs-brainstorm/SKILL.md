@@ -15,7 +15,7 @@ description: 想法还模糊时的讨论入口，做分诊后路由到 feature-d
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
-brainstorm 是"讨论层"统一入口。
+brainstorm 是"讨论层"统一入口，也是 feature 语义流程 **Stage 0（需求澄清）的深化入口**。它不是所有 feature 的必经技能：`cs-feat` 已内置轻量分诊，需求清楚时可直接进入 `cs-feat-design`；需求模糊或用户明确想 grill 时才进入本技能。case 3 / case 4 的出口是 roadmap，不留在单 feature 主线。
 
 三件最重要的事：
 
@@ -39,6 +39,8 @@ brainstorm 是"讨论层"统一入口。
 | **case 4：大需求，想 grill** | 多 feature | 还不想拆——想先 grill、发散、产生想法存着 | `.codestable/brainstorms/{slug}/brainstorm.md` → 之后 `cs-roadmap` 读到 |
 
 判错 case 不是灾难——**允许升降级**。case 2 聊着发现范围越聊越大切 case 3/4，case 3 聊着发现需要先 grill 切 case 4，case 4 grill 完可以直接拆切 case 3，当场切换出口。
+
+**Stage 0 Gate**：进入 design 前至少确认四件事——真问题 / 核心行为 / 成功标准 / 明确不做；关键业务取舍必须由用户拍板。case 2 还要把结论落成可检查的业务规则。case 1 不落盘不代表 Gate 被跳过，只是澄清结果已由需求输入满足。
 
 ### 开聊前检查
 

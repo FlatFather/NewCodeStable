@@ -206,7 +206,7 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 ## 退出后
 
-完成汇报获得用户 review 通过后，告诉用户“所有步骤完成，方案 doc 已同步，现在进入阶段 4 验收闭环”，并立即 handoff 到 `cs-feat-accept`；不得再要求一次“继续验收”的确认。恢复场景中，如果唯一 canonical 候选已表明实现完成且只差验收，也直接进入 `cs-feat-accept`。
+完成汇报获得用户 review 通过后，告诉用户“所有步骤完成，方案 doc 已同步，现在进入 `cs-feat-accept` 的 Verify → Ship”，并立即 handoff 到 `cs-feat-accept`；不得再要求一次“继续验收”的确认。恢复场景中，如果唯一 canonical 候选已表明实现完成且只差验收，也直接进入 `cs-feat-accept`。
 
 用户尚未 review 实现汇报时不得提前写验收报告；review 通过后的直接 handoff 不属于提前进入。
 

@@ -12,13 +12,16 @@ tags: [workflow, feature, cs-feat, cs-feat-plan, codestable]
 
 CodeStable 当前的活跃 feature 主线已经从过去的“design 后直接 impl”演进为显式的：
 
-`cs-feat-design → cs-feat-plan → cs-feat-impl → cs-feat-accept`
+`cs-feat → [需求模糊时 cs-brainstorm] → cs-feat-design → cs-feat-plan → cs-feat-impl → cs-feat-accept`
+
+Brainstorm 是**语义 Stage 0（需求澄清）**，不是每个 feature 的强制技能。`cs-feat` 内置轻量分诊：需求已清楚时直接进入 design；需求模糊时进入 `cs-brainstorm` 深化；大需求分诊后移交 `cs-roadmap`。标准实现主体仍从 design 开始。
 
 其中：
-- `design` 只负责确定范围、术语、约束和验收契约
+- `design` 只负责确定范围、术语、约束、验收契约和测试观察点
 - `plan` 负责把已批准的 design 展开成**文件级改动计划**，并同时生成 `checklist.yaml`
 - `impl` 只在 design 与 plan 都已 approved、checklist 已齐备后才能启动
-- `accept` 对照 `design + plan + checklist` 做最终核验
+- `impl` 在每个 step 的新鲜验证证据通过后才标 `done`
+- `accept` 内部先做 Verify（Standards Review + Spec Review），blocker 清零后再做 Ship（回写、沉淀与 Handoff）
 
 fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录只作留档兼容读取，不再作为新 feature 的活跃标准口径。
 
@@ -46,6 +49,7 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 先走：
 
 - `cs-feat` → 路由判断
+- 需求模糊时 → `cs-brainstorm`，完成语义 Stage 0 的需求澄清与分诊
 - `cs-feat-design` → 产出并批准 `design.md`
 
 此时还**不会**进入实现。
@@ -114,6 +118,7 @@ fastforward 继续作为小需求的独立快路径存在；历史 legacy 目录
 
 以下 handoff 在 canonical artifacts 唯一、fresh 且无 blocker 时自动发生：
 
+- clear or completed brainstorm input → `cs-feat-design`
 - approved feature design → `cs-feat-plan`
 - approved feature plan/checklist → `cs-feat-impl`
 - completed feature checklist → `cs-feat-accept`
@@ -179,6 +184,7 @@ plan 的意义不是“把 design 写得更长”，而是提供**可执行的�
 
 职责：
 - 只做 feature 路由判断
+- 承担语义 Stage 0 的轻量分诊：需求清楚 → design；需求模糊 → brainstorm；大需求 → roadmap
 - 把用户导向：brainstorm / design / plan / impl / accept / fastforward
 
 ### `cs-feat-design`
@@ -201,13 +207,13 @@ plan 的意义不是“把 design 写得更长”，而是提供**可执行的�
 - 读取 `design + plan + checklist`
 - 按 checklist 状态推进实现
 - 详细步骤解释以 plan 为准
+- 每个 step 必须拿到新鲜验证证据后才标 `done`
 
 ### `cs-feat-accept`
 
 职责：
-- 对照 `design + plan + checklist` 验收
-- 补 acceptance 报告
-- 完成 architecture / requirement / roadmap 回写（如需要）
+- **Verify**：固定 diff 基准后，分开执行 Standards Review 与 Spec Review；blocker 未清零不进入 Ship
+- **Ship**：补 acceptance 报告，完成 architecture / requirement / roadmap 回写（如需要），评估 Handoff 与发布 / 回滚信息
 
 ## 常见场景
 
@@ -219,7 +225,7 @@ plan 的意义不是“把 design 写得更长”，而是提供**可执行的�
 
 流程：
 
-`cs-feat` → `cs-feat-design` → `cs-feat-plan` → `cs-feat-impl` → `cs-feat-accept`
+`cs-feat` → `[需求模糊时 cs-brainstorm]` → `cs-feat-design` → `cs-feat-plan` → `cs-feat-impl` → `cs-feat-accept`
 
 ### 场景 2：小需求快路径
 
@@ -248,7 +254,8 @@ plan 的意义不是“把 design 写得更长”，而是提供**可执行的�
 ## 已知限制与注意事项
 
 - 当前仓库仍保留历史 legacy 目录，但它们只作留档兼容读取，不再代表活跃标准主线。
-- `cs-feat-plan/reference.md` 里的 Step 模板是 paradigm 维度的分步计划，不下沉到 file:line / 函数级；具体改哪个文件由 implement 阶段决定。
+- `cs-feat-plan/reference.md` 里的 Step 模板是 paradigm 维度的分步计划，不下沉到 file:line / 函数级；具体改哪个文件由 implement 阶段决定。跨层 feature 优先拆成可独立验证的端到端切片，不按技术层水平堆任务。
+- `cs-feat-accept` 当前同时承载 Verify 与 Ship；这是有意的技能结构，不代表 Ship 可以省略 Handoff、回滚路径和遗留风险的交付语义。
 - `workflow-check` 的适用边界仍需与新主线继续同步演进，尤其在“历史 legacy 目录兼容读取”与“新 feature 必须走 plan”之间保持清晰区分。
 
 ## 相关文档

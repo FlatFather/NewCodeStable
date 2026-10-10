@@ -58,14 +58,14 @@ FEATURE_FLOW_EXPECTATIONS = {
         ".codestable/reference/workflow-contract.md",
     ],
     "cs/SKILL.md": [
-        "`cs-feat-design` → `cs-feat-plan` → `cs-feat-impl` → `cs-feat-accept`",
+        "`cs-feat` → `[需求模糊时 cs-brainstorm]` → `cs-feat-design` → `cs-feat-plan` → `cs-feat-impl` → `cs-feat-accept`",
     ],
     "docs/dev/feature-workflow.md": [
-        "`cs-feat-design → cs-feat-plan → cs-feat-impl → cs-feat-accept`",
+        "`cs-feat → [需求模糊时 cs-brainstorm] → cs-feat-design → cs-feat-plan → cs-feat-impl → cs-feat-accept`",
     ],
     ".codestable/reference/system-overview.md": [
         "design + plan + checklist + acceptance",
-        "design → plan → implement → acceptance",
+        "brainstorm（语义阶段，条件触发） → design → plan → implement → verify → ship",
     ],
     ".codestable/reference/shared-conventions-feature.md": [
         "design + plan + checklist + acceptance",

@@ -1,6 +1,6 @@
 ---
 name: cs-feat-accept
-description: feature 流程阶段 4——验收闭环：对照 design / plan 核实现 + 回写 architecture / requirement / roadmap，最后产出 {slug}-acceptance.md。触发：用户说"功能写完了验收一下"、"做最后检查"、"准备 merge"、"出验收报告"。前置依赖 cs-feat-impl 完成。
+description: feature 流程技术阶段 4——在同一技能内承载语义 Verify 与 Ship：先对照 design / plan / checklist 做核验，blocker 清零后回写 architecture / requirement / roadmap 并完成 Handoff，最后产出 {slug}-acceptance.md。触发：用户说"功能写完了验收一下"、"做最后检查"、"准备 merge"、"出验收报告"。前置依赖 cs-feat-impl 完成。
 ---
 
 # cs-feat-accept
@@ -18,16 +18,21 @@ description: feature 流程阶段 4——验收闭环：对照 design / plan 核
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
-代码已经写完，但流程没结束。本阶段只适用于标准 `design + plan + checklist` feature，做四件事，缺一不可：
+代码已经写完，但流程没结束。本阶段只适用于标准 `design + plan + checklist` feature，并在语义上分为两道关口：**先 Verify，后 Ship**。Verify 做两件，缺一不可：
 
-1. **核对实现有没有偏离方案**——逐层对照 `{slug}-design.md` 与 `{slug}-plan.md`；发现偏差当场修，**不是在报告里"记一下"**就过去
-2. **把 feature 归并到整体架构**——对照方案第 4 节，实际去更新架构中心目录下的相关 doc
-3. **能力落档到 requirement**——draft req 对应的能力实现完成后升级为 current（保留愿景，追加变更日志）；从未写过 req 的能力 backfill
-4. **完成状态回写到 roadmap**——方案 frontmatter 有 `roadmap` / `roadmap_item` 字段时**必须**改 items.yaml 对应条目为 `done` 并同步主文档
+1. **Standards Review（实现与方案 / 计划 / checklist 一致）**——逐层对照 `{slug}-design.md`、`{slug}-plan.md` 与 `{slug}-checklist.yaml`；发现偏差当场修，**不是在报告里"记一下"**就过去
+2. **Spec Review（验收场景与质量守护）**——逐条核对 design 第 3 节关键场景、测试观察点与反向核对项；测试通过不等于场景满足
 
-漏掉任何一件的代价：架构 doc 过期下个 feature 读到错信息；req 和实际能力脱节；roadmap 规划层和实际进度脱节，下次推进会重复跑流程。
+blocker 清零后，才进入 Ship。Ship 做四件事，缺一不可：
 
-**没产出报告 = 工作流未完成**。后人查"上次这个功能验收时确认了哪些行为"，没报告就只能翻 git diff 重新推断。
+1. **把 feature 归并到整体架构**——对照方案第 4 节，实际去更新架构中心目录下的相关 doc
+2. **能力落档到 requirement**——draft req 对应的能力实现完成后升级为 current（保留愿景，追加变更日志）；从未写过 req 的能力 backfill
+3. **完成状态回写到 roadmap**——方案 frontmatter 有 `roadmap` / `roadmap_item` 字段时**必须**改 items.yaml 对应条目为 `done` 并同步主文档
+4. **完成交付 Handoff**——补 acceptance 报告中的遗留风险、发布 / 部署注意事项与回滚 / 止损路径；用户终审前不得宣告 Ship 完成
+
+漏掉任何一件的代价：架构 doc 过期下个 feature 读到错信息；req 和实际能力脱节；roadmap 规划层和实际进度脱节；交付者只能靠翻 git diff 重新推断风险和恢复路径。
+
+**没产出报告 = 工作流未完成**。后人查"上次这个功能验收时确认了哪些行为、交付后要小心什么"，没报告就只能翻 git diff 重新推断。
 
 > 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。
 

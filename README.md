@@ -93,7 +93,7 @@ CodeStable 编排的不是 Agent 团队，而是**软件本身的生命周期**�
 
 | 场景 | 主线 |
 |---|---|
-| 新功能 | `cs-feat-design → cs-feat-plan → cs-feat-impl → cs-feat-accept` |
+| 新功能 | `cs-feat → [需求模糊时 cs-brainstorm] → cs-feat-design → cs-feat-plan → cs-feat-impl → cs-feat-accept` |
 | 修 bug | `cs-issue-report → cs-issue-analyze → cs-issue-fix` |
 | 重构 | `cs-refactor`（标准三阶段：scan → design → apply） |
 | 主动扫描问题 | `cs-audit` |
@@ -105,7 +105,7 @@ CodeStable 编排的不是 Agent 团队，而是**软件本身的生命周期**�
 
 ### 讨论入口
 
-- `cs-brainstorm`：想法还没收敛时先分诊
+- `cs-brainstorm`：语义 Stage 0 / 需求澄清的条件入口；需求已清楚时由 `cs-feat` 直接进入 design
 - `cs-roadmap`：大需求先拆 roadmap，再拆子 feature
 
 > fastforward 只在低复杂度边界内成立；一旦超阈值，会自动回到标准 lane。详细边界见相关指南和术语文档。

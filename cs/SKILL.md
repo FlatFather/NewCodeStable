@@ -57,7 +57,7 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 
 **三条流程**：
 
-- **新增能力**：`cs-feat-design` → `cs-feat-plan` → `cs-feat-impl` → `cs-feat-accept`（想法模糊先 `cs-brainstorm` 分诊）
+- **新增能力**：`cs-feat` → `[需求模糊时 cs-brainstorm]` → `cs-feat-design` → `cs-feat-plan` → `cs-feat-impl` → `cs-feat-accept`；`cs-feat` 承担语义 Stage 0 轻量分诊
 - **修 bug**：`cs-issue-report` → `cs-issue-analyze` → `cs-issue-fix`
 - **重构**：`cs-refactor` / `cs-refactor-ff`
 

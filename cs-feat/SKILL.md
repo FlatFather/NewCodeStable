@@ -18,10 +18,10 @@ description: 新功能开发的子流程入口，把"加个 X 能力"从想法�
 新功能流程在"需求"和"代码"之间塞了一份方案文件，让两边有交接点——AI 直接拿到需求就写代码会出三个老问题：名字跟原代码对不上、改着改着改出范围、改完不留存档。
 
 ```
-(想法模糊先去 cs-brainstorm 分诊) → 方案设计（名词层 + 编排层 + 验收契约 + 推进策略切片）→ 执行计划（plan + checklist）→ 分步实现 → 验收闭环
+cs-feat 分诊 → [需求模糊时 cs-brainstorm] → 方案设计（名词层 + 编排层 + 验收契约 + 测试观察点 + 推进策略切片）→ 执行计划（plan + checklist）→ 分步实现（新鲜证据）→ Verify（Standards / Spec 双轴）→ Ship（回写 + Handoff）
 ```
 
-brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 design）/ case 2（小需求继续讨论 → 落 brainstorm note）/ case 3（大需求 → 移交 `cs-roadmap`）。只有 case 2 在 feature 目录产出 brainstorm note。
+brainstorm 是语义 Stage 0 的深化入口，会分诊：case 1（清楚 → 直接 design）/ case 2（小需求继续讨论 → 落 brainstorm note）/ case 3（大需求 → 移交 `cs-roadmap`）。只有 case 2 在 feature 目录产出 brainstorm note。
 
 本技能不写代码不写文档，只做一件事：看当前 feature 走到哪步，告诉用户该触发哪个子技能。
 
@@ -31,9 +31,9 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 
 ```
 .codestable/features/{feature}/
-├── {slug}-brainstorm.md       ← 阶段 0 产物（仅 case 2 落盘）
+├── {slug}-brainstorm.md       ← 语义 Stage 0 产物（仅 case 2 落盘）
 ├── {slug}-intent.md           ← 可选前置草稿（用户自己写半成品，供 design 读取）
-├── {slug}-design.md           ← 阶段 1 方案文件（范围与约束唯一方案源）
+├── {slug}-design.md           ← Design 产物（范围、约束与测试观察点）
 ├── {slug}-plan.md             ← 阶段 2 执行计划正文（标准 feature 必备）
 ├── {slug}-checklist.yaml      ← 阶段 2 生成 steps + checks，3/4 阶段更新 status
 └── {slug}-acceptance.md       ← 阶段 4 验收报告
@@ -47,23 +47,26 @@ brainstorm 是讨论层独立入口，会分诊：case 1（清楚 → 直接 des
 
 ---
 
-## 五个阶段
+## 语义六阶段与技能映射
 
-| 阶段 | 子技能 | 产出 | 谁主导 |
+| 语义阶段 | 子技能 | Artifact | Gate |
 |---|---|---|---|
-| 0 brainstorm（可选，独立入口） | `cs-brainstorm` | case 2 时产出 brainstorm note | AI 思考伙伴，用户拍板 |
-| 1 方案设计 | `cs-feat-design` | design.md（初始化模式可先建 intent.md） | AI 起草，用户整体 review |
-| 2 执行计划 | `cs-feat-plan` | plan.md + checklist.yaml | AI 起草，用户整体 review |
-| 3 分步实现 | `cs-feat-impl` | 代码 + 阶段汇报 | AI 按方案执行 |
-| 4 验收闭环 | `cs-feat-accept` | acceptance.md | AI 逐层核对，用户终审 |
+| 0 Brainstorm（需求澄清，条件触发） | `cs-feat` 轻量分诊；模糊时 `cs-brainstorm` | case 2 时 brainstorm note | 真问题 / 核心行为 / 成功标准 / 明确不做已确认 |
+| 1 Design | `cs-feat-design` | design.md（初始化模式可先建 intent.md） | 系统边界、验收契约和测试观察点已确认 |
+| 2 Plan | `cs-feat-plan` | plan.md + checklist.yaml | 每步可观察完成条件与执行顺序已确认 |
+| 3 Execute | `cs-feat-impl` | 小步 diff + 每个 step 的新鲜验证证据 | 当前 step 验证未通过不得标 done |
+| 4 Verify | `cs-feat-accept`（内部第一关口） | Standards Review + Spec Review；偏差当场修复 | blocker 未清零不得进入 Ship |
+| 5 Ship | `cs-feat-accept`（内部第二关口） | acceptance.md + architecture / requirement / roadmap 回写 + Handoff | 遗留风险、发布注意事项与回滚路径已写清，用户终审通过 |
+
+`cs-feat-accept` 是一个技能承载两个语义阶段：先 Verify，后 Ship；这是技能结构与语义阶段的刻意映射，不代表 Ship 可以被省略。
 
 阶段间有人工 checkpoint。上一阶段没拿到用户明确放行，下一阶段别开始——防止 AI 一口气从需求跑到代码、跑出来才发现走偏。
 
-阶段 0 可选且是 feature 流程的**外部入口**——`cs-brainstorm` 同时服务 feature 和 roadmap。case 3（大需求）讨论被移交给 `cs-roadmap` 不再回 feature 流程；roadmap 拆出子 feature 后从 `cs-feat-design` 的"从 roadmap 条目起头"入口进来。
+阶段 0 是**语义必经、条件触发**：`cs-feat` 已内置轻量分诊；需求清楚时 Brainstorm Gate 直接通过，不强制进入 `cs-brainstorm`。需要深化讨论时才进入 `cs-brainstorm`；case 3（大需求）移交给 `cs-roadmap`，不留在单 feature 主线。`cs-brainstorm` 同时服务 feature 和 roadmap，因此不是 feature 主线的无条件前置技能。
 
 ### Fastforward 模式
 
-需求清楚 + 范围小时走完整五阶段太啰嗦。fastforward 不写 design / checklist / 验收清单，直接实现，写完代码后回写一份最简 `{slug}-ff-note.md`（需求摘要 / 改了哪些 / 怎么验证的）留痕。触发："快速模式"、"fastforward"、"直接开干"、"别那么多步骤"，去 `cs-feat-ff`。
+需求清楚 + 范围小时走完整标准阶段太啰嗦。fastforward 不写 design / checklist / 验收清单，直接实现，写完代码后回写一份最简 `{slug}-ff-note.md`（需求摘要 / 改了哪些 / 怎么验证的）留痕。触发："快速模式"、"fastforward"、"直接开干"、"别那么多步骤"，去 `cs-feat-ff`。
 
 **别走** fastforward：跨多个子系统、有术语冲突风险、推进步骤超过 4 步——这些情况跳过 design 意味着 AI 和用户没共同确认过同一份方案，实现完容易发现彼此理解不一样。
 
@@ -186,9 +189,9 @@ AI：  "让我先搜索一下... {fast-context 搜索 '权限 / permission / aut
 
 如果需要恢复桥接信息，可参考 `.ccg/tasks/*/task.json`，但它**只作 task 状态桥 / recovery hint**，不能替代 feature 目录里的 design / plan / checklist / acceptance 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
 
-### 怎么判断该不该走阶段 0
+### 怎么判断该不该深化 Brainstorm
 
-判断信号不是"用户描述字数少"，是用户能不能清楚说出三件事：要解决的真问题 / 核心行为 / 一条明确的"不做什么"。三项有一项模糊就值得 brainstorm。
+判断信号不是"用户描述字数少"，是用户能不能清楚说出四件事：要解决的真问题 / 核心行为 / 成功标准 / 一条明确的"不做什么"。四项都清楚时，Brainstorm Gate 已经通过，直接进 design；任一项模糊就值得进入 `cs-brainstorm` 深化。
 
 但别强推——用户明确说"想清楚了直接做设计"就尊重。不确定时问一句让用户选。**宁可漏判，别误判**——逼一个想清楚的用户做发散是浪费。
 

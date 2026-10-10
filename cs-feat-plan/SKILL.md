@@ -59,7 +59,7 @@ description: feature 流程阶段 2——基于已批准的 `{slug}-design.md` �
 
 ### 2. checklist 从 design + plan 派生
 
-- `steps`：来自 design 的推进策略切片 + plan 的分步计划
+- `steps`：来自 design 的推进策略切片 + plan 的分步计划；跨层 feature 必须切成可独立验证的端到端切片，禁止按前端 / 后端 / 数据层这类技术层水平堆任务
 - `checks`：来自 design 第 1/2/3 节的范围守护、名词契约、流程级约束、挂载点、验收场景
 - checklist 不写大段解释，解释留在 plan
 
