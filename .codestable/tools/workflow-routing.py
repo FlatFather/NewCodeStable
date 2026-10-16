@@ -50,10 +50,20 @@ def decide(status: dict, freshness: str | None = None) -> dict:
         return {"action": "inspect_canonical", "reason": f"generated_state_{freshness or 'missing'}", "candidate": None}
 
     candidates = []
+    blocked_candidates = []
     for lane_name, lane in status.get("lanes", {}).items():
         for item in lane.get("items", []):
             derived = item.get("derived", {})
             blockers = set(derived.get("blockers") or [])
+            candidate = {
+                "lane": lane_name,
+                "key": item.get("key"),
+                "path": item.get("path"),
+                "next_skill": derived.get("next_skill"),
+                "continuation_mode": derived.get("continuation_mode"),
+                "needs_user_decision": derived.get("needs_user_decision") is True,
+                "blockers": sorted(blockers),
+            }
             eligible = (
                 item.get("consistency", {}).get("state") != "conflict"
                 and derived.get("auto_continue_allowed") is True
@@ -61,13 +71,35 @@ def decide(status: dict, freshness: str | None = None) -> dict:
                 and not (blockers & SAFETY_BLOCKERS)
             )
             if eligible:
-                candidates.append({"lane": lane_name, "key": item.get("key"), "path": item.get("path"), "next_skill": derived.get("next_skill")})
+                candidates.append(candidate)
+                continue
 
-    if not candidates:
-        return {"action": "route_normally", "reason": "no_eligible_continuation", "candidate": None}
+            is_terminal = derived.get("canonical_complete") is True or derived.get("continuation_mode") == "terminal"
+            needs_attention = (
+                derived.get("active") is True
+                or derived.get("continuation_mode") == "ask_user"
+                or derived.get("needs_user_decision") is True
+                or bool(blockers)
+                or item.get("consistency", {}).get("state") == "conflict"
+            )
+            if not is_terminal and needs_attention:
+                blocked_candidates.append(candidate)
+
     if len(candidates) > 1:
         return {"action": "ask_user", "reason": "multiple_candidates", "candidate": None, "candidates": candidates}
-    return {"action": "continue", "reason": "unique_eligible_candidate", "candidate": candidates[0]}
+    if len(candidates) == 1:
+        return {"action": "continue", "reason": "unique_eligible_candidate", "candidate": candidates[0]}
+    if len(blocked_candidates) > 1:
+        return {"action": "ask_user", "reason": "multiple_candidates", "candidate": None, "candidates": blocked_candidates}
+    if len(blocked_candidates) == 1:
+        return {
+            "action": "ask_user",
+            "reason": "candidate_requires_user_decision",
+            "candidate": blocked_candidates[0],
+        }
+    if not candidates:
+        return {"action": "route_normally", "reason": "no_eligible_continuation", "candidate": None}
+    return {"action": "route_normally", "reason": "no_eligible_continuation", "candidate": None}
 
 
 def main() -> int:

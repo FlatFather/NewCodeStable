@@ -76,7 +76,7 @@ python .codestable/tools/check-workflow-contracts.py --json
 ### 严格 / 兼容分层
 
 - **严格失败**：活跃 workflow 文档、公共文档、manifest parity、共享资产缺失、被重开的 hybrid feature 缺少 `plan.md` 或 `checklist.yaml`
-- **兼容警告**：历史 / 归档 artifact 的旧口径、未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`；已审查的历史警告仅可通过 `workflow-contract-warning-baseline.json` 基线化，新警告仍会报告。
+- **兼容警告**：历史 / 归档 artifact 的旧口径、未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`；已审查的历史警告仅可通过 `workflow-contract-warning-baseline.json` 基线化，新警告仍会报告。`review_after` 到期会严格失败。
 - **样板例外**：仓库内显式标记为 sample/example 的 feature，在仓库级运行中按 compatibility warning 处理；严格失败场景由 `tests/fixtures/workflow-contracts/` 单独覆盖
 
 ### Fixtures
@@ -215,7 +215,7 @@ python .codestable/tools/validate-yaml.py \
 .codestable/tools/sync-skills.sh --verify cs-feat
 ```
 
-`--verify` 只比较仓库源码与已安装副本（会解析 symlink），不创建目录、不写入文件；发现缺失或 drift 时返回非零。
+`--verify` 只比较仓库源码与已安装副本（会解析 symlink），不创建目录、不写入文件；发现缺失、drift 或解析后的物理目标越过允许根目录时返回非零。同步写入前也会执行同一物理路径检查。
 
 **注意**：`cs-onboard/tools/sync-skills.sh` 是 manifest 声明的 source，必须与 `.codestable/tools/sync-skills.sh` 保持一致；项目内任何引用都应指向 `.codestable/tools/sync-skills.sh`。
 
@@ -228,6 +228,6 @@ python .codestable/tools/check-ccg-tasks.py
 python .codestable/tools/workflow-routing.py .codestable/status.json
 ```
 
-`check-ccg-tasks.py` 只校验 bridge task 的生命周期、字段和 canonical 关联路径，不提升 task authority。`workflow-routing.py` 只执行 continuation predicate：非 fresh 回退 canonical inspection，多个候选询问用户，只有唯一且无安全 blocker 的候选才继续。
+`check-ccg-tasks.py` 只校验 bridge task 的生命周期、字段和 canonical 关联路径，不提升 task authority。`workflow-routing.py` 只执行 continuation predicate：非 fresh 回退 canonical inspection，多个候选询问用户；唯一但需要人工决策的候选也会返回候选、下一技能和 blockers，只有唯一且无安全 blocker 的候选才继续。
 
 外部模型协作前可运行 `scripts/check-model-backends.sh`：exit 0 表示双 backend 可用，10 表示 degraded，20 表示 local-only。调用方应记录降级而不是重复长时间等待。

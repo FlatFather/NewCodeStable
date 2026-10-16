@@ -26,6 +26,31 @@ check_dest_allowed() {
   exit 3
 }
 
+physical_root() {
+  local root="$1"
+  python3 - "$root" <<'PY'
+import os
+import sys
+print(os.path.realpath(sys.argv[1]))
+PY
+}
+
+check_physical_dest_allowed() {
+  local dest="$1"
+  local physical_dest
+  local allowed
+  physical_dest="$(physical_root "$dest")"
+  for allowed in "${ALLOWED_DESTS[@]}"; do
+    allowed="$(physical_root "$allowed")"
+    if [[ "$physical_dest" == "$allowed" || "$physical_dest" == "$allowed/"* ]]; then
+      return 0
+    fi
+  done
+  echo "ERROR: Resolved destination '$physical_dest' is outside the allowed roots:" >&2
+  printf "  %s\n" "${ALLOWED_DESTS[@]}" >&2
+  exit 3
+}
+
 usage() {
   cat <<'EOF'
 Usage:
@@ -146,6 +171,7 @@ for skill_file in "${SKILL_FILES[@]}"; do
     else
       dest_dir="$dest_link"
     fi
+    check_physical_dest_allowed "$dest_dir"
 
     if [[ $VERIFY_ONLY -eq 0 ]]; then
       mkdir -p "$dest_dir"

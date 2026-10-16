@@ -455,7 +455,7 @@ def apply_warning_baseline(root: Path, report: Report):
     if review_after:
         try:
             if date.fromisoformat(str(review_after)) < date.today():
-                report.warn("warning_baseline_review_due", rel_path(root, path), f"baseline review was due on {review_after}")
+                report.error("warning_baseline_review_due", rel_path(root, path), f"baseline review was due on {review_after}")
         except ValueError:
             report.error("warning_baseline_review_date", rel_path(root, path), "review_after must be YYYY-MM-DD")
     actual_warnings = {(finding.rule, finding.path) for finding in report.findings if finding.level == "warning"}

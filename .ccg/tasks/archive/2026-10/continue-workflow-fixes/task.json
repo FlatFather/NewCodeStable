@@ -1,0 +1,12 @@
+{
+  "id": "continue-workflow-fixes",
+  "title": "修复工作流续作、Skill 同步和 baseline 严格性问题",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "medium",
+  "domain": "workflow",
+  "currentPhase": "completed",
+  "nextAction": "修复已验证，待归档",
+  "createdAt": "2026-10-16T00:00:00+08:00",
+  "branch": "main"
+}
