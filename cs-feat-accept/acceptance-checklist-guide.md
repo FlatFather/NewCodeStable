@@ -7,6 +7,10 @@
 逐节填写**别跳节**。报告路径在 feature 目录下（位置看 `.codestable/reference/shared-conventions-core.md`）。
 
 ```markdown
+---
+evidence_contract: v1
+---
+
 # {功能名称} 验收报告
 
 > 阶段：阶段 4（Verify → Ship）
@@ -180,4 +184,15 @@ req 是能力愿景层，本节是 draft → current 升级和 backfill 的触�
 - 发布 / 部署注意事项：{有则写具体步骤；无则写"无额外发布步骤"}
 - 回滚 / 止损路径：{按最小可回滚单元写；无则写"回滚本次 scoped commit"}
 - 交接给后续维护者的风险提示：{有则写；无则写"无"}
+
+## 验证证据
+
+逐条列出关键命令或观察路径、结果、验证责任方和日期：
+
+- `{命令 / 观察路径}` → {通过 / 失败结果}（verified_by: ai | user | ci，verified_at: YYYY-MM-DD）
+
+## 遗留风险
+
+- 无（仅可在用户终审确认后填写）
+- 或逐条列出风险、影响和后续动作
 ```

@@ -7,13 +7,12 @@ description: 把踩过的坑或好做法沉淀成可检索的 learning 文档，
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+先定位经验的来源和既有 learning，再决定写什么：
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+- **Hard-required**：用户提供的经验 / 已完成 artifact，以及 `.codestable/compound/` 的目标索引或用户点名的既有 learning。
+- **On-demand**：attention 仅在经验可能成为全局启动约束时读取；`shared-conventions.md` 仅在 frontmatter、归档或 supersede 语义需要澄清时读取；代码、issue、feature 只读取能验证该经验的最小片段。
 
-**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
+**缓存优化**：本轮已查过的候选、来源和结论复用；缺 `.codestable/` 时提示先补齐或运行 `cs-onboard`。
 
 每次做 feature 或修 issue 都会留下 spec 文件。但 spec 记录的是"做了什么"和"怎么做的"，**不会记录"踩了什么坑"和"发现了什么更好的做法"**。没有沉淀的团队总在重复解决同一个问题。
 
@@ -70,6 +69,8 @@ frontmatter / 正文模板 / 完整示例见同目录 `reference.md`。
 
 **更新路径**：读旧文档 → 和用户对齐要改哪几节（常见是补新踩的坑、补当时"没找到原因"的根因）→ 起草 diff → 写回原文件 + `updated: YYYY-MM-DD`，不新建。
 
+**动作判定**：同一触发条件且结论仍成立 → `update`；同一主题但适用边界不同 → `link` 到旧文档后新建；已有文档已被新结论取代 → `supersede`；只是一次性命令或项目启动约束 → `redirect` 到 `cs-note`。不要为了保留上下文把同一个坑拆成多份近似 learning。
+
 ### Phase 2：提炼要点（一次一个问题）
 
 **坑点轨道**问：
@@ -91,6 +92,8 @@ frontmatter / 正文模板 / 完整示例见同目录 `reference.md`。
 
 AI 一次性起草完整文档（YAML frontmatter + 所有正文节）。一次性展示给用户。
 
+起草只保留能复用的证据切片：现象 / 触发条件 / 根因 / 验证 / 边界。完整日志、长对话和 feature 方案正文用链接指向 canonical artifact，不复制进 learning。
+
 ### Phase 4：归档
 
 - 新建：写入 `compound/YYYY-MM-DD-learning-{slug}.md`（日期取**归档当天**），frontmatter 带 `doc_type: learning`
@@ -102,6 +105,21 @@ AI 一次性起草完整文档（YAML frontmatter + 所有正文节）。一次�
 写完若发现一两行"每次 CodeStable 技能启动都该知道"的项目硬约束，提示用户用 `cs-note` 追加到 `.codestable/attention.md`。不要自作主张改 attention，也不要写外部 AI 入口。
 
 ---
+
+## 质量执行约束
+
+- **Hard-required**：已发生的经验、触发条件、处理结果与已有相近 learning。
+- **On-demand**：attention、代码、issue、feature、architecture 仅在它们能验证经验、建立链接或判定 redirect 时读取。
+- **证据**：记录现象、根因、解法、适用边界、来源与失效条件；避免把一次性偶然经验泛化。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
+## 退出条件
+
+- [ ] 已确认内容是可复用经验而非普通 decision、trick 或 note
+- [ ] 已查重并选择新建、更新或 supersede
+- [ ] 已判定是否应 link 或 redirect，未复制完整日志 / spec 正文
+- [ ] learning 已含触发、处理、验证/来源、适用范围和过期信号
+- [ ] 已提示可能需要进入 attention 或 decision 的内容，但未混写
 
 ## 搜索工具
 

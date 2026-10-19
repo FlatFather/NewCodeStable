@@ -791,7 +791,11 @@ def scan_lane(repo_root: Path, lane: str, builder_name: str) -> tuple[list[dict]
     items = []
     files = []
     builder = globals()[builder_name]
-    for directory in sorted(child for child in lane_root.iterdir() if child.is_dir() and not child.name.startswith(".")):
+    for directory in sorted(
+        child
+        for child in lane_root.iterdir()
+        if child.is_dir() and not child.name.startswith(".") and child.name != "archive"
+    ):
         item, item_files = builder(directory, repo_root)
         items.append(item)
         files.extend(item_files)

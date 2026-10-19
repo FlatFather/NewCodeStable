@@ -107,6 +107,20 @@ AI 一次性起草完整文档（YAML frontmatter + 正文）。示例代码优�
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：技巧主题、项目内可验证用法与既有同类 trick。
+- **On-demand**：代码仓其他模块、guide、libdoc、learning 与外部资料只在示例或边界需要时读取。
+- **证据**：示例优先来自真实代码/命令，记录适用条件、已知坑和失效边界。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
+## 退出条件
+
+- [ ] 已确定 pattern/library/technique 类型，并完成重叠检查
+- [ ] 已用真实代码、命令或明确的外部事实验证做法
+- [ ] artifact 含适用条件、标准做法、示例和必要 caveat
+- [ ] 已处理与 learning、guide、libdoc 的交叉引用而非重复复制
+
 ## 搜索工具
 
 > 完整语法见 `.codestable/reference/tools.md`。

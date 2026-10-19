@@ -7,13 +7,13 @@ description: 新功能开发的子流程入口，把"加个 X 能力"从想法�
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions-feature.md` — feature 产物职责边界
+`cs-feat` 只做 feature 分诊和阶段路由，先判断“新需求还是续作”，再读取命中资料：
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+- **Fast probe（每次）**：用户需求；若用户给出 feature slug、短回复或明确说“继续”，再读取 fresh `status.json` 或该 feature 目录的最小索引。
+- **Handoff gate（命中后）**：`.codestable/attention.md` 在要进入具体 feature 工作前读取；`shared-conventions-feature.md` 只在 artifact 职责不清、设计 / 计划状态冲突或需要解释目录规则时读取。
+- **不在路由层预读**：代码、architecture、requirements、roadmap 与 compound 由命中的下游阶段按实际需要读取；尤其不要在新需求分诊时扫描全仓代码。
 
-**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
+**缓存优化**：本轮已验证的 candidate、freshness 与 attention 复用；attention 缺失时提示先补齐或运行 `cs-onboard`。
 
 新功能流程在"需求"和"代码"之间塞了一份方案文件，让两边有交接点——AI 直接拿到需求就写代码会出三个老问题：名字跟原代码对不上、改着改着改出范围、改完不留存档。
 
@@ -158,7 +158,12 @@ AI：  "让我先搜索一下... {fast-context 搜索 '权限 / permission / aut
 
 ## 路由：用户现在该走哪个子技能
 
-进入本技能先优先读取 fresh `.codestable/status.json`（如果存在）看 feature lanes 的当前索引，再 `Glob` 一下 `.codestable/features/` 看已有产物。若 `status.json` 缺失、`freshness.state != fresh`、或与实际目录现状矛盾，必须回退到 direct `.codestable/features/` inspection。**不要只听用户口头描述**——用户说"设计写完了"不一定真完整，自己读一遍。
+按最小读取顺序路由，而不是每次先扫整个 feature lane：
+
+1. **短回复 / 续作**：先运行 `workflow-routing.py`；唯一 fresh 候选直接进入 candidate 阶段，不额外 `Glob` 所有 feature。
+2. **指定 feature**：只检查该目录的 design / plan / checklist / acceptance；`status.json` 仅用于加速发现，stale 或冲突时才回退到这个目录的 direct inspection。
+3. **新需求**：先判断清晰度、范围与是否请求 fastforward；不为“找已有 feature”扫描所有目录，也不在本技能抢做 `cs-feat-design` 的代码复用搜索。
+4. **多个候选或 scope 冲突**：再列出候选或读取必要 canonical artifact；不得靠用户口头的“设计写完了”绕过状态核验。
 
 | 当前状态 | 触发哪个子技能 |
 |---|---|
@@ -187,6 +192,8 @@ AI：  "让我先搜索一下... {fast-context 搜索 '权限 / permission / aut
 3. 多个候选 → 列给用户选，不猜
 4. 没有候选 → 才按普通 feature 路由处理
 
+fresh helper 返回唯一 `continue` 时，直接传递 `{feature path, stage, blocker}` 给下游；不要为了二次确认再全量扫描 feature 目录。只有 `inspect_canonical` 或候选冲突时才扩展读取。
+
 如果需要恢复桥接信息，可参考 `.ccg/tasks/*/task.json`，但它**只作 task 状态桥 / recovery hint**，不能替代 feature 目录里的 design / plan / checklist / acceptance 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
 
 ### 怎么判断该不该深化 Brainstorm
@@ -207,6 +214,20 @@ AI：  "让我先搜索一下... {fast-context 搜索 '权限 / permission / aut
 用户模糊触发"开一个新需求"时默认问"你想先聊清楚（brainstorm）还是自己写草稿（intent）？"，别自己挑。
 
 ---
+
+## 质量执行约束
+
+- **Hard-required**：用户需求，以及续作 / 指定 feature 命中时的 canonical artifact 与 fresh status。
+- **On-demand**：attention、shared feature conventions、architecture、requirements、roadmap、compound 与代码检索仅在路由或复用判断命中时读取。
+- **证据**：路由输出必须说明当前 stage、理由、confidence、blocker 与下一 skill；不可仅凭 bridge hint。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
+## 退出条件
+
+- [ ] 已判定新需求、已有 feature continuation、fastforward 或 roadmap/brainstorm 分流
+- [ ] 已核验 canonical artifact，而非仅接受用户口头阶段说明
+- [ ] 唯一且无 blocker 的下一阶段已直接 handoff
+- [ ] 多候选、scope 扩张或缺少 checkpoint 时已明确阻断原因和用户决策
 
 ## 与 issue 工作流的边界
 

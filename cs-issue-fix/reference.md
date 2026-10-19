@@ -52,6 +52,7 @@ doc_type: issue-fix
 issue: {issue 目录名}
 status: completed
 path: standard
+evidence_contract: v1
 fix_date: YYYY-MM-DD
 related: [{slug-analysis.md 相对路径}]
 tags: []
@@ -65,7 +66,18 @@ tags: []
 
 ## 3. 验证结果
 
+## 验证证据
+
+记录复现验证、回归测试或人工观察的命令 / 路径、结果、验证责任方和日期：
+
+- `{命令 / 观察路径}` → {结果}（verified_by: ai | user | ci，verified_at: YYYY-MM-DD）
+
 ## 4. 遗留事项
+
+## 遗留风险
+
+- 无（仅可在用户确认后填写）
+- 或逐条列出风险、影响和后续动作
 ```
 
 ## 4. `{slug}-fix-note.md` 快速通道模板
@@ -78,6 +90,7 @@ doc_type: issue-fix
 issue: {issue 目录名}
 status: draft
 path: fast-track
+evidence_contract: v1
 fix_date: YYYY-MM-DD
 tags: []
 ---
@@ -94,5 +107,16 @@ tags: []
 
 ## 5. 验证结果
 
+## 验证证据
+
+记录复现验证、回归测试或人工观察的命令 / 路径、结果、验证责任方和日期：
+
+- `{命令 / 观察路径}` → {结果}（verified_by: ai | user | ci，verified_at: YYYY-MM-DD）
+
 ## 6. 遗留事项
+
+## 遗留风险
+
+- 无（仅可在用户确认后填写）
+- 或逐条列出风险、影响和后续动作
 ```

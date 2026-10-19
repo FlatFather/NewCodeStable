@@ -10,7 +10,7 @@
 
 <p>
   <img src="https://img.shields.io/badge/status-beta-F59E0B?style=flat-square" alt="Status"/>
-  <img src="https://img.shields.io/badge/skills-22-6366F1?style=flat-square" alt="Skills"/>
+  <img src="https://img.shields.io/badge/skills-27-6366F1?style=flat-square" alt="Skills"/>
   <img src="https://img.shields.io/badge/license-MIT-10B981?style=flat-square" alt="License"/>
 </p>
 
@@ -46,7 +46,7 @@ After changing a workflow, run the unified quality gate:
 ./scripts/verify.sh
 ```
 
-The script uses a repository-local temporary directory and checks generated state, workflow contracts, CCG task lifecycle, repository skill exit conditions, and Python regression tests. Set `PYTHON_BIN` to select an interpreter; locally, set `VERIFY_INSTALLED_SKILLS=1` to also check installed-copy drift. CI runs the same entry point.
+The script uses a repository-local temporary directory and checks generated state, workflow contracts, CCG task lifecycle, Workflow Evidence Contracts, repository skill exit conditions, skill quality scoring, and Python regression tests. Repository skill quality is a `100%` hard gate; evidence validation is mandatory for new artifacts declaring `evidence_contract: v1`, while historical artifacts are not force-migrated. Set `PYTHON_BIN` to select an interpreter; locally, set `VERIFY_INSTALLED_SKILLS=1` to also check installed-copy drift. CI runs the same entry point.
 
 ---
 

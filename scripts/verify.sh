@@ -27,9 +27,11 @@ cd "$REPO_ROOT"
 "$PYTHON_BIN" .codestable/tools/build-status.py --check --json
 "$PYTHON_BIN" .codestable/tools/check-workflow-contracts.py
 "$PYTHON_BIN" .codestable/tools/check-ccg-tasks.py
+"$PYTHON_BIN" .codestable/tools/check-workflow-evidence.py
 CLAUDE_SKILLS_DIR="$REPO_ROOT" .codestable/tools/lint-exit-conditions.sh
+"$PYTHON_BIN" .codestable/tools/score-workflow.py --check-skills --min-skill-score 100
 "$PYTHON_BIN" -m unittest discover -s tests -v
 
 if [[ "${VERIFY_INSTALLED_SKILLS:-0}" == "1" ]]; then
-  .codestable/tools/sync-skills.sh --target "${VERIFY_SKILLS_TARGET:-claude}" --verify
+  .codestable/tools/sync-skills.sh --target "${VERIFY_SKILLS_TARGET:-agents}" --verify
 fi

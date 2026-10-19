@@ -152,6 +152,13 @@ tags: []
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：confirmed report、相关代码路径、失败路径与根因证据。
+- **On-demand**：architecture、requirements、compound 与额外模块只在影响面分析需要时读取。
+- **证据**：根因、影响面、方案选项与推荐均保留 `file:line`、风险和用户选择理由。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 - [ ] frontmatter 存在（`doc_type=issue-analysis` / `issue` 一致）

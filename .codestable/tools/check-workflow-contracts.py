@@ -269,7 +269,8 @@ def load_markdown_line_limit_exemptions(root: Path, report: Report):
 def collect_line_limit_docs(root: Path, report: Report):
     try:
         output = subprocess.check_output(["git", "-C", str(root), "ls-files", "--", "*.md"], text=True, stderr=subprocess.DEVNULL)
-        return sorted(root / line for line in output.splitlines() if line)
+        tracked_paths = [root / line for line in output.splitlines() if line]
+        return sorted(path for path in tracked_paths if path.is_file())
     except (OSError, subprocess.CalledProcessError):
         return sorted(path for path in root.rglob("*.md") if ".git" not in path.parts)
 
@@ -541,7 +542,11 @@ def check_legacy_features(root: Path, report: Report):
     feature_root = root / ".codestable/features"
     if not feature_root.is_dir():
         return
-    for feature_dir in sorted(path for path in feature_root.iterdir() if path.is_dir() and not path.name.startswith(".")):
+    for feature_dir in sorted(
+        path
+        for path in feature_root.iterdir()
+        if path.is_dir() and not path.name.startswith(".") and path.name != "archive"
+    ):
         design_files = sorted(feature_dir.glob("*-design.md"))
         if not design_files:
             continue

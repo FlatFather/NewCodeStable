@@ -7,13 +7,12 @@ description: 写或更新对外指南文档——开发者指南（dev-guide）�
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+先确认读者任务和目标文档，再读取支持该任务的最小事实源：
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+- **Hard-required**：目标读者、用户任务、现有同 component guide 的索引，以及当前产品 / 代码的公开行为。
+- **On-demand**：attention 只在 docs 路径、构建或发布约束命中时读取；`shared-conventions.md` 只在 frontmatter / 归档语义需要澄清时读取；feature、architecture、libdoc、trick 和 UI 只读取与目标章节直接相关的部分。
 
-**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
+**缓存优化**：本轮已确认的文档候选、公开行为和术语复用；缺 `.codestable/` 时提示先补齐或运行 `cs-onboard`。
 
 代码解决问题，文档让别人能用它解决问题。spec 记录"做了什么、为什么这么做"，但下游开发者和终端用户不需要、也不应该读 spec——他们需要面向自己角色的、可发布的指南。guidedoc 就是从 spec 和代码出发写成读者真正能用的指南。
 
@@ -134,13 +133,28 @@ A: ...
 
 ## 工作流步骤
 
-1. **明确任务范围**——轨道（dev / user / 都要）+ 覆盖范围（新写还是更新）+ 信息来源（方案 doc 已有吗？同 component 已有 guide？需要读哪些代码？）
-2. **收集输入**——读方案 doc（重点第 0 节术语、第 2 节接口契约、第 1 节用户可见行为）+ `search-yaml.py` 搜 docs/ 确认有无已有 guide。发现已有 guide 标 `outdated` → 任务定性为**更新**
-3. **起草**——按对应轨道结构起草，frontmatter `status: draft`。约束：只写面向目标读者的内容——**不要把方案 doc 里"实现提示"或内部设计搬过来**；术语与方案 doc 第 0 节一致；代码示例必须来自实际代码不虚构接口
+1. **明确任务范围与动作**——轨道（dev / user / 都要）+ 读者任务；先在 docs/ 搜同 component / slug，明确是 `update`、`create`、`link` 还是标 `outdated` 后转交。已有 guide 不因标题略有不同就新建副本。
+2. **收集最小事实源**——先读既有 guide 和当前公开行为；只有需要补术语、接口或意图时，才读方案 doc（第 0 / 1 / 2 节的相关片段）与 libdoc。发现已有 guide 标 `outdated` → 任务定性为**更新**。
+3. **起草**——按对应轨道结构起草，frontmatter `status: draft`。约束：一篇 guide 只服务一个读者任务；接口细节链接 libdoc，**不要把方案 doc 的实现提示、完整 API 表或内部设计搬进来**；术语与方案 doc 一致，代码示例必须来自实际代码不虚构接口。
 4. **用户 review**——展示草稿，逐节确认覆盖范围 / 描述准确性 / 是否有读者看不懂的地方
 5. **落盘**——用户放行后：写入路径；`status: current` + `last_reviewed` 当天；更新已有文档时小修直接改，大改（结构重组 / 读者定位调整）先把旧文档 `status: outdated` 留作参考再新写一份
 
 ---
+
+## 质量执行约束
+
+- **Hard-required**：目标读者、要完成的任务、当前产品 / 代码事实与目标文档。
+- **On-demand**：attention、shared conventions、architecture、feature、libdoc、trick 与用户界面验证只在任务步骤或链接关系命中时读取。
+- **证据**：每个关键步骤提供可执行动作、预期结果、失败处理或明确的人工验证边界。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
+## 退出条件
+
+- [ ] 已确认文档属于 developer-guide 或 user-guide，且任务范围明确
+- [ ] 已选择 update / create / link / outdated，未创建同一读者任务的重复 guide
+- [ ] 每个关键步骤有前置条件、动作和可观察结果
+- [ ] 示例和接口信息可回溯到代码、已验证流程或已确认的公开文档
+- [ ] 已处理相关 libdoc/feature 链接与文档状态
 
 ## 与其他工作流的关系
 

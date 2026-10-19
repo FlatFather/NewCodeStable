@@ -13,6 +13,16 @@ skill 本身不共享文件系统（每个 skill 是独立安装单元），共�
 - generated state 语义 → `workflow-contract-generated-state.md`
 - source/copy 分发关系 → `workflow-contract-distribution.md`
 
+## 技能质量合同
+
+所有 `cs-*` 技能的启动成本、证据、交互摩擦与退出质量口径见
+`skill-quality-contract.md`。它不改变 workflow contract 的 authority 或
+continuation 语义，只规定技能设计和 artifact 质量的共同底线。
+
+新的 checklist、acceptance 与 fix-note 的机器可验证证据格式见
+`evidence-contract.md`。它采用 `evidence_contract: v1` opt-in，历史产物不被
+强制回填。
+
 ---
 
 ## 模块导航

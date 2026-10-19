@@ -132,6 +132,13 @@ tags: []
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：用户现象、最小复现、期望/实际、影响范围与严重度。
+- **On-demand**：代码定位、duplicate issue、architecture 与 compound 仅在快速通道或澄清需要时读取。
+- **证据**：report 记录复现置信度、已知线索与 fast-path 判定依据；根因不在本阶段伪造。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 - [ ] frontmatter 完整（`doc_type=issue-report` / `issue` 一致 / `severity` 和 `summary` 非空 / `tags` ≥ 1）

@@ -17,6 +17,15 @@ feature 的活跃标准口径固定为：
 
 fastforward 继续作为独立快路径存在；历史 legacy 目录（`design + checklist + acceptance`）仅作留档兼容读取，不再作为新 feature 或重开 feature 的活跃口径。
 
+不再参与路由、状态生成或 active workflow 校验的历史 feature/样例，放在：
+
+```text
+.codestable/features/archive/YYYY-MM/{feature-directory}/
+```
+
+archive 是历史证据，不是新的活跃 lane。若要重开，先移回
+`.codestable/features/YYYY-MM-DD-{slug}/`，再按本模块的 minimal backfill 规则升级。
+
 ### 四类产物各写什么
 
 - **`{slug}-intent.md`**：仅在初始化模式或用户主动先写半成品方案时出现。它记录 design 前的需求概要 / 大致做法 / 相关数据结构，是 feature 的 **pre-design seed**；后续由 `cs-feat-design` 读取并消化进正式 design，不作为 implement / acceptance 的输入。
@@ -33,7 +42,7 @@ fastforward 继续作为独立快路径存在；历史 legacy 目录（`design +
 - 标准 feature 一旦进入实现，`plan.md` 与 `checklist.yaml` 就都必须存在；implement 与 acceptance 都必须把它们当作输入之一。
 - issue / refactor 流程不依赖 `feature-plan`；本节只约束 feature 流程。
 - **feature directory binding**：`YYYY-MM-DD-{slug}` 目录名是 roadmap item、design、plan、checklist、acceptance 之间的唯一绑定键，不再新增第二套 execution id。
-- **plan presence rule**：活跃标准 feature 的 `plan.md` 与 `checklist.yaml` 必须在进入实现前存在；未重开的历史 legacy 目录可继续缺失并只作兼容读取；workflow-check 对新 feature 和被重开的 feature 仍应把缺失视为错误。
+- **plan presence rule**：活跃标准 feature 的 `plan.md` 与 `checklist.yaml` 必须在进入实现前存在；archive 下的历史 feature 可继续缺失并只作兼容读取；workflow-check 对新 feature 和被重开的 feature 仍应把缺失视为错误。
 
 ---
 

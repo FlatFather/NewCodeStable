@@ -107,7 +107,8 @@ attention.md 是 CodeStable 自己的启动注意事项入口，价值来自所�
 
 - 读 `.codestable/attention.md`，找 `<!-- cs-note managed -->` 锚定位
 - 找不到锚 → 在文件末尾追加整块"项目碎片知识"骨架
-- 在"项目碎片知识"段内 grep 关键词查重——已有相似条目时**不另起一条**，问用户"是更新已有那条还是确实是另一条"
+- 在"项目碎片知识"段内 grep 关键词查重，先明确动作：`replace`（旧事实失效）、`merge`（同一规则补条件）、`append`（确是独立事实）或 `redirect`（不该进 attention）
+- 已有相似条目时**不另起一条**；只在该条可能与长期规约冲突时读取被点名的 decision / architecture，不全量扫描 compound
 - 选好分节，没有合适分节进"其他"
 
 ### 4. 写一条进去
@@ -128,6 +129,9 @@ attention.md 是 CodeStable 自己的启动注意事项入口，价值来自所�
 
 写完用户 review 一句确认就退出。**不主动连写多条**——一次一条，避免顺手把没拍板的也塞进去。
 
+事实来源不显然或可能随环境变化时，在同一条末尾追加最短复查锚，例如
+`（依据：docs/setup.md；复查：升级构建工具时）`；已有稳定公开命令不重复粘贴完整日志。
+
 ### 5. 触发软上限检查
 
 写完看一眼"项目碎片知识"段总行数：
@@ -138,6 +142,20 @@ attention.md 是 CodeStable 自己的启动注意事项入口，价值来自所�
 只是**提示**，不替用户决定。
 
 ---
+
+## 质量执行约束
+
+- **Hard-required**：候选提示与现有 attention 分节。
+- **On-demand**：被候选直接点名的 decision / architecture、代码、issue、feature、guide 和环境资料只在验证候选是否普遍有效或存在冲突时读取。
+- **证据**：每条 note 标明来源、适用范围、是否临时及复查条件；不能把长方案塞进 attention。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
+## 退出条件
+
+- [ ] 候选满足“一两行、每次启动都应知道、跨工作流有效”边界
+- [ ] 已选择 `replace` / `merge` / `append` / `redirect`，按固定分节归类、查重并控制 attention 的上下文预算
+- [ ] 与现有 decision/architecture 不冲突，必要时仅保留链接摘要
+- [ ] 已记录来源、范围和需要复查的临时信息
 
 ## 主动推荐时机
 

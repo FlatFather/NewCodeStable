@@ -59,6 +59,7 @@ def decide(status: dict, freshness: str | None = None) -> dict:
                 "lane": lane_name,
                 "key": item.get("key"),
                 "path": item.get("path"),
+                "stage": derived.get("stage"),
                 "next_skill": derived.get("next_skill"),
                 "continuation_mode": derived.get("continuation_mode"),
                 "needs_user_decision": derived.get("needs_user_decision") is True,

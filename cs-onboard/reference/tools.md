@@ -76,7 +76,7 @@ python .codestable/tools/check-workflow-contracts.py --json
 ### 严格 / 兼容分层
 
 - **严格失败**：活跃 workflow 文档、公共文档、manifest parity、共享资产缺失、被重开的 hybrid feature 缺少 `plan.md` 或 `checklist.yaml`
-- **兼容警告**：历史 / 归档 artifact 的旧口径、未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`；已审查的历史警告仅可通过 `workflow-contract-warning-baseline.json` 基线化，新警告仍会报告。`review_after` 到期会严格失败。
+- **兼容警告**：活跃目录中未重开的 legacy feature 缺少 `plan.md` 或 design 里没有 `workflow`；需要长期留档的旧协议和故障样例应移入 `.codestable/features/archive/YYYY-MM/`，它们不参与 active workflow 校验。临时 baseline 只用于迁移窗口，`review_after` 到期会严格失败。
 - **样板例外**：仓库内显式标记为 sample/example 的 feature，在仓库级运行中按 compatibility warning 处理；严格失败场景由 `tests/fixtures/workflow-contracts/` 单独覆盖
 
 ### Fixtures
@@ -201,11 +201,32 @@ python .codestable/tools/validate-yaml.py \
 ### 历史 feature 适用边界
 
 - workflow-check 默认用于**新 feature**和**被重开的历史 feature**
-- 历史 feature 如果只是留档、不继续推进，则缺 `workflow` 或 `plan.md` 不应直接被视为错误
+- 历史 feature 如果只是留档、不继续推进，则应移动到 `.codestable/features/archive/YYYY-MM/`；archive 下缺 `workflow` 或 `plan.md` 不参与 active workflow 校验
 - 如果用户决定重开旧 feature，再按 `legacy` 或 `hybrid` 路径补最小必要字段和产物后运行 workflow-check
 ---
 
-## 4. sync-skills.sh
+## 4. check-workflow-evidence.py
+
+校验 opt-in 的 Workflow Evidence Contract，用于确保新产物中的完成状态都有可追溯证据。
+
+```bash
+# 默认入口，校验活跃 features / refactors / issues 中声明 evidence_contract: v1 的产物
+python .codestable/tools/check-workflow-evidence.py
+
+# JSON 输出，便于 CI 或脚本消费
+python .codestable/tools/check-workflow-evidence.py --json
+```
+
+### 校验规则
+
+- 新 checklist 顶层声明 `evidence_contract: v1` 后，`steps` / `checks` 每项必须有稳定 `id`、`verification.method` 和 `evidence`
+- `status: done | passed` 时，`evidence.result` 必须是具体结果，不能是 `pending`；`verified_at` 必须为 `YYYY-MM-DD`；`verified_by` 必须为 `ai | user | ci`
+- 新验收报告 / fix-note 声明 `evidence_contract: v1` 后，必须包含 `## 验证证据` 和 `## 遗留风险`
+- 未声明 v1 的历史产物不校验，避免强制批量回填
+
+---
+
+## 5. sync-skills.sh
 
 将仓库技能同步到 `~/.agents/skills/`（已固定，无需 --target 参数）。manifest 已将该脚本声明为共享资产（source→destination），但落盘副本允许项目按需微调。
 

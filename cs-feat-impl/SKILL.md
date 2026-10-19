@@ -193,9 +193,17 @@ frontmatter：`doc_type=feature-design` / `feature` 一致 / `status=approved` /
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：approved design/plan、checklist、当前 step 与相关实现代码。
+- **On-demand**：architecture、requirements、roadmap、compound 与浏览器验证仅在当前 step 或风险命中时读取。
+- **证据**：每完成一个 step 回写 `status`、`evidence.result`、`evidence.verified_at`、`evidence.verified_by`、偏差与范围外观察；偏差不可只留在对话中。新 checklist 遵守 `evidence_contract: v1`。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 - [ ] 所有 steps 的 status 都 `done`
+- [ ] 所有 steps 的 `evidence.result` 都有具体验证结果，且 `verified_at` / `verified_by` 已回写
 - [ ] 完成汇报已输出，用户 review 通过
 - [ ] 没有未处理的"需要叫停"信号
 - [ ] 第 3 节关键场景每条都有证据 / 测试覆盖

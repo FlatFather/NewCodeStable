@@ -67,7 +67,7 @@ blocker 清零后，才进入 Ship。Ship 做四件事，缺一不可：
 
 ## 验收报告模板与核对指南
 
-逐节填写**别跳节**。完整报告模板和 9 个核对节的填写要求见 `acceptance-checklist-guide.md`。
+逐节填写**别跳节**。完整报告模板和 9 个核对节的填写要求见 `acceptance-checklist-guide.md`。新建验收报告必须声明 `evidence_contract: v1`，并包含 `## 验证证据` 与 `## 遗留风险`；checks 通过时同步回写 checklist evidence。
 
 执行时必须按该指南逐节核对；发现偏差先修代码或回填方案 doc，不允许只在报告里记录“已知偏差”。
 
@@ -81,6 +81,13 @@ blocker 清零后，才进入 Ship。Ship 做四件事，缺一不可：
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：approved design/plan、checklist、实现 diff 与验收场景。
+- **On-demand**：architecture、requirements、roadmap、guide、libdoc 仅在设计字段或公开表面命中时读取/回写。
+- **证据**：每个 check 记录验证对象、命令或观察结果、责任方和剩余风险；`done` / `passed` 条目必须有 `evidence.result`、`verified_at`、`verified_by`；Ship 回写列出实际路径。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 - [ ] 验收报告 9 节都填完
@@ -92,6 +99,7 @@ blocker 清零后，才进入 Ship。Ship 做四件事，缺一不可：
 - [ ] 第 6 节 req 回写有结论：跳过 / 未变 / 已 backfill / draft→current / 已 update
 - [ ] 第 7 节 roadmap 回写有结论：跳过（非 roadmap 起头）/ 已更新（items.yaml + 主文档同步，yaml 通过校验）
 - [ ] checklist 所有 checks 都 `passed`
+- [ ] 验收报告声明 `evidence_contract: v1`，且 `## 验证证据` / `## 遗留风险` 完整
 - [ ] 用户终审确认
 
 ---

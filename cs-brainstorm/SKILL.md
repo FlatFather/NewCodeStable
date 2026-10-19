@@ -235,6 +235,20 @@ case 1 / case 3 也能借这个动作（不强求落 brainstorm note），逻辑
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：用户意图、规模判断、相关既有 brainstorm/feature/roadmap 线索。
+- **On-demand**：architecture、requirements、compound 与代码检索仅在术语、边界或复用判断命中时读取。
+- **证据**：case 判定、关键取舍、未决问题与 handoff 摘要必须留在 brainstorm artifact 或响应中。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
+## 退出条件
+
+- [ ] 已在一到两轮内明确 case，或列出阻碍判定的唯一问题
+- [ ] case 1/3 已给出可直接 handoff 的上下文摘要；case 2/4 已落盘对应 brainstorm artifact
+- [ ] 已记录真问题、核心行为、成功标准与明确不做（适用时）
+- [ ] 下一步唯一时已直接 handoff；不唯一时已让用户选择
+
 ## 硬性边界
 
 1. **不跳过分诊**——任何长度的讨论开始前都要先判 case

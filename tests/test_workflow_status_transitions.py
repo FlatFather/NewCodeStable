@@ -581,9 +581,11 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
 
     def test_routing_helper_requires_fresh_unique_candidate(self):
         decide = runpy.run_path(str(ROUTING_PATH), run_name="workflow_routing_test")["decide"]
-        candidate = {"key": "x", "path": "p", "consistency": {"state": "clean"}, "derived": {"auto_continue_allowed": True, "needs_user_decision": False, "next_skill": "cs-feat-impl", "blockers": []}}
+        candidate = {"key": "x", "path": "p", "consistency": {"state": "clean"}, "derived": {"stage": "implementing", "auto_continue_allowed": True, "needs_user_decision": False, "next_skill": "cs-feat-impl", "blockers": []}}
         status = {"freshness": {"state": "fresh"}, "lanes": {"features": {"items": [candidate]}}}
-        self.assertEqual("continue", decide(status)["action"])
+        result = decide(status)
+        self.assertEqual("continue", result["action"])
+        self.assertEqual("implementing", result["candidate"]["stage"])
         status["lanes"]["features"]["items"].append(dict(candidate, key="y"))
         self.assertEqual("ask_user", decide(status)["action"])
         status["freshness"]["state"] = "stale"
@@ -610,6 +612,7 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
             "consistency": {"state": "clean"},
             "derived": {
                 "active": True,
+                "stage": "awaiting_plan_approval",
                 "auto_continue_allowed": False,
                 "needs_user_decision": True,
                 "continuation_mode": "ask_user",
@@ -620,6 +623,7 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
         result = decide({"freshness": {"state": "fresh"}, "lanes": {"features": {"items": [item]}}})
         self.assertEqual("ask_user", result["action"])
         self.assertEqual("candidate_requires_user_decision", result["reason"])
+        self.assertEqual("awaiting_plan_approval", result["candidate"]["stage"])
         self.assertEqual("cs-feat-plan", result["candidate"]["next_skill"])
         self.assertEqual(["awaiting_plan_approval"], result["candidate"]["blockers"])
 
@@ -661,6 +665,11 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
         self.assertEqual(3, result.returncode)
         self.assertIn("outside the allowed roots", result.stderr)
 
+    def test_verify_script_uses_the_current_installed_skill_target(self):
+        content = (REPO_ROOT / "scripts/verify.sh").read_text(encoding="utf-8")
+        self.assertIn('VERIFY_SKILLS_TARGET:-agents', content)
+        self.assertNotIn('VERIFY_SKILLS_TARGET:-claude', content)
+
     def test_routing_cli_reverifies_freshness_against_canonical_artifacts(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -674,7 +683,7 @@ class WorkflowStatusTransitionTests(unittest.TestCase):
         self.assertEqual("inspect_canonical", payload["action"])
 
     def test_onboard_builder_copy_matches_canonical_tool(self):
-        for name in ["build-status.py", "check-ccg-tasks.py", "check-workflow-contracts.py", "sync-skills.sh", "workflow-routing.py"]:
+        for name in ["build-status.py", "check-ccg-tasks.py", "check-workflow-contracts.py", "check-workflow-evidence.py", "score-workflow.py", "sync-skills.sh", "workflow-routing.py"]:
             source = (REPO_ROOT / "cs-onboard/tools" / name).read_bytes()
             canonical = (REPO_ROOT / ".codestable/tools" / name).read_bytes()
             self.assertEqual(canonical, source)

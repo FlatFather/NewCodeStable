@@ -9,6 +9,20 @@ description: 把新仓库或有零散文档的仓库接入 CodeStable 体系，�
 
 ---
 
+## 启动必读
+
+onboard 的对象可能尚未有 `.codestable/`，因此不要把项目内 attention 或共享约定当成
+启动前提。先读取：
+
+- `cs-onboard/reference.md` — 骨架文件的最小模板
+- `cs-onboard/reference/shared-asset-manifest.yaml` — 共享 assets 的 source → destination 合同
+- 仓库根目录与现有文档目录清单 — 用于判定空仓库或迁移路径
+
+**缓存优化**：已在本轮读取过的技能包模板或 manifest 直接复用；发现现有
+`.codestable/` 时才按需读取其中的 attention、status 和待迁移 artifact。
+
+---
+
 ## 两条路径
 
 | 路径 | 适用 | 产出 |
@@ -163,6 +177,13 @@ Copy-Item -Recurse -Force <技能包路径>\cs-onboard\reference\*  .codestable\
 `ARCHITECTURE.md` 占位模板和 `attention.md` 最小模板见同目录 `reference.md`。
 
 ---
+
+## 质量执行约束
+
+- **Hard-required**：仓库目录、已有文档、共享 asset manifest 与目标 `.codestable/` 骨架。
+- **On-demand**：具体历史文档、架构资料和迁移映射只在探测到对应输入时读取。
+- **证据**：迁移表记录来源、目标、置信度、用户决定与未迁移原因；共享资产同步后需验证 manifest parity。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
 
 ## 退出条件
 

@@ -140,6 +140,13 @@ Phase 6：落盘（backfill/update）或 等用户拍板（check）
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：当前 architecture 目标、架构总入口与直接代码证据。
+- **On-demand**：requirements、roadmap、compound 与历史 feature 只在目标模块或差异命中时读取。
+- **证据**：每个架构结论记录 `file:line` 或明确的文档来源、验证结果与未解决 drift。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 **共通**：

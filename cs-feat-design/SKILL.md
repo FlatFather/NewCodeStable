@@ -250,6 +250,13 @@ design 只管"编排-计算分离"里的编排那一侧：**这次 feature 在�
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：需求输入、相关代码入口、术语/架构约束与当前 feature artifact。
+- **On-demand**：requirements、roadmap、compound、目录健康度材料只在需求或风险信号命中时读取。
+- **证据**：复用判断、接口来源、关键约束和范围取舍都写入 design，保留来源位置。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 用户整体 review 通过，并且：

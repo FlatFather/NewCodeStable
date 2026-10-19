@@ -2,10 +2,10 @@ version: 1
 parity_scope: manifest-declared-assets-only
 
 references:
-  - source: cs-onboard/reference/ccg-task-legacy-baseline.json
-    destination: .codestable/reference/ccg-task-legacy-baseline.json
   - source: cs-onboard/reference/code-dimensions.md
     destination: .codestable/reference/code-dimensions.md
+  - source: cs-onboard/reference/evidence-contract.md
+    destination: .codestable/reference/evidence-contract.md
   - source: cs-onboard/reference/maintainer-notes.md
     destination: .codestable/reference/maintainer-notes.md
   - source: cs-onboard/reference/markdown-line-limit-exemptions.json
@@ -22,6 +22,8 @@ references:
     destination: .codestable/reference/shared-conventions-feature.md
   - source: cs-onboard/reference/shared-conventions-roadmap.md
     destination: .codestable/reference/shared-conventions-roadmap.md
+  - source: cs-onboard/reference/skill-quality-contract.md
+    destination: .codestable/reference/skill-quality-contract.md
   - source: cs-onboard/reference/shared-conventions.md
     destination: .codestable/reference/shared-conventions.md
   - source: cs-onboard/reference/status-schema.md
@@ -52,18 +54,20 @@ references:
     destination: .codestable/reference/workflow-contract-shared-concepts.md
   - source: cs-onboard/reference/workflow-contract.md
     destination: .codestable/reference/workflow-contract.md
-  - source: cs-onboard/reference/workflow-contract-warning-baseline.json
-    destination: .codestable/reference/workflow-contract-warning-baseline.json
 
 tools:
   - source: cs-onboard/tools/check-ccg-tasks.py
     destination: .codestable/tools/check-ccg-tasks.py
+  - source: cs-onboard/tools/check-workflow-evidence.py
+    destination: .codestable/tools/check-workflow-evidence.py
   - source: cs-onboard/tools/build-status.py
     destination: .codestable/tools/build-status.py
   - source: cs-onboard/tools/check-workflow-contracts.py
     destination: .codestable/tools/check-workflow-contracts.py
   - source: cs-onboard/tools/search-yaml.py
     destination: .codestable/tools/search-yaml.py
+  - source: cs-onboard/tools/score-workflow.py
+    destination: .codestable/tools/score-workflow.py
   - source: cs-onboard/tools/sync-skills.sh
     destination: .codestable/tools/sync-skills.sh
   - source: cs-onboard/tools/validate-yaml.py

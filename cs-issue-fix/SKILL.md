@@ -104,15 +104,23 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 ## 写 {slug}-fix-note.md
 
-验证通过后补全 `{slug}-fix-note.md` 的改动、验证与遗留内容，再将 frontmatter 从 `status: draft` 改为 `status: completed`。标准路径可在此时新建；快速通道必须复用确认后已建的 draft。两种模板都在同目录 `reference.md`；验证尚未完成时不得提前写 completed。
+验证通过后补全 `{slug}-fix-note.md` 的改动、验证与遗留内容，再将 frontmatter 从 `status: draft` 改为 `status: completed`。新建 fix-note 必须声明 `evidence_contract: v1`，并包含 `## 验证证据` 与 `## 遗留风险`。标准路径可在此时新建；快速通道必须复用确认后已建的 draft。两种模板都在同目录 `reference.md`；验证尚未完成时不得提前写 completed。
 
 ---
+
+## 质量执行约束
+
+- **Hard-required**：confirmed analysis 或 draft fast-path fix-note、修复范围、复现步骤与验证方式。
+- **On-demand**：architecture、compound、浏览器与日志调试只在根因、影响面或验证失败命中时使用。
+- **证据**：fix-note 记录改动、复现验证、回归结果、命令结果、残余风险和用户确认；新 fix-note 遵守 `evidence_contract: v1`，验证证据必须包含结果、责任方和日期。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
 
 ## 退出条件
 
 - [ ] 所有改动文件已提交或列清单
 - [ ] 验证清单全部勾选
 - [ ] `{slug}-fix-note.md` 已建并填写完整，frontmatter 为 `status: completed`
+- [ ] 新 fix-note 声明 `evidence_contract: v1`，且 `## 验证证据` / `## 遗留风险` 完整
 - [ ] 没有未处理的"顺手发现"（都进后续 issue 列表）
 - [ ] 没有范围外改动（或已和用户确认）
 - [ ] 用户明确确认修复完成

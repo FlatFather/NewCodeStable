@@ -174,6 +174,13 @@ feature-design 发现接口契约不合理 / 漏了 / 描述不准 → **回 `cs
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：目标愿景、模块边界、依赖关系、当前 roadmap/items artifact。
+- **On-demand**：architecture、requirements、brainstorms、compound 与 feature 只在拆解或契约关系命中时读取。
+- **证据**：每项记录价值、依赖、风险、验收边界与排序理由；接口契约有明确来源。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 - [ ] 已锁定单一模式 + 单一目标

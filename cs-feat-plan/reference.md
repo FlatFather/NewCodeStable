@@ -51,17 +51,39 @@ status: draft
 ```yaml
 feature: {feature 目录名}
 created: YYYY-MM-DD
+evidence_contract: v1
 
 steps:
-  - action: "{paradigm 维度的切片}：{动作描述}"
+  - id: step-1
+    action: "{paradigm 维度的切片}：{动作描述}"
     exit_signal: "{退出信号，可独立验证}"
+    verification:
+      method: command | typecheck | test | grep | manual
+      expected: "{期望观察结果}"
+    evidence:
+      result: pending
+      verified_at: null
+      verified_by: null
     status: pending
 
 checks:
-  - item: "{检查项描述}"
+  - id: check-1
+    item: "{检查项描述}"
     source: 名词契约 | 编排骨架 | 流程级约束 | 挂载点 | 范围守护 | 验收场景
+    verification:
+      method: command | typecheck | test | grep | manual
+      expected: "{期望观察结果}"
+    evidence:
+      result: pending
+      verified_at: null
+      verified_by: null
     status: pending
 ```
+
+`evidence_contract: v1` 是新生成 checklist 的硬要求。条目变为
+`done` / `passed` 前，必须把 `evidence.result` 写成具体命令或观察结果，
+`verified_at` 写 `YYYY-MM-DD`，`verified_by` 写 `ai | user | ci`。
+详细规则见 `.codestable/reference/evidence-contract.md`。
 
 ## 4. 派生规则
 
@@ -69,3 +91,4 @@ checks:
 - `checklist.yaml` 从 design + plan 共同派生
 - `steps` 粒度是 paradigm 维度，不写 file:line / 函数级
 - `checks` 不允许编造 design 里不存在的条目
+- `id` 必须在当前 checklist 内稳定且唯一，后续回写不得因排序改变含义

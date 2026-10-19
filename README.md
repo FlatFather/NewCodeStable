@@ -10,7 +10,7 @@
 
 <p>
   <img src="https://img.shields.io/badge/status-beta-F59E0B?style=flat-square" alt="Status"/>
-  <img src="https://img.shields.io/badge/skills-22-6366F1?style=flat-square" alt="Skills"/>
+  <img src="https://img.shields.io/badge/skills-27-6366F1?style=flat-square" alt="Skills"/>
   <img src="https://img.shields.io/badge/license-MIT-10B981?style=flat-square" alt="License"/>
 </p>
 
@@ -46,7 +46,7 @@ npx skills update
 ./scripts/verify.sh
 ```
 
-脚本会使用项目内临时目录，依次检查生成状态、工作流契约、CCG task 生命周期、仓库 Skill 退出条件和 Python 回归测试。若需要指定解释器，可设置 `PYTHON_BIN`；本地还可用 `VERIFY_INSTALLED_SKILLS=1` 增加安装副本漂移校验。CI 会自动执行同一入口。
+脚本会使用项目内临时目录，依次检查生成状态、工作流契约、CCG task 生命周期、Workflow Evidence Contract、仓库 Skill 退出条件、技能质量评分和 Python 回归测试。仓库内 Skill Quality Contract 以 `100%` 为硬门；Evidence 校验对声明 `evidence_contract: v1` 的新产物硬性生效，历史产物不强制回填。若需要指定解释器，可设置 `PYTHON_BIN`；本地还可用 `VERIFY_INSTALLED_SKILLS=1` 增加安装副本漂移校验。CI 会自动执行同一入口。
 
 ---
 

@@ -1,0 +1,29 @@
+refactor: YYYY-MM-DD-slug
+created: YYYY-MM-DD
+evidence_contract: v1
+
+steps:
+  - id: step-1
+    action: "实现第一块行为等价变更"
+    exit_signal: "目标改动已完成且行为基线保持一致"
+    verification:
+      method: command
+      expected: "聚焦测试和类型检查通过"
+    evidence:
+      result: pending
+      verified_at: null
+      verified_by: null
+    status: pending
+
+checks:
+  - id: check-1
+    item: "行为等价基线保持通过"
+    source: "refactor-design 第 3 节"
+    verification:
+      method: command
+      expected: "指定测试或观察场景通过"
+    evidence:
+      result: pending
+      verified_at: null
+      verified_by: null
+    status: pending

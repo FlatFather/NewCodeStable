@@ -168,8 +168,10 @@ plan/checklist 落盘后，要明确进入实现前的独立关口：确认对�
 ### 2. 生成 `{slug}-checklist.yaml`
 
 按同一 reference 里的 checklist 模板生成：
+- 顶层写入 `evidence_contract: v1`
 - `steps`
 - `checks`
+- 每个 step / check 都有稳定 `id`、`verification.method`、`verification.expected` 和初始 `evidence`
 
 ### 3. 校验
 
@@ -197,11 +199,19 @@ plan/checklist 落盘后，要明确进入实现前的独立关口：确认对�
 ### 校验结果
 - plan frontmatter：通过 / 失败
 - checklist yaml：通过 / 失败
+- checklist evidence contract：v1
 ```
 
 首次汇报后停在实现前关口：确认对象是执行顺序与步骤切分，不是已批准的 design 意图。用户明确回复 `继续 / 确认 / 同意 / 继续下一步` 后，必须把 `{slug}-plan.md` frontmatter 的 `status` 从 `draft` 改为 `approved`，再直接切到 `cs-feat-impl`；该 canonical 状态已存在时，不得重复补一轮“要不要开始实现”。
 
 ---
+
+## 质量执行约束
+
+- **Hard-required**：approved design、现有 feature artifact、执行顺序与风险。
+- **On-demand**：architecture、roadmap、compound、requirements 仅在 approved design 直接引用时读取。
+- **证据**：每个 step 指明触碰范围、退出信号、验证方式与回退；plan/checklist 映射可被工具校验。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
 
 ## 退出条件
 

@@ -184,6 +184,13 @@ tags: []
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：目标能力、用户价值、当前实现状态与对应 requirement artifact。
+- **On-demand**：architecture、roadmap、feature、compound 仅在可追溯关系或冲突命中时读取。
+- **证据**：需求声明保留来源、成功标准、明确不做、关联 feature 与状态变化理由。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 - [ ] 已锁定单一模式 + 单一目标

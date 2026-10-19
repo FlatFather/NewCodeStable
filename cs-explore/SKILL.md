@@ -119,6 +119,13 @@ python .codestable/tools/search-yaml.py --dir .codestable/compound --filter doc_
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：探索问题、范围与直接代码证据。
+- **On-demand**：architecture、requirements、roadmap 和 compound 仅在它们能回答探索问题时读取。
+- **证据**：结论先行，并保留 3–8 条可追溯 `file:line` 证据与 confidence。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 - [ ] 已明确探索问题与范围

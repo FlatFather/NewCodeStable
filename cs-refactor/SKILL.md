@@ -137,7 +137,7 @@ scan（扫优化点清单）→ design（和用户定做哪几条 + 顺序）→
 2. **每条补执行细节**：方法号 / 步骤 / 前置条件 / 退出信号 / 验证责任方（AI / HUMAN）/ 回滚策略
 3. **识别前置依赖**——测试覆盖不够的条目前置"补刻画测试"；改公开接口的前置"搜调用方"
 4. **整体 review**：整稿交用户，放行后 `status: approved`
-5. **抽 checklist**：steps 对应执行顺序，checks 对应每步退出信号
+5. **抽 checklist**：steps 对应执行顺序，checks 对应每步退出信号；从 `reference/evidence-checklist-template.yaml` 复制后填充。新 checklist 必须声明 `evidence_contract: v1`，每个条目包含稳定 `id`、`verification` 和初始 `evidence`
 
 ### design 文件结构
 
@@ -186,6 +186,7 @@ summary: {本次要做的几条是什么，一句话}
 2. **每步完成走验证**：
    - AI 自证：跑指定测试 / 类型检查 / lint / grep 无残留旧引用。通过了记 apply-notes 继续
    - HUMAN 验证：**停下来**汇报"第 N 步已完成，请在 {具体页面 / 操作} 目视确认，确认后我继续"。用户不明确说"继续"就不推进
+   - 证据回写：条目变为 `done` / `passed` 时，同步回写 `evidence.result`、`evidence.verified_at`、`evidence.verified_by`
 3. **偏离当场记**——执行中发现方案没考虑的情况（如有个调用方在动态 import 里），**停下来汇报不发挥**。和用户对齐后追加到 apply-notes，必要时回阶段 2 改 design
 4. **行为等价自检**——每步结束额外问"这一步有没有可能改了外部可观察行为？" 有怀疑就退回当步
 
@@ -216,6 +217,13 @@ refactor: {YYYY-MM-DD}-{slug}
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：范围内代码、行为等价基线、测试覆盖和当前 refactor artifact。
+- **On-demand**：architecture、compound、调用方与性能资料只在方法、风险或 drift 命中时读取。
+- **证据**：scan 量化问题、design 的回退策略、apply 的 before/after 验证与行为等价结论均落盘。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 - [ ] scan 前置检查跑过，命中的已路由，没命中的才进 scan
@@ -223,7 +231,9 @@ refactor: {YYYY-MM-DD}-{slug}
 - [ ] design 每条勾选项映射到方法号
 - [ ] design 用户整体 review 通过 `status: approved`
 - [ ] checklist.yaml 已生成且通过 `validate-yaml.py`
+- [ ] 新 checklist 声明 `evidence_contract: v1`
 - [ ] apply 每步都有验证记录（AI 自证贴日志，HUMAN 贴用户确认语录）
+- [ ] `done` / `passed` 条目都有 `evidence.result`、`verified_at`、`verified_by`
 - [ ] 全量测试 / 类型检查 / lint 通过
 - [ ] 用户最后一次目视确认通过
 
@@ -255,6 +265,7 @@ refactor: {YYYY-MM-DD}-{slug}
 
 - 小重构超轻量通道见 `cs-refactor-ff` 技能（单函数/单组件局部、有测试可自证时走那边）
 - `reference/scan-checklist-format.md` — scan 清单条目字段 / 顺序 / 硬约束
+- `reference/evidence-checklist-template.yaml` — Evidence v1 refactor checklist 起始模板
 - `reference/refusal-routing.md` — scan 前置检查 7 条 + 路由表
 - `reference/methods.md` — 方法库索引（L1-L4 四层分类）
 - `reference/methods-L1-L2.md` / `reference/methods-L3.md` / `reference/methods-L4.md` — 方法详情

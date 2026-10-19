@@ -116,6 +116,20 @@ fastforward 不读完整方法库，但要守住"**每一处改动都能对应�
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：受影响函数/组件、行为等价基线、改动阈值与可执行测试。
+- **On-demand**：调用方、architecture、compound 和浏览器验证仅在风险信号命中时读取；需要人工目视即退出 fastforward。
+- **证据**：记录所用经典方法、before/after 范围、测试结果和旧引用清理证据；发生升级时记录原因。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
+## 退出条件
+
+- [ ] 入场三条硬检查均通过，或已明确切回标准 refactor lane
+- [ ] 每个改动对应一个经典重构方法，且未改变公开行为或接口
+- [ ] 已运行可证明行为等价的测试/检查，并记录结果
+- [ ] 范围、验证或行为假设变化时已停止扩张并给出 handoff
+
 ## 不做什么
 
 - **不写 scan / design / checklist** —— 写了就违背 fastforward 存在的理由

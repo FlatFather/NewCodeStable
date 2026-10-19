@@ -186,6 +186,13 @@ tags: [...]
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：用户目标、受影响代码、fastforward 阈值与可执行验证方式。
+- **On-demand**：compound、architecture、requirements 和浏览器验证仅在风险或改动类型命中时读取/执行。
+- **证据**：`ff-note` 记录改动范围、验证命令/结果、用户可见结果和升级标准 lane 的原因（如发生）。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 - [ ] 代码写完且用户确认效果 OK

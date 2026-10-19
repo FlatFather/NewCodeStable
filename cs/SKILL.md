@@ -7,13 +7,13 @@ description: CodeStable 工作流根入口，介绍体系全貌并把诉求路�
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+`cs` 是路由器，不是执行器。启动时遵守“先 probe、后按需读”的两层读取：
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+- **Fast probe（每次）**：用户原话、`.codestable/` 是否存在；只有续作或已有工作可能性时才读取 `status.json`。
+- **Handoff gate（命中后）**：`.codestable/attention.md` 只在已接入项目且项目约束会影响 handoff 时读取；`shared-conventions.md` 只在路由冲突、术语歧义或用户要求解释体系时读取。
+- **Continuation fast path**：短回复优先调用 `workflow-routing.py`；得到唯一结论后不再扫描其他 lane 或重读体系总览。
 
-**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
+**缓存优化**：已经读取过的 probe 结果或命中资料在本轮复用；缺少 `.codestable/` 时直接建议 `cs-onboard`，不尝试读取项目内 CodeStable 文件。
 
 `cs` 是 CodeStable 工作流家族的统一入口。用户开口大概率不会指名某个 `cs-xxx`——可能只说"我想加个权限校验"、"这个地方有 bug"、"介绍下 codestable"，甚至只发一个 `cs`。本技能负责接住开放式输入，弄清意图，路由到对的子技能。
 
@@ -28,14 +28,14 @@ description: CodeStable 工作流根入口，介绍体系全貌并把诉求路�
 
 ## 收到调用先做的扫描
 
-回应前每次都做（几个 tool 调用就够）：
+读取预算固定为 **probe → 决策 → 命中上下文**，不要为了“心里有数”预读整个仓库：
 
-1. **看仓库有没有接入 CodeStable**——`Glob .codestable/` 看顶层目录
-2. **存在**——优先读取 `.codestable/status.json`（若存在）做快速发现；若缺失、`freshness.state != fresh`、或与当前诉求/目录现状矛盾，则回退为直接 `Read .codestable/attention.md`（如果缺失提示骨架不完整，先补齐或重跑 `cs-onboard`）；再 `Read .codestable/reference/system-overview.md`（如果有）；`Glob` 一下 `features/` `issues/` `roadmap/` 看进行中的工作（拿目录名就够，不逐份读）
-3. **不存在**——后面提示用户先走 `cs-onboard`
-4. **看用户原话**——开放式还是带具体诉求？带诉求匹配路由表，没诉求给体系介绍
+1. **检查接入状态**——只探测 `.codestable/` 顶层；不存在时直接路由 `cs-onboard`。
+2. **短回复优先**——存在 `status.json` 时运行 `python .codestable/tools/workflow-routing.py .codestable/status.json`；该 helper 会复核 freshness。返回 `continue` 就使用唯一候选直接 handoff，返回 `ask_user` 就列候选，返回 `inspect_canonical` 才读取对应的单个 lane / artifact。
+3. **普通具体诉求**——先根据用户原话匹配路由表；新 feature / issue / refactor 直接交给 lane 路由技能，不在根入口 `Glob` 全部 features、issues、roadmap，也不替下游预读代码。
+4. **介绍或歧义**——只有用户要求项目专属体系说明时读取 `system-overview.md`；只有路由受项目约束、冲突或缺口影响时读取 attention 与相关 shared conventions。
 
-扫完才回应。让用户感觉你心里有数。
+根入口只收集足够做出可解释路由的事实；深入 canonical 检查由命中的 lane skill 负责。
 
 ---
 
@@ -162,6 +162,13 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 收住，别把所有子技能细节讲一遍。用户问到具体的再展开。
 
 ---
+
+## 质量执行约束
+
+- **Hard-required**：仓库接入状态、当前用户输入，以及续作 / 已有工作命中时的 fresh `status.json`；路由不得只依赖 bridge hint。
+- **On-demand**：attention、shared conventions、具体 lane artifact、architecture、roadmap、compound 与 system overview 只在候选、意图或冲突命中时读取。
+- **证据**：响应中明确 lane、stage、理由、confidence 与 blocker；本技能不伪造 canonical artifact。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
 
 ## 退出
 

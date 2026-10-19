@@ -154,6 +154,13 @@ index.md 末尾给优先级建议：
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：用户确认的审计范围、当前代码与对应架构资料（仅审 architecture drift 时）。
+- **On-demand**：requirements、roadmap、compound 和非范围模块仅在 finding 需要佐证时读取。
+- **证据**：finding 必须包含 `file:line`、影响、置信度、建议动作；零发现也是有效结论。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
 - [ ] 审计范围已和用户确认

@@ -7,13 +7,13 @@ description: 修 bug 的子流程入口，把"发现问题"走到验证修复闭
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+`cs-issue` 只做问题分类和阶段路由；先确认“新问题还是现有 issue 续作”，再读取命中资料：
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+- **Fast probe（每次）**：用户问题；若是短回复、带 issue slug 或明确说“继续”，再读取 fresh `status.json` 或指定 issue 目录的最小索引。
+- **Handoff gate（命中后）**：`.codestable/attention.md` 在要进入具体 issue 工作前读取；`shared-conventions.md` 只在状态冲突、命名 / 目录语义不清或用户要求解释流程时读取。
+- **不在路由层定位根因**：代码、日志、architecture、requirements 与 compound 由 report / analyze / fix 在路径确定后按需读取；路由层不得为猜根因而全仓扫描。
 
-**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
+**缓存优化**：本轮已验证的 candidate、freshness 与 attention 复用；attention 缺失时提示先补齐或运行 `cs-onboard`。
 
 修 bug 直觉是"找到错的地方改了完事"，但这个直觉路径反复制造同样的麻烦：
 
@@ -79,7 +79,12 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 
 ## 路由
 
-进入本技能先优先读取 fresh `.codestable/status.json`（如果存在）看 issue lanes 的当前索引，再 `Glob` `.codestable/issues/`，自己读已有文件才有数。若 `status.json` 缺失、`freshness.state != fresh`、或与实际 issue 目录现状矛盾，必须回退到 direct `.codestable/issues/` inspection。
+按最小读取顺序路由，而不是每次先扫整个 issue lane：
+
+1. **短回复 / 续作**：先运行 `workflow-routing.py`；唯一 fresh 候选直接进入 candidate 阶段，不额外 `Glob` 所有 issue。
+2. **指定 issue**：只检查该目录的 report / analysis / fix-note；`status.json` 仅用于加速发现，stale 或冲突时才回退到这个目录的 direct inspection。
+3. **新问题**：先判断它是 issue、feature 还是需要澄清；不在 router 层预读代码、日志或所有旧 issue。
+4. **多个候选或状态冲突**：再列出候选或读取必要 canonical artifact，不能靠口头阶段说明绕过状态核验。
 
 | 当前状态 | 触发哪个子技能 |
 |---|---|
@@ -102,6 +107,8 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 3. 多个候选 → 列给用户选，不猜
 4. 没有候选 → 才按普通 issue 路由处理
 
+fresh helper 返回唯一 `continue` 时，直接传递 `{issue path, stage, blocker}` 给下游；不要为了二次确认再全量扫描 issue 目录。只有 `inspect_canonical` 或候选冲突时才扩展读取。
+
 如果需要恢复桥接信息，可参考 `.ccg/tasks/*/task.json`，但它**只作 task 状态桥 / recovery hint**，不能替代 issue 目录里的 report / analysis / fix-note 真相源。详细协议见 `.codestable/reference/workflow-continuation.md`。
 
 ---
@@ -109,6 +116,20 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 用户描述的是**新功能需求而不是 bug** → 告诉用户走 `cs-feat`。
 
 ---
+
+## 质量执行约束
+
+- **Hard-required**：用户问题，以及续作 / 指定 issue 命中时的 canonical artifact 与 fresh status。
+- **On-demand**：attention、shared conventions、代码、architecture、requirements、compound 与 bridge hint 只在路径判定或证据需要时读取。
+- **证据**：快速通道必须保留 file:line、改动范围、风险与验证方式；标准路径不在路由层伪造根因。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
+## 退出条件
+
+- [ ] 已判定问题属于 issue、feature 或需进一步澄清
+- [ ] 已按 canonical report/analysis/fix-note 状态路由，且 continuation 不重复消费 checkpoint
+- [ ] 快速通道满足根因明确、改动小、无跨模块风险和可验证条件
+- [ ] 唯一无 blocker 的下一阶段已 handoff；否则已列出需用户选择的缺口
 
 ## 与 feature 工作流的边界
 

@@ -7,13 +7,12 @@ description: 给库的公开表面（组件 / 函数 / 命令）逐条目生成�
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+先定位公开 entry 和 manifest，再读取该 entry 的源码：
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+- **Hard-required**：`docs/api/manifest.yaml`（首次初始化除外）、目标 entry 的 `source_files` 与输出路径。
+- **On-demand**：attention 只在文档生成 / 发布约束命中时读取；`shared-conventions.md` 只在元数据或归档语义需要澄清时读取；guide、design、trick 与历史 API 文档只在交叉引用或增量更新命中时读取。
 
-**检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
+**缓存优化**：本轮已提取的 source_files、导出和 manifest 条目复用；缺 `.codestable/` 时提示先补齐或运行 `cs-onboard`。
 
 guidedoc 教你"怎么用 X 做 Y"，libdoc 告诉你"X 的每个零件长什么样、怎么配"。
 
@@ -101,6 +100,7 @@ libdoc 产物**不在 `.codestable/` 下**——API 参考是面向外部读者�
 - **每个条目独立读源码**——即使批量也不允许复制上一个改名。两个看起来很像的接口经常有微妙差异
 - **样板确认不可跳**
 - **源码结构特殊（动态导出 / 代码生成）暂标 `skipped` 加 note**——硬猜出来的文档比没文档更有害
+- **更新优先**：同一公开 entry 的已有文档一律更新原文件；需要解释使用场景时链接 `cs-guide`，不要再新建第二份 API 参考
 
 ### Phase 3：增量更新
 
@@ -110,7 +110,7 @@ libdoc 产物**不在 `.codestable/` 下**——API 参考是面向外部读者�
 - 对比 `manifest.yaml` 里 `last_scanned` 之后变更的源码文件
 - `search-yaml.py --sort-by last_reviewed --order asc` 按最久没复核的排在前主动复核
 
-重新读源码 → 对比已有文档 → 增量更新变化部分 → `validate-yaml.py` 校验 → `status: current` + `last_reviewed` 当天。
+先按 manifest 的 `source_files` 和 `last_scanned` 定位变更 entry → 只重读这些 entry 的源码与已有文档 → 增量更新变化部分 → `validate-yaml.py` 校验 → `status: current` + `last_reviewed` 当天。不要为了更新一项重扫整个库。
 
 ---
 
@@ -126,15 +126,20 @@ libdoc 产物**不在 `.codestable/` 下**——API 参考是面向外部读者�
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：公开源码、manifest、条目粒度与输出路径。
+- **On-demand**：attention、shared conventions、guide、design、trick 与历史 API 文档仅在相互引用或增量更新命中时读取。
+- **证据**：每个 API 条目的签名、默认值、导出和示例可回溯到源码；无法解析的条目显式 `skipped`。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
 ## 退出条件
 
-**Phase 1**：manifest.yaml 已落盘 + 用户已确认范围（含 skipped 理由）+ 粒度和输出路径已确认
-
-**Phase 2 单条目**：条目按模板生成 + frontmatter 完整 + API 参考节信息来源于源码提取（非编造）+ 用户确认 + manifest 已更新
-
-**Phase 2 批量**：样板（2-3 篇）已获用户确认 + 所有 pending 条目已生成或标 skipped + 用户做了整体 review + manifest 所有条目 status 已同步
-
-**Phase 3**：outdated 条目已全部更新或确认不需更新 + manifest 无残留 outdated（除非用户明确暂缓）
+- [ ] **Phase 1**：`manifest.yaml` 已落盘，用户已确认范围（含 skipped 理由），条目粒度和输出路径已确认
+- [ ] **Phase 2 单条目**：条目按模板生成，frontmatter 完整，API 参考信息可回溯到源码，用户已确认，manifest 已更新
+- [ ] **Phase 2 批量**：样板（2-3 篇）已获用户确认，所有 pending 条目已生成或标 skipped，用户已整体 review，manifest 状态已同步
+- [ ] **Phase 3**：outdated 条目已全部更新或确认不需更新，manifest 无残留 outdated（除非用户明确暂缓）
+- [ ] 同一公开 entry 已更新原文或显式 skipped，未生成重复 API 参考；批量前样板已确认
 
 ---
 

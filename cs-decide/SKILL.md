@@ -100,6 +100,20 @@ AI 根据对话起草完整文档（YAML frontmatter + 所有正文节）。一�
 
 ---
 
+## 质量执行约束
+
+- **Hard-required**：已拍板的决定、决策范围、现有同类 decision 与当前 artifact。
+- **On-demand**：architecture、attention、requirements、roadmap 与 compound 只在受影响关系命中时读取。
+- **证据**：记录上下文、选项、取舍、决定、后果和 supersede 关系；不得把猜测写成历史事实。
+- 共同底线见 `.codestable/reference/skill-quality-contract.md`。
+
+## 退出条件
+
+- [ ] decision 已确认属于长期、可复用的项目约束或选型
+- [ ] 已完成查重，并对更新/supersede 给出明确关系
+- [ ] artifact 写明决定、理由、替代选项或无法评估的边界
+- [ ] 已提示受影响的 architecture 或 attention 更新，但未越权代写
+
 ## 搜索工具
 
 > 完整语法见 `.codestable/reference/tools.md`。
