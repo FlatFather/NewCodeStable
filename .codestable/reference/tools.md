@@ -69,6 +69,7 @@ python .codestable/tools/check-workflow-contracts.py --json
 - manifest 声明的 `source` / `destination` 文件是否存在、是否仍落在共享合同路径前缀下
 - 被活跃 workflow 文档引用的 `.codestable/reference/*` / `.codestable/tools/*` 是否真实存在且已写入 manifest
 - 活跃 / 公共文档是否仍使用标准 feature 主线：`cs-feat → [需求模糊时 cs-brainstorm] → cs-feat-design → cs-feat-plan → cs-feat-impl → cs-feat-accept`
+- 根入口、feature / issue 路由表和体系总览表中的具体 `cs-*` 目标是否存在对应 `SKILL.md`，且 frontmatter `name` 与目录名一致；只在技能源码仓库中提供这些文档时检查，不要求消费项目安装整套源码
 - 活跃 workflow 文档是否违反 `.codestable/` 路径契约
 - Markdown 文档是否超过仓库当前行数上限（默认从 `CLAUDE.md` / `AGENTS.md` 读取，当前为 500）
 - 历史 legacy feature 是否被兼容读取而非误判为硬失败

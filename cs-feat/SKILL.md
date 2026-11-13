@@ -10,7 +10,7 @@ description: 新功能开发的子流程入口，把"加个 X 能力"从想法�
 `cs-feat` 只做 feature 分诊和阶段路由，先判断“新需求还是续作”，再读取命中资料：
 
 - **Fast probe（每次）**：用户需求；若用户给出 feature slug、短回复或明确说“继续”，再读取 fresh `status.json` 或该 feature 目录的最小索引。
-- **Handoff gate（命中后）**：`.codestable/attention.md` 在要进入具体 feature 工作前读取；`shared-conventions-feature.md` 只在 artifact 职责不清、设计 / 计划状态冲突或需要解释目录规则时读取。
+- **Handoff gate（命中后）**：`.codestable/attention.md` 在要进入具体 feature 工作前读取；artifact 职责或设计 / 计划状态不清时查 `shared-conventions-feature.md`，目录规则不清时查 `shared-conventions-core.md`。
 - **不在路由层预读**：代码、architecture、requirements、roadmap 与 compound 由命中的下游阶段按实际需要读取；尤其不要在新需求分诊时扫描全仓代码。
 
 **缓存优化**：本轮已验证的 candidate、freshness 与 attention 复用；attention 缺失时提示先补齐或运行 `cs-onboard`。

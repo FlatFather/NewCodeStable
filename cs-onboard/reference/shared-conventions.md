@@ -40,6 +40,8 @@ continuation 语义，只规定技能设计和 artifact 质量的共同底线。
 
 本文件保留第 1、3-7 节（共享元数据、收尾提交、归档检索、守护规则、反射检查），为所有技能共用。
 
+启动读取统一遵循 `skill-quality-contract.md` 的“启动成本”：优先直达命中模块，总入口保留规则也只读当前任务需要的节。reference 全图见 `maintainer-notes.md` 第 0 节。
+
 ---
 
 ## 1. 共享元数据口径

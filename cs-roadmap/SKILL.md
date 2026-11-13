@@ -7,11 +7,10 @@ description: 把"大到塞不进单个 feature"的需求做成完整事前规划
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+- **Hard-required**：`.codestable/attention.md`、用户目标与本次更新的 roadmap / items（如有）。
+- **On-demand**：创建或核对路径时读 `.codestable/reference/shared-conventions-core.md`；定义条目状态或关联 feature 时读 `.codestable/reference/shared-conventions-roadmap.md`；检索沉淀时读 `.codestable/reference/shared-conventions.md` 第 5 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
@@ -29,7 +28,7 @@ description: 把"大到塞不进单个 feature"的需求做成完整事前规划
 
 **为什么文件夹不是单文件**：拆解过程会产生草稿 / 调研 / 方案对比 / 白板转述，塞一份 md 会乱又舍不得删。每个 roadmap 一个子目录，主文档对外口径，旁边 `drafts/` 随便堆。
 
-> 共享路径与命名约定看 `.codestable/reference/shared-conventions.md`。主文档和 items 完整模板看同目录 `reference.md`。
+> 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。主文档和 items 完整模板看同目录 `reference.md`。
 
 ---
 

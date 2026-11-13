@@ -10,7 +10,7 @@ description: 写或更新对外指南文档——开发者指南（dev-guide）�
 先确认读者任务和目标文档，再读取支持该任务的最小事实源：
 
 - **Hard-required**：目标读者、用户任务、现有同 component guide 的索引，以及当前产品 / 代码的公开行为。
-- **On-demand**：attention 只在 docs 路径、构建或发布约束命中时读取；`shared-conventions.md` 只在 frontmatter / 归档语义需要澄清时读取；feature、architecture、libdoc、trick 和 UI 只读取与目标章节直接相关的部分。
+- **On-demand**：attention 只在 docs 路径、构建或发布约束命中时读取；核对路径时读 `.codestable/reference/shared-conventions-core.md`，核对 frontmatter 时读 `.codestable/reference/shared-conventions.md` 第 1 节；feature、architecture、libdoc、trick 和 UI 只读取与目标章节直接相关的部分。
 
 **缓存优化**：本轮已确认的文档候选、公开行为和术语复用；缺 `.codestable/` 时提示先补齐或运行 `cs-onboard`。
 

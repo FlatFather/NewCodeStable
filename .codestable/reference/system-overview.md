@@ -16,7 +16,7 @@ CodeStable 把这几类场景各配一套子技能，产物放进统一的目录
 **做事**——从一段模糊想法走到上线的功能、或者从一份错误报告走到修好的 bug:
 
 - `cs-feat` — 新功能，`[需求模糊时 brainstorm] → design → plan → 分步实现 → verify + ship`；`cs-feat` 承担语义 Stage 0 轻量分诊。`cs-feat-design` 只负责范围、约束与测试观察点，`cs-feat-plan` 负责生成 `plan.md` + `checklist.yaml` 并形成进入实现前的独立确认关口。需求模糊时深化进入讨论层 `cs-brainstorm`；大需求移交 roadmap。fastforward 保持为独立快路径。
-- `cs-issue` — 修 bug,report → analyze → fix
+- `cs-issue` — 修 bug，标准路径 report → analyze → fix；简单问题由 report 判定快速通道，确认根因与方案后直接 fix，仅必留 fix-note，不另设快速技能
 - `cs-refactor` — 代码优化(行为不变、结构/性能/可读性变),scan → design → apply；`cs-refactor-ff` 是同流程的超轻量快路径（1-3 条低风险优化、单次确认）
 
 两类都不直接让 AI 写代码,而是先产出 spec(功能方案 / 问题分析),用户 review 后再动手,代码和 doc 一起交付。针对的是术语冲突、范围失控、改完不留存档这三种 AI 默认会出的问题。
@@ -119,7 +119,7 @@ CodeStable 建立"**复用优先、扩展为主、新增为辅**"的文化，通
 
 此外，本仓库内 skills 统一采用 **continuation-first**；规范性定义见 `.codestable/reference/workflow-contract-continuation.md`，lane-facing 摘要见 `.codestable/reference/workflow-continuation.md`。
 
-例外两种:issue 根因一眼确定时走快速通道,跳过 analyze 直接 fix;feature 范围小时走 `cs-feat-ff`,写完 spec 直接进实现。
+快路径例外：issue 根因一眼确定时由 `cs-issue-report` 分诊，用户确认后直接进入 `cs-issue-fix`，不强制生成 report / analysis；小 feature 走 `cs-feat-ff`，实现验证后回写 ff-note；小重构走 `cs-refactor-ff`。具体边界见 `terminology.md` 第 3-4 节。
 
 
 ## 进一步参考
@@ -130,7 +130,7 @@ CodeStable 建立"**复用优先、扩展为主、新增为辅**"的文化，通
 - `.codestable/reference/tools.md` — `search-yaml.py` / `validate-yaml.py` 用法
 - `.codestable/reference/maintainer-notes.md` — 断点恢复、新增子工作流的登记
 
-目录结构(requirements/、architecture/、roadmap/、features/、issues/、compound/、tools/、reference/)的权威定义在 `shared-conventions.md`。要改目录先改那里——方法是改 `cs-onboard/reference/shared-conventions.md` 这个模板,新项目 onboard 时会带上新版本。
+目录结构(requirements/、architecture/、roadmap/、features/、issues/、compound/、tools/、reference/)的权威定义在 `shared-conventions-core.md`。要改目录先改 `cs-onboard/reference/shared-conventions-core.md` 模板并同步项目副本，新项目 onboard 时会带上新版本。
 
 
 ## 相关

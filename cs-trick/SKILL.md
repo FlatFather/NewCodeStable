@@ -7,11 +7,10 @@ description: 把可复用的编程模式 / 库用法 / 技术技巧整理成处�
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+- **Hard-required**：`.codestable/attention.md`、本次技巧的可追溯来源与用户指定的既有 trick（如有）。
+- **On-demand**：创建或核对命名时读 `.codestable/reference/shared-conventions-core.md`；查重、起草或取代技巧前读 `.codestable/reference/shared-conventions.md` 第 1、5-6 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
@@ -19,7 +18,7 @@ cs-trick 是面向问题的**处方性参考库**，回答：**要做 X，经过
 
 典型内容：某个设计模式在这个项目的标准写法 / 某个库的核心 API 用法 + 已知坑 / 某类操作的命令配方。
 
-> 共享路径与命名约定看 `.codestable/reference/shared-conventions.md`。产物写入 `.codestable/compound/`，命名 `YYYY-MM-DD-trick-{slug}.md`，frontmatter 带 `doc_type: trick`。
+> 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。产物写入 `.codestable/compound/`，命名 `YYYY-MM-DD-trick-{slug}.md`，frontmatter 带 `doc_type: trick`。
 
 ---
 

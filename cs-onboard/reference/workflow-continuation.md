@@ -27,6 +27,7 @@
 
 ## lane 读取提示
 
+- 通用操作查 `workflow-continuation-base.md`；feature / issue 分别查 `workflow-continuation-feature.md` / `workflow-continuation-issue.md`。它们是操作参考，不能覆盖上面的 workflow contract；完整阅读地图见 `maintainer-notes.md` 第 0 节。
 - feature lane：继续前先看该 feature 目录下的正式产物状态
 - issue lane：继续前先看该 issue 目录下的正式产物状态
 - 顶层入口：只有在 workflow contract 允许时，才可用恢复结果替代普通路由

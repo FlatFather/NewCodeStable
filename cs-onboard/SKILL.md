@@ -36,7 +36,7 @@ onboard 的对象可能尚未有 `.codestable/`，因此不要把项目内 atten
 
 ## 标准骨架（目标状态）
 
-> 共享路径与命名约定的权威版本是项目里的 `.codestable/reference/shared-conventions.md`——本技能从技能包复制过去。下面只列 onboard 创建 / 检查的骨架文件。
+> 共享路径与命名约定的权威版本是项目里的 `.codestable/reference/shared-conventions-core.md`——本技能从技能包复制过去。下面只列 onboard 创建 / 检查的骨架文件。
 
 ```
 .codestable/

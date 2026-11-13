@@ -7,12 +7,10 @@ description: issue 流程阶段 3——按已确认根因和方案定点修复�
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
-- `.codestable/reference/shared-conventions.md` — 反射检查与收尾规则
+- **Hard-required**：`.codestable/attention.md`、已确认的 analysis 或快速通道 draft fix-note，以及修复范围与验证方式。
+- **On-demand**：创建或核对路径时读 `.codestable/reference/shared-conventions-core.md`；检索沉淀、写代码、收尾时分别读 `.codestable/reference/shared-conventions.md` 第 5、7、3-4 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
@@ -38,9 +36,9 @@ fix 阶段最容易出问题的不是改代码本身，而是**改的过程中�
 
 进入这个入口时 AI 在 report 阶段已读过代码并对根因有把握。
 
-1. **明确陈述根因**："`{文件}:{行号}` 的 {具体代码} 存在 {问题描述}"，让用户确认根因判断准确
-2. **给修复方案**——改哪里、怎么改（一两句话，不写完整分析文档）
-3. **等用户明确说"对，就这样改"才动手**——这是快速通道保留的人类拍板点；确认后立刻建 `status: draft` 的 `{slug}-fix-note.md`，先写第 1-3 节作为 canonical 决策记录，绝不只留在对话里
+1. **先恢复已确认记录**——有 draft fix-note 就读取其中的根因、方案、范围、验证方式与确认记录；已在 report 阶段批准的方案直接执行，不重问
+2. **只有确认缺失时补齐**——明确陈述 `{文件}:{行号}` 的根因，以及改哪里、怎么改与验证方式；等用户明确同意再动手
+3. **先留 canonical 决策记录**——复用已有 draft fix-note；尚未建档则按快速通道模板建立 `status: draft` 的 `{slug}-fix-note.md`，先填第 1-3 节，绝不只留在对话里
 4. 读 `.codestable/attention.md`
 5. **补搜沉淀目录**——快速通道也要查一遍 `compound/`（trick + explore），避免误把已知边界条件当新问题
 6. **短回复 continuation-first**——如果用户这轮输入只是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步`，先读 draft fix-note 恢复已确认的根因与方案，再检查代码修改 / 验证状态；必要时再参考 `.ccg/tasks/*/task.json` 作为恢复桥，但不把 task 文件当成 fix 真相源
@@ -50,9 +48,9 @@ fix 阶段最容易出问题的不是改代码本身，而是**改的过程中�
 
 ## 实现期间的约束
 
-### 只改 analysis 里声明的文件
+### 只改已确认方案里声明的文件
 
-修复范围来自 analysis 第 5 节"推荐方案"的"影响面"。超出范围的文件——哪怕顺眼——**不动**。
+标准路径的范围来自 analysis 第 5 节"推荐方案"的"影响面"；快速通道来自 draft fix-note 第 3 节。超出范围的文件——哪怕顺眼——**不动**。
 
 发现范围外值得改的记一条"顺手发现"不改代码：
 
@@ -84,9 +82,9 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 修复改完后逐项核对：
 
-- [ ] **复现步骤验证**——按 report 第 2 节走一遍，问题不再出现
-- [ ] **期望行为验证**——report 第 3 节"期望行为"现在确实发生
-- [ ] **影响面回归**——analysis 第 4 节"潜在受害模块"每个走一遍最基本的冒烟路径
+- [ ] **复现步骤验证**——按 report 第 2 节或快速 fix-note 第 1 节走一遍，问题不再出现
+- [ ] **期望行为验证**——report 第 3 节或快速 fix-note 第 1 节的"期望行为"现在确实发生
+- [ ] **影响面回归**——analysis 第 4 节或快速 fix-note 第 3 节声明的范围逐一冒烟；没有 analysis 不等于跳过回归
 - [ ] **前端改动浏览器验证**（如涉及）——按 `.codestable/attention.md` 的硬要求执行，不能只 typecheck
 - [ ] **相关测试通过**——有测试覆盖到修复区域就跑一遍
 
@@ -138,7 +136,7 @@ issue-fix 比 feature-implement 更谨慎：**触发反射信号但结论是"该
 
 ## 退出后
 
-告诉用户："issue 修复完成，工作流闭环。report + analysis + fix-note 已存档。"
+按实际路径汇报：标准路径告知 report + analysis + fix-note 已存档；快速通道告知 fix-note 已存档，不声称生成了不存在的 report / analysis。
 
 按 `shared-conventions.md` 第 3 节（阶段收尾推荐）"issue-fix"收尾推荐顺序各问一句（用户"不用"立即跳过）：
 

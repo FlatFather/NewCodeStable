@@ -10,6 +10,7 @@ Checks:
   5. active/public docs keep the canonical feature-flow wording
   6. active workflow docs stay within the markdown line-limit policy
   7. historical legacy feature artifacts warn in compatibility mode instead of failing
+  8. root/lane routing tables only target existing skills with matching names
 
 Designed for AI agent use: deterministic, read-only, structured output, no required
 external dependencies.
@@ -519,6 +520,47 @@ def check_feature_flow_wording(root: Path, report: Report):
                 report.error("feature_flow_wording", rel, f"Found outdated feature-flow wording: {bad}")
 
 
+def check_skill_routes(root: Path, report: Report):
+    router_docs = (
+        "cs/SKILL.md",
+        "cs-feat/SKILL.md",
+        "cs-issue/SKILL.md",
+    )
+    if not existing_paths(root, router_docs):
+        return
+    route_docs = (
+        *router_docs,
+        "cs-onboard/reference/system-overview.md",
+        ".codestable/reference/system-overview.md",
+    )
+    skill_pattern = re.compile(r"`(cs(?:-[a-z0-9]+)+)`")
+    for path in existing_paths(root, route_docs):
+        content, err = read_text(path)
+        if err:
+            report.error("read_error", rel_path(root, path), err)
+            continue
+        in_fence = False
+        for line_number, line in enumerate((content or "").splitlines(), start=1):
+            if line.lstrip().startswith(("```", "~~~")):
+                in_fence = not in_fence
+                continue
+            if in_fence or not line.lstrip().startswith("|"):
+                continue
+            for skill_name in sorted(set(skill_pattern.findall(line))):
+                target = root / skill_name / "SKILL.md"
+                location = f"{rel_path(root, path)}:{line_number}"
+                if not target.is_file():
+                    report.error("skill_route_missing", location, f"Routing target {skill_name}/SKILL.md does not exist")
+                    continue
+                target_content, err = read_text(target)
+                if err:
+                    report.error("read_error", rel_path(root, target), err)
+                    continue
+                metadata, _ = parse_frontmatter(target_content or "")
+                if metadata.get("name") != skill_name:
+                    report.error("skill_route_name", location, f"Routing target {target.relative_to(root)} must declare name: {skill_name}")
+
+
 def check_markdown_line_limit(root: Path, report: Report):
     exemptions = load_markdown_line_limit_exemptions(root, report)
     for path in collect_line_limit_docs(root, report):
@@ -659,6 +701,7 @@ def main() -> None:
     check_referenced_assets(root, report, declared)
     check_path_contract(root, report)
     check_feature_flow_wording(root, report)
+    check_skill_routes(root, report)
     check_markdown_line_limit(root, report)
     check_legacy_features(root, report)
     apply_warning_baseline(root, report)

@@ -7,11 +7,10 @@ description: 对仓库做定向代码探索并把"提问→读代码→得结论
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+- **Hard-required**：`.codestable/attention.md`、本次探索问题与相关代码证据。
+- **On-demand**：创建或核对命名时读 `.codestable/reference/shared-conventions-core.md`；查重或写入探索文档前读 `.codestable/reference/shared-conventions.md` 第 1、5-6 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
@@ -28,7 +27,7 @@ description: 对仓库做定向代码探索并把"提问→读代码→得结论
 
 本技能只负责"看到了什么"的证据化记录。用户意图是别的（拍板 / 处方 / 修 bug）让用户按场景选对应子技能。
 
-> 共享路径与命名约定看 `.codestable/reference/shared-conventions.md`。产物写入 `.codestable/compound/`，命名 `YYYY-MM-DD-explore-{slug}.md`，frontmatter 带 `doc_type: explore`。
+> 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。产物写入 `.codestable/compound/`，命名 `YYYY-MM-DD-explore-{slug}.md`，frontmatter 带 `doc_type: explore`。
 
 ---
 

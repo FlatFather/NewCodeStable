@@ -7,11 +7,10 @@ description: feature 流程的超轻量通道——不写 design / checklist 直
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+- **Hard-required**：`.codestable/attention.md`、用户目标与 fastforward 共享合同中的当前 lane 判据。
+- **On-demand**：创建 ff-note 时读 `.codestable/reference/shared-conventions-core.md`；检索沉淀、写代码、收尾时分别读 `.codestable/reference/shared-conventions.md` 第 5、7、3-4 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
@@ -23,15 +22,7 @@ description: feature 流程的超轻量通道——不写 design / checklist 直
 
 ## Shared fastforward contract
 
-`cs-feat-ff` 与 `cs-refactor-ff` 共享同一条 fastforward 边界合同：
-
-- 只有在范围小、决策空间小、AI 可一次对话内完成并自证时，fastforward 才继续成立
-- fastforward 只降低 ceremony，不改变 truth source / authority ordering
-- 一旦超出 documented thresholds，workflow **自动 normalize** 到对应标准 lane
-- auto-normalize 是单向的：触发后不再沿用 fastforward 语义硬推到底
-- 不确定是否仍属于 fastforward 时，默认回标准 lane
-
-本 lane 的局部限制仍以本文件为准；跨 lane 的共享判据看 `.codestable/reference/terminology.md` 第 3 节。
+进入 fastforward 前读取 `.codestable/reference/terminology.md` 第 3 节的共享边界合同与当前 lane 判据；本文件只补充执行步骤。
 
 ---
 

@@ -7,11 +7,10 @@ description: 代码优化的子流程入口，处理"行为不变、结构变"�
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+- **Hard-required**：`.codestable/attention.md`、用户指定范围与当前 refactor 阶段产物（如有）。
+- **On-demand**：创建或核对路径时读 `.codestable/reference/shared-conventions-core.md`；生成或推进 checklist 前读 `.codestable/reference/shared-conventions-checklist.md`；检索沉淀、写代码、收尾时分别读 `.codestable/reference/shared-conventions.md` 第 5、7、3-4 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 

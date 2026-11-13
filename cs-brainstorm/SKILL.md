@@ -7,11 +7,10 @@ description: 想法还模糊时的讨论入口，做分诊后路由到 feature-d
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+- **Hard-required**：`.codestable/attention.md`、用户想法与本次继续讨论的已有草稿（如有）。
+- **On-demand**：创建草稿时读 `.codestable/reference/shared-conventions-core.md`；交接 feature 或 roadmap 时分别读 `.codestable/reference/shared-conventions-feature.md` 或 `.codestable/reference/shared-conventions-roadmap.md`。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
@@ -23,7 +22,7 @@ brainstorm 是"讨论层"统一入口，也是 feature 语义流程 **Stage 0（
 - **任何话题都可以聊**——用户想聊库 / Schema / 接口就聊；TA 提出来说明心里有谱，趁早讨论清楚 design 阶段更省力，不设话题黑名单。
 - **AI 是思考伙伴不是记录员**——用户来这步是想被挑战、被启发，不是被一条条问题填表。如果只是把用户的话整理一遍写下来这步就白做了
 
-> 共享路径和命名约定看 `.codestable/reference/shared-conventions.md`。
+> 共享路径和命名约定看 `.codestable/reference/shared-conventions-core.md`。
 
 ---
 

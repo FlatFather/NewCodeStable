@@ -7,12 +7,10 @@ description: 维护 `.codestable/architecture/` 这份只记现状的系统地�
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
-- `.codestable/reference/shared-conventions.md` — 归档检索规则与守护规则
+- **Hard-required**：`.codestable/attention.md`、本次目标架构文档与待核对的现状证据。
+- **On-demand**：创建或核对路径时读 `.codestable/reference/shared-conventions-core.md`；检索相关沉淀时读 `.codestable/reference/shared-conventions.md` 第 5 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
@@ -31,7 +29,7 @@ description: 维护 `.codestable/architecture/` 这份只记现状的系统地�
 - **代码复述**——每节都说"这里有什么"，不说"为什么这么分"，信息量等于 `ls -R`
 - **检查时看一眼感觉没问题**——没给具体位置证据
 
-> 共享路径与命名约定看 `.codestable/reference/shared-conventions.md`。文档结构模板、check 覆盖项、报告格式看同目录 `reference.md`。
+> 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。文档结构模板、check 覆盖项、报告格式看同目录 `reference.md`。
 
 ---
 

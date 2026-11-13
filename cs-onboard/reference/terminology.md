@@ -91,6 +91,8 @@
 
 **判定**：是否进快速通道由 `cs-issue-report` 的启动检查做唯一正式判定。一旦进标准路径默认不再二次改判。
 
+**入口与留档**：`cs-issue` → `cs-issue-report`（只做快速判定与方案确认）→ `cs-issue-fix`，不另设独立快速技能。用户确认后先建 `status: draft` 的 fix-note 记录现象、根因、方案、范围与验证方式；验证通过后补全并改为 `status: completed`。快速通道不强制生成 report / analysis，已有记录则保留。
+
 ---
 
 ## 5. brainstorm vs intent

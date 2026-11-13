@@ -102,6 +102,7 @@ Normative definition:
 
 - `cs-feat-ff`: feature fastforward for small requests
 - `cs-refactor-ff`: refactor fastforward for small, behavior-preserving changes
+- Issue fast path: `cs-issue-report` selects the path; once the root cause and fix are approved, hand off directly to `cs-issue-fix`. Only a fix-note is required; no separate fast-path skill is needed.
 
 ### Discussion / planning entry
 
@@ -131,6 +132,7 @@ Normative definition:
 
 ### Normative references
 
+- [`.codestable/reference/maintainer-notes.md`](./.codestable/reference/maintainer-notes.md) — reference reading map and maintenance steps
 - [`.codestable/reference/workflow-contract.md`](./.codestable/reference/workflow-contract.md) — truth source, continuation, generated state, distribution
 - [`.codestable/reference/system-overview.md`](./.codestable/reference/system-overview.md) — full CodeStable system map
 - [`.codestable/reference/terminology.md`](./.codestable/reference/terminology.md) — feature / issue / fastforward routing criteria

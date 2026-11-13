@@ -10,7 +10,7 @@ description: 把踩过的坑或好做法沉淀成可检索的 learning 文档，
 先定位经验的来源和既有 learning，再决定写什么：
 
 - **Hard-required**：用户提供的经验 / 已完成 artifact，以及 `.codestable/compound/` 的目标索引或用户点名的既有 learning。
-- **On-demand**：attention 仅在经验可能成为全局启动约束时读取；`shared-conventions.md` 仅在 frontmatter、归档或 supersede 语义需要澄清时读取；代码、issue、feature 只读取能验证该经验的最小片段。
+- **On-demand**：attention 仅在经验可能成为全局启动约束时读取；核对命名时读 `.codestable/reference/shared-conventions-core.md`，核对 frontmatter、归档或 supersede 时读 `.codestable/reference/shared-conventions.md` 第 1、5-6 节；代码、issue、feature 只读取能验证该经验的最小片段。
 
 **缓存优化**：本轮已查过的候选、来源和结论复用；缺 `.codestable/` 时提示先补齐或运行 `cs-onboard`。
 

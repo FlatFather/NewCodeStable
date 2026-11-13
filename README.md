@@ -102,6 +102,7 @@ CodeStable 编排的不是 Agent 团队，而是**软件本身的生命周期**�
 
 - `cs-feat-ff`：小需求的 feature fastforward
 - `cs-refactor-ff`：小范围、行为等价的重构 fastforward
+- issue 快速通道：`cs-issue-report` 内判定，确认根因与方案后直接进入 `cs-issue-fix`，仅必留 fix-note，无独立快速技能
 
 ### 讨论入口
 
@@ -131,6 +132,7 @@ CodeStable 编排的不是 Agent 团队，而是**软件本身的生命周期**�
 
 ### 规范性入口
 
+- [`.codestable/reference/maintainer-notes.md`](./.codestable/reference/maintainer-notes.md) — reference 阅读地图与维护步骤
 - [`.codestable/reference/workflow-contract.md`](./.codestable/reference/workflow-contract.md) — truth source、continuation、generated state、distribution
 - [`.codestable/reference/system-overview.md`](./.codestable/reference/system-overview.md) — CodeStable 体系总览
 - [`.codestable/reference/terminology.md`](./.codestable/reference/terminology.md) — feature / issue / fastforward 等术语判据

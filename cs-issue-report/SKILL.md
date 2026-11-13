@@ -1,17 +1,16 @@
 ---
 name: cs-issue-report
-description: issue 流程阶段 1——通过对话把问题落成可复现、可追溯的 {slug}-report.md，并判定走标准路径还是快速通道。只问现象不猜根因。触发：用户说"提个 issue"、"记录这个 bug"、"我发现一个问题"。issue 工作流的起点。
+description: issue 流程阶段 1——判定标准路径或快速通道。标准路径把现象落成可复现的 {slug}-report.md，不猜根因；简单问题先读代码，确认根因与方案后直达 fix。触发：用户说"提个 issue"、"记录这个 bug"、"我发现一个问题"。issue 工作流的起点。
 ---
 
 # cs-issue-report
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
+- **Hard-required**：`.codestable/attention.md`、用户现象与指定 issue 的已有记录（如有）。
+- **On-demand**：创建或核对路径时读 `.codestable/reference/shared-conventions-core.md`；判定快速通道时读 `.codestable/reference/terminology.md` 第 4 节及相关代码。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
@@ -29,7 +28,7 @@ description: issue 流程阶段 1——通过对话把问题落成可复现、�
 2. **看有没有相关 issue 目录**——Glob `.codestable/issues/`，有同类问题先和用户确认是新建还是更新
 3. **短回复 continuation-first**——如果用户这轮输入只是 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步`，先检查是否存在唯一候选 issue 目录；命中则优先恢复该 issue 的 report / analysis / fix 状态，而不是默认按新问题建档。必要时可参考 `.ccg/tasks/*/task.json` 作为恢复桥，但不把 task 文件当成 issue 真相源
 4. **快速通道判断（唯一正式判定点）**——按用户线索**读一下相关代码**（Grep / Read 定位）：
-   - **能一眼确定根因**（能给出 `{文件}:{行号}`、修复改动小 1-2 处、无跨模块影响风险）→ 告诉用户"我已看到问题所在，可以走快速通道：直接告知根因和修复方案，你确认后我立刻修，修完你验证，只写一份 `{slug}-fix-note.md`"。同意后先建 `status: draft` 的 `{slug}-fix-note.md`，写入根因与修复方案，再触发 `cs-issue-fix`（快速通道模式）
+   - **能一眼确定根因**（能给出 `{文件}:{行号}`、修复改动小 1-2 处、无跨模块影响风险）→ 告诉用户"我已看到问题所在，可以走快速通道：直接告知根因和修复方案，你确认后我立刻修，修完你验证，只写一份 `{slug}-fix-note.md`"。同意后按 `cs-issue-fix` 的快速通道模板建 `status: draft` 的 fix-note，记录现象、根因、修复范围、验证方式与本次确认，直接 handoff，不要求补 report / analysis 或重复确认
    - **不能**（根因有多个候选 / 不确定 / 需要更多复现信息）→ 走标准路径做完整问题报告。进入标准路径后默认不再二次改判
 5. **确定 issue 目录名**——跟用户商定 slug，日期前缀用今天（环境信息 `currentDate`）。目录不存在就创建。快速通道也要建 issue 目录，`{slug}-fix-note.md` 放那
 
@@ -141,6 +140,8 @@ tags: []
 
 ## 退出条件
 
+### 标准路径
+
 - [ ] frontmatter 完整（`doc_type=issue-report` / `issue` 一致 / `severity` 和 `summary` 非空 / `tags` ≥ 1）
 - [ ] 5 问都有具体答案（环境中相关文件可"待定"）
 - [ ] 问题现象是纯现象描述，没混入根因推测
@@ -149,13 +150,20 @@ tags: []
 - [ ] 用户明确说"report 可以了，进下一步"
 - [ ] frontmatter `status: confirmed`
 
+### 快速通道
+
+- [ ] 已基于代码证据判定满足 `.codestable/reference/terminology.md` 第 4 节
+- [ ] 用户已明确确认根因、修复方案与范围，确认内容和日期已记入 draft fix-note
+- [ ] fix-note 采用快速通道模板，记录现象、复现 / 期望、file:line、修复方案、范围与验证方式
+- [ ] 已直接 handoff 到 `cs-issue-fix`；不要求补齐标准 report 的 5 问或 analysis
+
 ---
 
 ## 退出后
 
-用户明确说“report 可以了，进下一步”时，把 `report.md` 写为 `status: confirmed`，告诉用户“问题报告已确认，现在进入阶段 2 根因分析”，并立即 handoff 到 `cs-issue-analyze`。该确认已经完成阶段 checkpoint，**不得再要求一次 `确认 / 继续 / 同意`**。
+标准路径中，用户明确说“report 可以了，进下一步”时，把 `report.md` 写为 `status: confirmed`，告诉用户“问题报告已确认，现在进入阶段 2 根因分析”，并立即 handoff 到 `cs-issue-analyze`。该确认已经完成阶段 checkpoint，**不得再要求一次 `确认 / 继续 / 同意`**。
 
-用户尚未确认 report 时不得提前分析根因；确认后直接 handoff 不属于绕过 checkpoint。
+标准路径中，用户尚未确认 report 时不得提前分析根因；确认后直接 handoff 不属于绕过 checkpoint。快速通道按上面的独立退出条件直接进入 `cs-issue-fix`，不经过 analyze。
 
 ---
 

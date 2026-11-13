@@ -10,7 +10,7 @@ description: CodeStable 工作流根入口，介绍体系全貌并把诉求路�
 `cs` 是路由器，不是执行器。启动时遵守“先 probe、后按需读”的两层读取：
 
 - **Fast probe（每次）**：用户原话、`.codestable/` 是否存在；只有续作或已有工作可能性时才读取 `status.json`。
-- **Handoff gate（命中后）**：`.codestable/attention.md` 只在已接入项目且项目约束会影响 handoff 时读取；`shared-conventions.md` 只在路由冲突、术语歧义或用户要求解释体系时读取。
+- **Handoff gate（命中后）**：`.codestable/attention.md` 只在已接入项目且项目约束会影响 handoff 时读取；术语歧义查 `terminology.md`，路径歧义查 `shared-conventions-core.md`，用户要求解释体系时查 `system-overview.md`。
 - **Continuation fast path**：短回复优先调用 `workflow-routing.py`；得到唯一结论后不再扫描其他 lane 或重读体系总览。
 
 **缓存优化**：已经读取过的 probe 结果或命中资料在本轮复用；缺少 `.codestable/` 时直接建议 `cs-onboard`，不尝试读取项目内 CodeStable 文件。
@@ -92,6 +92,8 @@ CodeStable 把开发活动建模成 **7 个实体 + 3 个流程**，所有产物
 | 开发者指南 / 用户指南 | `cs-guide` |
 | 库 API 参考 | `cs-libdoc` |
 | 用户在 feature / issue 流程中间问"下一步" | 路由到对应入口（`cs-feat` / `cs-issue`），让该入口判断当前阶段 |
+
+本表的具体 `cs-*` 目标由 `check-workflow-contracts.py` 校验，新增或改名时同步维护对应 `SKILL.md`。
 
 **判不出来 / 太抽象**："听起来像 {猜测}，但你描述里 {缺什么}。是 {选项 A} 还是 {选项 B}？" 让用户选不要硬猜。
 

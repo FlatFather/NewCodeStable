@@ -7,13 +7,10 @@ description: feature 流程阶段 3——按 `{slug}-plan.md` 与 `{slug}-checkl
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
-- `.codestable/reference/shared-conventions-feature.md` — feature 产物职责边界
-- `.codestable/reference/shared-conventions.md` — 反射检查规则
+- **Hard-required**：`.codestable/attention.md`、已批准的 design / plan 与当前 checklist。
+- **On-demand**：核对路径时读 `.codestable/reference/shared-conventions-core.md`；产物职责不清时读 `.codestable/reference/shared-conventions-feature.md`；推进 checklist 前读 `.codestable/reference/shared-conventions-checklist.md`；写代码前读 `.codestable/reference/shared-conventions.md` 第 7 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 

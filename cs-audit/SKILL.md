@@ -7,11 +7,10 @@ description: 系统审计——从代码中主动发现 bug 隐患、安全漏�
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+- **Hard-required**：`.codestable/attention.md`、用户指定的审计范围与其中的代码证据。
+- **On-demand**：创建审计产物时读 `.codestable/reference/shared-conventions-core.md`；检索已有沉淀时读 `.codestable/reference/shared-conventions.md` 第 5 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 

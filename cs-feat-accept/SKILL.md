@@ -7,14 +7,10 @@ description: feature 流程技术阶段 4——在同一技能内承载语义 Ve
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions-core.md` — 目录结构与命名规则
-- `.codestable/reference/shared-conventions-feature.md` — feature 产物职责边界
-- `.codestable/reference/shared-conventions-roadmap.md` — roadmap ↔ feature 衔接
-- `.codestable/reference/shared-conventions.md` — 收尾推荐与提交规则
+- **Hard-required**：`.codestable/attention.md`、当前 feature 的 design / plan / checklist 与验收证据。
+- **On-demand**：核对路径时读 `.codestable/reference/shared-conventions-core.md`；核对产物职责和 checklist 时分别读 `.codestable/reference/shared-conventions-feature.md` 与 `.codestable/reference/shared-conventions-checklist.md`；有关联 roadmap 才读 `.codestable/reference/shared-conventions-roadmap.md`；Ship 收尾时读 `.codestable/reference/shared-conventions.md` 第 3-4 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 

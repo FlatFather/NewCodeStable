@@ -4,7 +4,7 @@ slug: issue-workflow
 component: cs-issue
 status: current
 summary: 说明 CodeStable 当前 issue 主线、快速通道、continuation 语义，以及 truth-source 与 generated-state 边界
-last_reviewed: 2026-06-25
+last_reviewed: 2026-11-13
 tags: [workflow, issue, cs-issue, codestable]
 ---
 
@@ -122,11 +122,15 @@ issue lane 的真实状态以 `.codestable/issues/{slug}/` 下正式产物为准
 
 ### 适用条件
 
+入口仍是 `cs-issue` → `cs-issue-report` → `cs-issue-fix`，无需单独安装快速技能。`report` 在快速通道中只做分诊和方案确认，不要求生成 report / analysis 文档，也不套用标准 report 的 5 问退出条件。
+
 仅当以下条件同时满足时，才留在 issue 快速通道：
 
 1. 根因一眼可确认（能明确指出 `file:line` + 原因）
 2. 修复改动很小（1-2 处）
 3. 无跨模块影响风险
+
+确认根因与方案后，先写 `status: draft` 的 fix-note 第 1-3 节，保留现象、复现 / 期望、代码证据、范围、验证方式与确认内容 / 日期，然后直接进入修复。恢复时复用该确认；验证通过后补全证据与风险并改为 `status: completed`。已有 report / analysis 保留，但不为补齐形式新建。
 
 ### 自动回标准路径
 

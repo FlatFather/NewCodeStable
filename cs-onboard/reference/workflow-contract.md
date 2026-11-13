@@ -2,6 +2,8 @@
 
 本文件是当前仓库内 CodeStable 工作流契约的唯一总入口。凡是描述 truth source、continuation、generated state、分发同步、跨 lane 共用语义的规范性规则，都以这里及其模块为准。
 
+完整 reference 层次与按任务阅读路径见 `maintainer-notes.md` 第 0 节；本入口只导航规范性模块。
+
 ## 适用范围
 
 - 当前仓库内的 `.codestable/reference/*`

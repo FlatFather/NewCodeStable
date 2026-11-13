@@ -28,6 +28,18 @@ CodeStable 技能的质量不只看“能完成任务”，还看启动成本、
 
 技能可以声明例外，但必须在 `SKILL.md` 写明触发条件与不可省略原因。
 
+共享约定统一按任务命中读取，不把 `shared-conventions.md` 总入口或全部分片列为启动必读：
+
+| 当前任务 | 读取材料 |
+|---|---|
+| 创建产物或核对路径、命名 | `shared-conventions-core.md` |
+| 判断 feature 产物职责与状态 | `shared-conventions-feature.md` |
+| 创建、推进或核验 checklist | `shared-conventions-checklist.md` |
+| 从 roadmap 起头或回写关联条目 | `shared-conventions-roadmap.md` |
+| 核对共享元数据、检索沉淀、写代码或收尾 | `shared-conventions.md` 中对应的第 1、5-6、7 或 3-4 节 |
+
+总入口用于导航与其保留的共享规则；已有明确模块时直接读取该模块。当前任务所需规则在执行相应动作前读取，本轮已读且未变更的内容复用。
+
 路由类技能还必须先执行低成本 probe：确认 `.codestable/` 是否存在、读取 fresh
 generated state 或指定 lane 的最小索引，然后才按需读取 attention、共享约定或具体
 artifact。短回复优先走 continuation predicate；predicate 已给出唯一结论时，不得

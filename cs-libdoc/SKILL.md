@@ -10,7 +10,7 @@ description: 给库的公开表面（组件 / 函数 / 命令）逐条目生成�
 先定位公开 entry 和 manifest，再读取该 entry 的源码：
 
 - **Hard-required**：`docs/api/manifest.yaml`（首次初始化除外）、目标 entry 的 `source_files` 与输出路径。
-- **On-demand**：attention 只在文档生成 / 发布约束命中时读取；`shared-conventions.md` 只在元数据或归档语义需要澄清时读取；guide、design、trick 与历史 API 文档只在交叉引用或增量更新命中时读取。
+- **On-demand**：attention 只在文档生成 / 发布约束命中时读取；核对路径时读 `.codestable/reference/shared-conventions-core.md`，核对元数据时读 `.codestable/reference/shared-conventions.md` 第 1 节；guide、design、trick 与历史 API 文档只在交叉引用或增量更新命中时读取。
 
 **缓存优化**：本轮已提取的 source_files、导出和 manifest 条目复用；缺 `.codestable/` 时提示先补齐或运行 `cs-onboard`。
 

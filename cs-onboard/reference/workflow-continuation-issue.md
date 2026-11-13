@@ -44,6 +44,8 @@ extends: workflow-continuation-base.md
 
 当 report 阶段已经收口并且用户明确回复 `确认 / 继续 / 同意` 时，report skill 把 `report.md` 写为 confirmed，并在同一回复中直接 handoff 到 `cs-issue-analyze`；不得要求用户再发一次 continuation。只有跨会话恢复时才回到 `cs-issue` 顶层入口，由 canonical artifacts 定位阶段。
 
+快速通道例外：根因与修复方案已确认后，report skill 写入 `status: draft` 的 fix-note 并在同一回复中直接 handoff 到 `cs-issue-fix`；不要求补 report / analysis，也不重复消费该确认。
+
 ### cs-issue-analyze
 
 先看 analysis 是否部分完成。

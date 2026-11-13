@@ -7,11 +7,10 @@ description: 维护 `.codestable/requirements/` 下的能力愿景文档。三�
 
 ## 启动必读
 
-本技能启动前需读取：
-- `.codestable/attention.md` — 项目注意事项
-- `.codestable/reference/shared-conventions.md` — 跨技能共享口径
+- **Hard-required**：`.codestable/attention.md`、目标能力与相关的既有 requirement / VISION 索引。
+- **On-demand**：创建或核对路径时读 `.codestable/reference/shared-conventions-core.md`；核对共享元数据或检索沉淀时分别读 `.codestable/reference/shared-conventions.md` 第 1 或 5 节。
 
-**缓存优化**：上述文件若已在本轮对话中读取过，输出"已复用上下文"并跳过 Read；否则执行 Read。
+**缓存优化**：本轮已读且未变更的材料直接复用；未命中条件的按需材料不读。
 
 **检查规则**：attention.md 缺失时，提示先补齐或运行 `cs-onboard`。
 
@@ -38,7 +37,7 @@ description: 维护 `.codestable/requirements/` 下的能力愿景文档。三�
 - 起花哨标题或用比喻——读者要读半段才知道这能力是什么
 - 把实现细节塞进来——"通过 XXX 服务调用 YYY 接口"
 
-> 共享路径与命名约定看 `.codestable/reference/shared-conventions.md`。一份样例看 `.codestable/reference/requirement-example.md`——起草前读一遍对齐语气。
+> 共享路径与命名约定看 `.codestable/reference/shared-conventions-core.md`。一份样例看 `.codestable/reference/requirement-example.md`——起草前读一遍对齐语气。
 
 ---
 

@@ -2,6 +2,44 @@
 
 本文件由 `cs-onboard` 复制到项目的 `.codestable/reference/maintainer-notes.md`。维护 CodeStable 技能家族时需要反复查阅、但不适合放在各子技能正文里的说明。
 
+## 0. Reference 阅读地图
+
+第一次维护时先读 `system-overview.md` 了解实体和流程，再读 `workflow-contract.md` 确认规范入口；执行具体任务时只进入命中的分支，不把下图当作全量必读清单。
+
+```text
+reference/
+├── system-overview.md                 体系速览与技能索引
+├── workflow-contract.md               规范性入口（冲突时优先）
+│   ├── workflow-contract-shared-concepts.md  共用概念
+│   ├── workflow-contract-authority.md       真相源与冲突优先级
+│   ├── workflow-contract-continuation.md    自动续作的允许与阻断条件
+│   ├── workflow-contract-generated-state.md 派生状态与 freshness
+│   └── workflow-contract-distribution.md    模板源与运行时副本
+├── workflow-continuation.md           续作操作导航，不另立规范
+│   ├── workflow-continuation-base.md        通用操作参考
+│   ├── workflow-continuation-feature.md     feature 阶段 handoff
+│   └── workflow-continuation-issue.md       issue 阶段与快速通道恢复
+├── shared-conventions.md              共享规则导航及元数据、检索、编码、收尾
+│   ├── shared-conventions-core.md          路径与命名
+│   ├── shared-conventions-feature.md       feature 产物职责
+│   ├── shared-conventions-checklist.md     checklist 生命周期
+│   └── shared-conventions-roadmap.md       roadmap ↔ feature
+├── terminology.md                    lane 区分与快路径判据
+├── skill-quality-contract.md          启动成本、证据与退出质量
+├── evidence-contract.md               新产物的机器可验证证据
+├── status-schema.md                   status.json 字段与消费边界
+├── tools.md                           校验、状态生成、检索与同步命令
+├── shared-asset-manifest.yaml          source → destination 清单
+├── code-dimensions.md                 代码结构分析维度
+├── requirement-example.md             requirement 写作示例
+└── markdown-line-limit-exemptions.json 行数校验的显式 fixture 豁免
+```
+
+- **改路由或恢复行为**：workflow contract → 命中的 lane 续作参考 → 对应 skill；不因操作参考的标题而降低规范性契约的优先级。
+- **写产物**：当前模板 → 对应 shared-conventions 分片；总入口仅按需读相关节。统一读取策略见 `skill-quality-contract.md` 的“启动成本”。
+- **改共享规则**：先改 `cs-onboard/reference/` 模板源，再按 manifest 更新 `.codestable/reference/` 副本；不能只改当前项目副本。
+- **验证改动**：运行 `./scripts/verify.sh`；只核对共享资产或路由目标时可单独运行 `python .codestable/tools/check-workflow-contracts.py`。
+
 ---
 
 ## 1. 断点恢复
@@ -24,7 +62,7 @@ AI 对话随时可能中断（token 超限、网络断开、用户换设备）�
 
 ### 新增子工作流
 
-新工作流定型后，在 `cs-onboard/reference/system-overview.md` 的"技能分成四部分"和"场景路由"表里加一段索引，并登记新的目录位置。
+新工作流定型后，在 `cs-onboard/reference/system-overview.md` 的技能索引和场景路由表里登记，并同步 `cs/SKILL.md` 与相关 lane 路由表；`check-workflow-contracts.py` 检查具体路由目标存在且 frontmatter `name` 与目录名一致。
 
 ### 跨阶段新约束
 
@@ -32,7 +70,7 @@ AI 对话随时可能中断（token 超限、网络断开、用户换设备）�
 
 ### 新模板 / 新产物类型
 
-如果引入新的 spec 产物（例如风险评估表、回滚预案），先在 `shared-conventions.md` 登记路径，再在对应阶段技能里引用。
+如果引入新的 spec 产物（例如风险评估表、回滚预案），先在 `shared-conventions-core.md` 登记路径，再在对应阶段技能里引用。
 
 ### 共享术语表
 
@@ -48,4 +86,4 @@ AI 对话随时可能中断（token 超限、网络断开、用户换设备）�
 
 - 每次扩展都要同步更新 `system-overview.md` 索引和相关子技能
 - 不允许只在某个子技能里加东西而不在 `system-overview.md` 登记
-- 共享说明优先放 `.codestable/reference/`，不要散落在各子技能里
+- 共享说明先维护 `cs-onboard/reference/` 模板源，再刷新 `.codestable/reference/`，不要散落在各子技能里

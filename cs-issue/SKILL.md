@@ -1,6 +1,6 @@
 ---
 name: cs-issue
-description: 修 bug 的子流程入口，把"发现问题"走到验证修复闭环，留下 report / analysis / fix-note 三份文件。触发：用户说"修 bug"、"有个问题"、"修复 XX"。只做路由，根据已有产物走 report / analyze / fix。简单问题走快速通道。
+description: 修 bug 的子流程入口，把"发现问题"走到验证修复闭环。触发：用户说"修 bug"、"有个问题"、"修复 XX"。标准路径留下 report / analysis / fix-note；简单问题由 report 判定快速通道，只保留 fix-note。只做路由。
 ---
 
 # cs-issue
@@ -10,7 +10,7 @@ description: 修 bug 的子流程入口，把"发现问题"走到验证修复闭
 `cs-issue` 只做问题分类和阶段路由；先确认“新问题还是现有 issue 续作”，再读取命中资料：
 
 - **Fast probe（每次）**：用户问题；若是短回复、带 issue slug 或明确说“继续”，再读取 fresh `status.json` 或指定 issue 目录的最小索引。
-- **Handoff gate（命中后）**：`.codestable/attention.md` 在要进入具体 issue 工作前读取；`shared-conventions.md` 只在状态冲突、命名 / 目录语义不清或用户要求解释流程时读取。
+- **Handoff gate（命中后）**：`.codestable/attention.md` 在要进入具体 issue 工作前读取；命名 / 目录语义不清时查 `shared-conventions-core.md`，状态冲突时查 `workflow-contract-authority.md`，解释路径判据时查 `terminology.md` 第 4 节。
 - **不在路由层定位根因**：代码、日志、architecture、requirements 与 compound 由 report / analyze / fix 在路径确定后按需读取；路由层不得为猜根因而全仓扫描。
 
 **缓存优化**：本轮已验证的 candidate、freshness 与 attention 复用；attention 缺失时提示先补齐或运行 `cs-onboard`。
@@ -36,8 +36,8 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 
 ```
 .codestable/issues/{YYYY-MM-DD}-{slug}/
-├── {slug}-report.md           ← 阶段 1 问题报告
-├── {slug}-analysis.md         ← 阶段 2 根因分析
+├── {slug}-report.md           ← 标准路径问题报告
+├── {slug}-analysis.md         ← 标准路径根因分析
 └── {slug}-fix-note.md         ← 阶段 3 修复记录（必出产物）
 ```
 
@@ -62,6 +62,8 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 阶段间有人工 checkpoint——让用户在每阶段结束有一次明确把关，防止 AI 一口气从问题跑到代码跑出来才发现走偏。
 
 ### 快速通道（问题简单、根因一眼确定）
+
+入口仍是 `cs-issue` → `cs-issue-report` → `cs-issue-fix`，无需独立的 `cs-issue-ff` 技能。`report` 在这条路径中承担分诊职责，不要求生成 report / analysis 文档；唯一必留产物是 fix-note。
 
 下面**同时满足**才进：
 
@@ -91,6 +93,7 @@ issue 工作流在"看到问题"和"动手改代码"之间塞缓冲：
 | 用户只回 `继续 / 确认 / 同意 / 按这个修 / 跳过 / 继续下一步` 这类短回复，且存在唯一候选 issue 目录 | **先按 continuation-first 续作**：直接根据该目录现有产物判断 report / analyze / fix，不重复按新 issue 路由 |
 | 刚发现问题，没有任何文件 | `cs-issue-report`（那里判断走标准还是快速） |
 | `report.md` 是 `status=draft`，没 `analysis.md` | `cs-issue-report`：完成 report checkpoint；不得提前进入 analyze |
+| 只有 `status=draft` 的 `fix-note.md`，根因与方案已确认 | `cs-issue-fix`（快速通道，恢复已确认方案，不补建 report / analysis） |
 | `report.md` 已 `status=confirmed`，有未 `completed` 的 `fix-note.md`，没 `analysis.md` | `cs-issue-fix`（快速通道，draft fix-note 是已确认方案的恢复记录） |
 | `report.md` 已 `status=confirmed`，没 `analysis.md` 和 `fix-note.md` | `cs-issue-analyze`（包括用户刚在 report 阶段明确回复“确认 / 继续”的续作场景） |
 | `analysis.md` 是 `status=draft`，代码还没改 | `cs-issue-analyze`：完成 fix-option checkpoint；不得提前进入 fix |
